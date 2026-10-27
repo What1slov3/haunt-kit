@@ -1,0 +1,374 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Руководство/Как расширять" />
+
+# Как расширять
+
+Как добавить в кит компонент, токен, строку, эффект, звук, глиф TUI или страницу документации так, чтобы он
+выглядел и вёл себя как всё остальное. Сначала — когда расширять вообще, потом — пошаговый пример нового
+компонента от папки до экспорта, потом — короткие рецепты для всего прочего.
+
+## Сначала: нужно ли расширять
+
+Кит **заморожен** с 2026-10-27 (решение `docs/decisions/0013-ui-kit-freeze.md`). Новый компонент появляется,
+когда его требует **настоящий экран**, а не «пригодится». Перед тем как писать код, пройдите по списку:
+
+1. **Есть ли уже?** Поиск в сайдбаре Storybook и таблица групп в `packages/ui/README.md`. Часто нужное — это
+   существующий компонент с другим пропом (`Badge bracket`, `Heading overline`, `Surface interactive`).
+2. **Это композиция?** Если экран собирается из `Stack`, `Surface`, `Text` и пары контролов — соберите его в
+   приложении. В кит уходит только то, что повторяется на нескольких экранах.
+3. **Есть ли в нём бизнес-смысл?** Компонент, которому нужен стор, транспорт или знание о каналах и сервере, —
+   это `features/*` приложения. Кит знает про раскладку и состояния, а не про данные.
+4. **Не похоже ли на чужой продукт?** Таблица в `docs/ui-kit.md` (раздел 10c) перечисляет детали, которые мы
+   уже заменили, чтобы не выглядеть как Discord. Узнаваемую чужую деталь ищите заменой в словаре TUI и примитивах
+   Haunt, а не перекраской.
+
+Если все четыре ответа ведут в кит — дальше по шагам.
+
+## Новый компонент: пример от начала до конца
+
+Пусть экрану «Пространство» нужна **карточка комнаты**: название, сколько людей внутри, их аватары, кнопка
+«Зайти». Назовём её `RoomCard`.
+
+### Шаг 1. Папка и файлы
+
+```text
+packages/ui/src/room-card/
+  room-card.tsx            компонент: разметка, пропсы, JSDoc
+  room-card.module.css     стили: только токены
+  room-card.stories.tsx    истории: по одной на состояние, play — если интерактивный
+  room-card-model.ts       чистая логика, если она есть (сортировка, подсчёт) — с тестом рядом
+  room-card-model.test.ts
+```
+
+Имя папки и файлов — kebab-case, компонента — PascalCase. Составной компонент (несколько частей) — части в
+`room-card-parts.tsx`, объект `RoomCard = { Root, Header… }` — в `room-card.ts`: файл с JSX экспортирует только
+компоненты и типы, иначе ругается `react-refresh/only-export-components`.
+
+### Шаг 2. Компонент
+
+```tsx title="room-card/room-card.tsx"
+import type { ComponentPropsWithRef, ReactNode } from 'react';
+
+import { AvatarGroup } from '../avatar-group/avatar-group';
+import { Button } from '../button/button';
+import { cx } from '../lib/cx';
+import { useUiStrings } from '../strings/ui-strings-context';
+
+import styles from './room-card.module.css';
+
+export interface RoomCardProps extends Omit<ComponentPropsWithRef<'article'>, 'title'> {
+  /** Название комнаты */
+  title: string;
+  /** Кто внутри — имена для аватаров; пусто — комната свободна */
+  people?: readonly string[];
+  /** Иконка занятия: кино, настолка, рейд */
+  icon?: ReactNode;
+  /** Зайти в комнату; без обработчика кнопки нет */
+  onJoin?: () => void;
+  /** Комната заполнена — кнопка выключена */
+  full?: boolean;
+}
+
+/**
+ * Карточка комнаты пространства: название, кто внутри и вход. Раскладка без данных — список людей и
+ * обработчик приходят пропсами. При `full` кнопка выключена, подпись — из словаря.
+ */
+export function RoomCard({
+  title,
+  people = [],
+  icon,
+  onJoin,
+  full = false,
+  className,
+  ...rest
+}: RoomCardProps) {
+  const strings = useUiStrings().roomCard;
+
+  return (
+    <article className={cx(styles.root, className)} data-full={full || undefined} {...rest}>
+      <header className={styles.header}>
+        {icon && <span className={styles.icon}>{icon}</span>}
+
+        <span className={styles.title}>{title}</span>
+      </header>
+
+      <span className={styles.meta}>
+        {people.length > 0 ? strings.here(people.length) : strings.empty}
+      </span>
+
+      {people.length > 0 && (
+        <AvatarGroup items={people.map((name) => ({ name }))} size="sm" max={4} />
+      )}
+
+      {onJoin && (
+        <Button size="sm" variant="secondary" disabled={full} onClick={onJoin}>
+          {full ? strings.full : strings.join}
+        </Button>
+      )}
+    </article>
+  );
+}
+```
+
+Что здесь обязательно:
+
+- **Пропсы расширяют `ComponentPropsWithRef<'tag'>`** корневого элемента: `className`, `style`, `aria-*`, `ref` и
+  обработчики проходят сами (`...rest`). Конфликтующие имена (`title`, `onSelect`) — через `Omit`.
+- **JSDoc у каждого пропса и у компонента.** Из него собирается таблица пропсов и описание на странице Docs.
+  Пишите _зачем_ проп и что при его отсутствии, а не тип — тип таблица покажет сама.
+- **Ни одной строки в разметке** — `useUiStrings()`. Сторож `strings/no-hardcoded-strings.test.ts` разбирает
+  исходники и валит прогон на кириллице в строках компонента.
+- **Состояния — `data-*` атрибутами** (`data-full`), а не классами на каждый случай: CSS читает их одной строкой,
+  тесты и e2e находят элемент по ним.
+- **Импорты внутри кита — относительные** (`../button/button`), не `@haunt/ui`: иначе циклы через `index.ts`.
+
+### Шаг 3. Стили
+
+```css title="room-card/room-card.module.css"
+/* Карточка комнаты: поверхность второго уровня, ритм — шкала отступов, цвета — токены темы */
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: inset 0 1px 0 var(--edge-highlight);
+}
+
+.root[data-full] {
+  opacity: 0.7;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.icon {
+  display: inline-flex;
+  color: var(--accent-text);
+}
+
+.title {
+  min-width: 0;
+  overflow: hidden;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Служебное — моно, как время и счётчики во всём ките */
+.meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+```
+
+Правила стилей, которые проверяет ревью:
+
+| Правило                                                      | Почему                                                                                             |
+| ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| цвета, отступы, высоты, радиусы, тени — только `var(--…)`    | тема, акцент, «сигнал» меняют токены; hex в модуле их не услышит                                   |
+| вложенное скругление — формулой `calc(var(--radius-lg) - …)` | внутренний радиус = внешний − отступ − рамка; в «сигнале» радиусы обнуляются                       |
+| анимация — только `transform`, `opacity`, `filter`           | остальное перекладывает страницу на каждом кадре                                                   |
+| keyframes — только через `animation: var(--anim-*)`          | CSS Modules переименуют `haunt-pop-in` локально — анимация не найдётся, Radix не размонтирует слой |
+| состояния интерактивного — токены `--state-*`                | наведение, нажатие, выбор выглядят одинаково у всех компонентов                                    |
+| у `data-tui="off"` и `data-style="signal"` — проверить вид   | оба режима переписывают токены и знаки                                                             |
+| новая «ручка» стиля — с запасным значением, равным основе    | `var(--chamfer, 0)`: без стиля переменной нет, и компонент выглядит как раньше                     |
+
+### Шаг 4. Строки
+
+Ключи — по компоненту, а не общие слова: одно русское слово на другом языке расходится, а в русском меняет
+род с соседом.
+
+```ts title="strings/ui-strings-types.ts"
+roomCard: {
+  join: string;
+  full: string;
+  empty: string;
+  here: (count: number) => string;
+}
+```
+
+```ts title="strings/ru.ts"
+roomCard: {
+  join: 'Зайти',
+  full: 'Мест нет',
+  empty: 'Никого',
+  here: (count) => `${count} ${n(count, 'человек', 'человека', 'человек')} внутри`,
+},
+```
+
+```ts title="strings/en.ts"
+roomCard: {
+  join: 'Join',
+  full: 'Full',
+  empty: 'Nobody here',
+  here: (count) => `${count} ${n(count, 'person', 'people')} inside`,
+},
+```
+
+Тип не даст забыть ни один язык: словарь, где ключа нет, не скомпилируется.
+
+### Шаг 5. Экспорт
+
+```ts title="index.ts"
+export { RoomCard, type RoomCardProps } from './room-card/room-card';
+```
+
+Только из `index.ts` компонент виден приложению. Тяжёлую зависимость (парсер, большой набор данных) внутри
+компонента грузите через `import()` при первом использовании: модули, достижимые из `index.ts` статически, не
+импортируют тяжёлые пакеты.
+
+### Шаг 6. Истории
+
+```tsx title="room-card/room-card.stories.tsx"
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Clapperboard } from 'lucide-react';
+import { expect, fn, userEvent, within } from 'storybook/test';
+
+import { Icon, RoomCard } from '@haunt/ui';
+
+const meta = {
+  title: 'Сообщество/RoomCard', // группа — как в таблице packages/ui/README.md
+  component: RoomCard,
+  tags: ['autodocs'],
+  args: {
+    title: 'Кино по пятницам',
+    icon: <Icon icon={Clapperboard} size="sm" />,
+    people: ['Мария Орлова', 'Аня', 'Лев'],
+    onJoin: fn(),
+  },
+  argTypes: { icon: { control: false } },
+  parameters: {
+    docs: {
+      description: {
+        component: 'Карточка комнаты пространства: название, кто внутри и вход. …',
+      },
+    },
+  },
+} satisfies Meta<typeof RoomCard>;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
+  play: async ({ args, canvasElement }) => {
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Зайти' }));
+    await expect(args.onJoin).toHaveBeenCalledOnce();
+  },
+};
+
+export const Empty: Story = { name: 'Пустая', args: { people: [] } };
+export const Full: Story = { name: 'Заполнена', args: { full: true } };
+export const LongTitle: Story = {
+  name: 'Длинное название',
+  args: { title: 'Очень длинное название комнаты…' },
+};
+```
+
+- **По истории на состояние**: варианты, размеры, пустое, ошибка, загрузка, disabled, длинный текст. Имя истории —
+  по-русски в `name`: в сайдбаре ищут «пустое», а не `Empty`.
+- **`play`** — если компонент интерактивный: клик, клавиатура, фокус, открытие и закрытие слоя. Каждая история —
+  тест в Chromium (`pnpm --filter @haunt/ui test:stories`).
+- **Помощники** для всплывающего — `lib/stories/play-helpers.ts`: `screen()` (поиск в `<body>`, где порталы),
+  `pressEscape`, `clickOutside`, `expectVisible`, `expectGone`, `expectFocused`.
+- **Демо-данные** — в историях или в `lib/stories/`: туда сторож строк не смотрит, в пакет приложения они не
+  попадают.
+
+### Шаг 7. Логика — отдельным файлом и с тестом
+
+Всё, что можно посчитать без DOM (раскладка колонок, группировка, формат, математика жеста), — чистая функция
+в `<name>-model.ts` с тестом рядом. Компонент тогда — только разметка и обработчики.
+
+```ts title="room-card/room-card-model.test.ts"
+import { describe, expect, it } from 'vitest';
+
+import { sortPeople } from './room-card-model';
+
+describe('sortPeople', () => {
+  it('говорящие — первыми, дальше по имени', () => {
+    expect(sortPeople([{ name: 'Лев' }, { name: 'Аня', speaking: true }])).toEqual([
+      { name: 'Аня', speaking: true },
+      { name: 'Лев' },
+    ]);
+  });
+});
+```
+
+Юнит-тесты (`*.test.ts` в `src/` и `scripts/`) идут в jsdom; то, что нужно настоящему браузеру (раскладка,
+фокус, Radix, анимации), — в `play` историй.
+
+### Шаг 8. Документация и проверка
+
+- Строка в таблице групп `packages/ui/README.md`; особые правила и ограничения — в разделы README.
+- Решение, которое кто-то захочет отменить через полгода, — в `docs/ui-kit.md` с причиной.
+- Проверка — один раз в конце: `pnpm verify:js` из корня (линт, prettier, типы, все тесты).
+- Посмотреть глазами: обе темы, `data-tui="off"`, «сигнал», ширина 390 px, клавиатура без мыши.
+
+## Рецепты для остального
+
+### Токен
+
+`theme/tokens.css`. Тема-независимый (размер, длительность) — в `:root`. Зависящий от темы — в обоих блоках
+(`:root, [data-theme='dark']` и `[data-theme='light']`). Выведенный из других токенов темы — в блок
+`:root, [data-theme]`: `var()` вычисляется там, где объявлен, и вложенный `ThemeScope` иначе унаследовал бы
+значение чужой темы. Выведенный из акцента — в блок `*` в конце файла: акцент переопределяется на любом
+контейнере. Затем `pnpm --filter @haunt/ui build:tokens`: генератор `scripts/tokens.ts` добавит токен в
+`theme/tokens.generated.ts`, и он станет доступен в коде (`tokens.myToken`, `setTokens`, `TokenScope`). Тест
+рядом не пропустит токен, добавленный в CSS без пересборки. Новый токен — строка на странице
+[Токены](?path=/docs/токены--docs).
+
+### Акцент пространства
+
+Пресет — в `accentPresets` (`theme/accent.ts`): `accent`, `accent2`, `contrast`. Белый на `accent` — контраст
+не ниже 4.5. Тулбар Storybook подхватит пресет сам.
+
+### Третья тема
+
+Ещё один блок `[data-theme='<имя>']` с полным набором тематических токенов, расширение типа `Theme` в
+`theme/theme.ts`, пункт в тулбаре (`.storybook/haunt-globals.ts`). Проверить контраст текста и рамок.
+
+### Язык интерфейса
+
+Файл `strings/<код>.ts` типа `UiStrings` — компилятор потребует все ключи. Числа — `plural` с формами языка.
+Пункт «Язык» в тулбаре — в `haunt-globals.ts`.
+
+### Ручка стиля «сигнал»
+
+Компонент читает новую переменную с запасным значением, равным основе: `border-radius: var(--chip-radius,
+var(--radius-full))`. Значение — в `signal/signal.css` внутри `[data-style='signal']`. Без атрибута стиль не
+меняет ни одного пикселя — это проверено попиксельно и должно остаться так.
+
+### Эффект
+
+Украшение на CSS — интенсивность из `--fx-*` (`theme/effects.css`), пауза — `animation-play-state: var(--fx-play)`.
+Эффект на JS — в `@haunt/ui/fx`: стратегия `{ webgl?, canvas2d?, static }` и общий планировщик (`fx/scheduler.ts`),
+решение «можно ли» — `isMotionAllowed()`. Строка — в таблице эффектов README: где и что его выключает.
+
+### Звук
+
+Звук — данные в `sound/sounds.ts`: голоса (тон или шум), огибающая, фильтр. Характер — тактильный, низкий и
+средний регистр, без писка в 2–4 кГц. Сумма громкостей голосов ≤ 1, длина < 0,5 с — их проверяет тест.
+`minLevel: 'subtle'` — только значимым звукам.
+
+### Глиф шрифта TUI
+
+Глифы — геометрией в `scripts/tui-font.ts` (клетка 600 × 1320 единиц, верх 1020, низ −300). Новый диапазон —
+ещё и в `unicode-range` у `theme/tui-font.css`. Пересобрать: `pnpm --filter @haunt/ui build:tui-font`. Тест рядом
+сверяет файл шрифта с генератором — правка без пересборки не пройдёт.
+
+### Страница документации
+
+MDX в `src/docs/` (руководство — `src/docs/guide/`), `<Meta title="Раздел/Страница" />`, место в сайдбаре —
+`storySort` в `.storybook/preview.tsx`. Элементы MDX рисует кит сам (`.storybook/mdx-components.tsx`):
+заголовки, текст, ссылки, код, таблицы, цитаты-заметки. Живой пример — компонент из `src/docs/*-blocks.tsx` в
+рамке `Demo`. Ссылка на другую страницу — `?path=/docs/<id>--docs`.

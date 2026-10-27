@@ -1,0 +1,59 @@
+/* Номер — дисплейный шрифт стиля «сигнал»; без стиля — моно, тот же индекс читается как TUI-метка */
+.root {
+  --index-color: var(--text);
+
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  color: var(--text-subtle);
+}
+
+.index {
+  flex-shrink: 0;
+  font-family: var(--font-display, var(--font-mono));
+  font-stretch: var(--display-stretch, inherit);
+  font-weight: var(--display-weight, var(--weight-semibold));
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--display-tracking, 0);
+  line-height: 1;
+  color: var(--index-color);
+  white-space: nowrap;
+}
+
+.sm .index {
+  font-size: calc(var(--text-sm) * var(--display-scale, 1));
+}
+
+.md .index {
+  font-size: calc(var(--text-xl) * var(--display-scale, 1));
+}
+
+.lg .index {
+  font-size: calc(var(--text-4xl) * var(--display-scale, 1));
+}
+
+.rule {
+  flex: 1;
+  min-width: var(--space-4);
+  height: var(--hairline, 1px);
+  background: var(--border-strong);
+}
+
+.label {
+  flex-shrink: 0;
+  font-family: var(--micro-font, var(--font-mono));
+  font-size: var(--micro-size, var(--text-xs));
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--micro-tracking, 0.06em);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.accent {
+  --index-color: var(--accent-text);
+}
+
+.muted {
+  --index-color: var(--text-muted);
+}

@@ -1,0 +1,59 @@
+.root {
+  --progress-color: var(--accent);
+
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: var(--surface-3);
+  border-radius: var(--radius-pill, var(--radius-full));
+  /* Фикс для Safari: скругление не обрезает transform без этого */
+  transform: translateZ(0);
+}
+
+.sm {
+  height: 2px;
+}
+
+.md {
+  height: 4px;
+}
+
+.accent {
+  --progress-color: var(--accent);
+}
+
+.success {
+  --progress-color: var(--success);
+}
+
+.warning {
+  --progress-color: var(--warning);
+}
+
+.danger {
+  --progress-color: var(--danger);
+}
+
+.indicator {
+  width: 100%;
+  height: 100%;
+  background: var(--progress-color);
+  border-radius: var(--radius-pill, var(--radius-full));
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+/* Бесконечная: короткий сегмент бегает по дорожке */
+.indeterminate {
+  width: 40%;
+  animation: slide 1.4s var(--ease-in-out) infinite;
+}
+
+@keyframes slide {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(250%);
+  }
+}

@@ -1,0 +1,57 @@
+/*
+ * Форма — clip-path из --chamfer-shape, рамка — ::after с кольцом --chamfer-ring поверх содержимого
+ * (как рамка поверх содержимого в решении 9): цвет рамки не просвечивает сквозь прозрачную заливку.
+ */
+.panel {
+  --chamfer-fill: var(--surface-1);
+  --chamfer-line: var(--border-strong);
+
+  position: relative;
+  min-width: 0;
+  padding: var(--space-4);
+  background: var(--chamfer-fill);
+  color: var(--text);
+  clip-path: var(--chamfer-shape);
+}
+
+.panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--chamfer-line);
+  clip-path: var(--chamfer-ring);
+  pointer-events: none;
+}
+
+.flush {
+  padding: 0;
+}
+
+.accent {
+  --chamfer-fill: var(--accent-soft);
+  --chamfer-line: var(--accent-text);
+}
+
+/* Заливка акцентом: токены текста и линий внутри переопределены в чернила — Text, Heading, Divider
+ * внутри читают те же имена и остаются читаемыми на кислотном фоне без своих пропсов */
+.solid {
+  --chamfer-fill: var(--accent);
+  --chamfer-line: var(--accent);
+  --text: var(--accent-contrast);
+  --text-muted: color-mix(in oklab, var(--accent-contrast) 78%, transparent);
+  --text-subtle: color-mix(in oklab, var(--accent-contrast) 64%, transparent);
+  --border: color-mix(in oklab, var(--accent-contrast) 24%, transparent);
+  --border-strong: color-mix(in oklab, var(--accent-contrast) 40%, transparent);
+
+  color: var(--text);
+}
+
+/* Штриховка — зона «осторожно» или пустое место под будущее; без стиля — диагональ из линий темы */
+.hatch {
+  background:
+    var(
+      --hatch,
+      repeating-linear-gradient(-45deg, var(--border-strong) 0 1px, transparent 1px 6px)
+    ),
+    var(--chamfer-fill);
+}

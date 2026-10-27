@@ -1,0 +1,150 @@
+/*
+ * TUI-вид: моно, направляющие вложенности тонкими линиями, типы — цветами подсветки кода (`--code-*`):
+ * ключи — как функции, строки — как строки, числа — как константы, true / false / null — как ключевые слова.
+ */
+.root {
+  composes: tokens from '../code-block/code-tokens.module.css';
+
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  color: var(--code-foreground);
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.count {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-subtle);
+}
+
+/* Фокус — на дереве, видна активная строка (aria-activedescendant); своё правило вместо общего */
+.tree {
+  overflow: auto;
+  padding: var(--space-1-5) 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.7;
+  outline: none;
+}
+
+.row {
+  --indent: 2ch;
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5ch;
+  min-width: max-content;
+  padding: 0 var(--space-3) 0 calc(var(--space-2) + var(--depth) * var(--indent));
+  white-space: pre;
+  cursor: default;
+  /* Направляющие — по одной на уровень: фон отступа, а не элементы на каждую строку */
+  background-image: repeating-linear-gradient(
+    to right,
+    transparent 0 0.75ch,
+    var(--border-subtle) 0.75ch calc(0.75ch + 1px),
+    transparent calc(0.75ch + 1px) var(--indent)
+  );
+  background-position: var(--space-2) 0;
+  background-size: calc(var(--depth) * var(--indent)) 100%;
+  background-repeat: no-repeat;
+}
+
+.row:hover {
+  background-color: var(--state-hover-bg);
+}
+
+.tree:focus-visible .row[data-active] {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+
+.chevron {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 1.5ch;
+  color: var(--code-token-punctuation);
+}
+
+.chevron :global(svg) {
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.chevron[data-open] :global(svg) {
+  transform: rotate(90deg);
+}
+
+.key {
+  color: var(--code-token-function);
+}
+
+.index {
+  color: var(--code-token-comment);
+}
+
+.colon,
+.bracket {
+  color: var(--code-token-punctuation);
+}
+
+.summary {
+  display: inline-flex;
+  gap: 0.5ch;
+}
+
+.size,
+.chunk {
+  color: var(--code-token-comment);
+}
+
+.value[data-kind='string'] {
+  color: var(--code-token-string);
+}
+
+.value[data-kind='number'] {
+  color: var(--code-token-constant);
+}
+
+.value[data-kind='boolean'],
+.value[data-kind='null'],
+.value[data-kind='undefined'] {
+  color: var(--code-token-keyword);
+}
+
+.value[data-kind='other'] {
+  color: var(--code-token-comment);
+}
+
+.mark {
+  background: var(--accent-soft-strong);
+  border-radius: 2px;
+  color: inherit;
+}
+
+/* Копирование — по наведению и у активной строки; клавиатурой — Ctrl+C / Ctrl+Shift+C */
+.actions {
+  display: inline-flex;
+  margin-left: var(--space-2);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.row:hover .actions,
+.tree:focus-visible .row[data-active] .actions {
+  opacity: 1;
+}

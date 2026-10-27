@@ -1,0 +1,49 @@
+.root {
+  min-width: 0;
+  padding: var(--space-5) var(--space-4) var(--space-8);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: sticky;
+  top: var(--space-4);
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+/*
+ * Предел ширины — у содержимого, а не у самой колонки: колонка с пределом не забирала бы свободное
+ * место, и его съедали бы разделы слева
+ */
+.main > * {
+  width: 100%;
+  max-width: var(--container-narrow);
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* Полоса изменений — плавающий остров на стекле, а не кромка экрана: её видно поверх любой формы */
+.saveBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+  background: var(--glass);
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-float);
+  animation: var(--anim-pop-in);
+}

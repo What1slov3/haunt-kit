@@ -1,0 +1,55 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: 1ch;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Окно в одну строку: видно один кадр из столбца */
+.window {
+  display: inline-block;
+  height: 1lh;
+  overflow: hidden;
+  color: var(--accent-text);
+}
+
+.frames {
+  display: flex;
+  flex-direction: column;
+  animation: tui-frames var(--frames-duration) steps(var(--frames)) infinite;
+}
+
+.frame {
+  height: 1lh;
+  white-space: pre;
+}
+
+/* Столбец уезжает вверх целиком; steps(N) показывает кадры 0…N−1 без промежуточных положений */
+@keyframes tui-frames {
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+.caption {
+  color: var(--text-muted);
+}
+
+/* Без TUI — обычный Spinner; селектор длиннее, чем у самого Spinner, иначе решал бы порядок стилей */
+.root .fallback {
+  display: none;
+}
+
+:global([data-tui='off']) .root .window {
+  display: none;
+}
+
+:global([data-tui='off']) .root .fallback {
+  display: inline-block;
+}
+
+:global([data-tui='off']) .root {
+  font-family: inherit;
+}

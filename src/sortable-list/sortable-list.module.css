@@ -1,0 +1,119 @@
+.root {
+  position: relative;
+  min-width: 0;
+}
+
+.list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Строки выше «призрака»: он виден только в зазоре, который раздвинули соседи */
+.item {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  border-radius: var(--radius-md);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+/* Тянется вся строка: курсор-рука, палец не прокручивает страницу, текст не выделяется */
+.whole {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.whole:focus-visible {
+  outline-offset: -2px;
+}
+
+/* Поднятая строка: над соседями, стекло и тень плавающего слоя */
+.item[data-dragging] {
+  z-index: 2;
+  cursor: grabbing;
+  background: var(--glass);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
+  box-shadow:
+    var(--shadow-float),
+    0 0 0 1px var(--accent-soft-strong);
+}
+
+/* Мышью строка едет за курсором без задержки; доезд до места после отпускания — плавно */
+.root[data-drag-mode='pointer'][data-drag-phase='drag'] .item[data-dragging] {
+  transition: none;
+}
+
+/* Кадр после перестановки: DOM уже в новом порядке, сдвиги сброшены — без анимации, иначе прыжок */
+.root[data-settling] .item {
+  transition: none;
+}
+
+.root[data-drag-mode] {
+  user-select: none;
+}
+
+/* «Призрак» — место, куда ляжет строка: пунктир цвета акцента под соседями */
+.ghost {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 0;
+  background: var(--accent-soft);
+  border: 1px dashed var(--accent-soft-strong);
+  border-radius: var(--radius-md);
+  pointer-events: none;
+  transition: transform var(--duration-base) var(--ease-out);
+  animation: var(--anim-fade-in);
+}
+
+.handle {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--control-sm);
+  height: var(--control-sm);
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-subtle);
+  cursor: grab;
+  touch-action: none;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.handle:hover {
+  background: var(--state-hover-bg);
+  color: var(--text);
+}
+
+.handle:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.item[data-dragging] .handle {
+  cursor: grabbing;
+  color: var(--accent-text);
+}
+
+.grip {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--text-subtle);
+}
+
+.root[data-disabled] .whole {
+  cursor: default;
+}

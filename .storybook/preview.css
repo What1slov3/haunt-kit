@@ -1,0 +1,224 @@
+/*
+ * Холст и страницы документации Storybook — из токенов темы, в духе Fumadocs: спокойная проза 15 px с
+ * ритмом 1.7, полужирные заголовки без подчёркиваний, инлайн-код в рамке, таблицы и превью историй —
+ * карточками. Фон body (var(--bg)) задаёт global.css кита; здесь только то, что Storybook рисует сам.
+ *
+ * Страницы MDX рисуют компоненты кита (mdx-components.tsx, класс `sb-unstyled` — эти правила их не трогают).
+ * Проза ниже — для того, что Storybook рендерит сам: описания autodocs из `parameters.docs.description`.
+ * Его элементы без своих классов, их красит emotion селекторами вида `.css-… h2`, которые подключаются
+ * позже этого файла. Поэтому префикс `.sbdocs-wrapper .sbdocs.sbdocs-content` — на класс специфичнее, а
+ * `:not(.sb-unstyled *)` не пускает правила внутрь историй и страниц из компонентов кита.
+ */
+
+/* Страница документации прозрачна: под ней фон темы и живой фон из тулбара */
+.sbdocs.sbdocs-wrapper {
+  padding: var(--space-12) var(--space-10) var(--space-16);
+  background: transparent;
+}
+
+.sbdocs.sbdocs-content {
+  max-width: 880px;
+}
+
+/* --- Типографика прозы --------------------------------------------------------------- */
+.sbdocs-wrapper .sbdocs.sbdocs-content :is(p, li):not(.sb-unstyled *) {
+  font-size: 15px;
+  line-height: 1.7;
+  color: color-mix(in oklab, var(--text) 86%, transparent);
+}
+
+.sbdocs-wrapper .sbdocs.sbdocs-content :is(h1, .sbdocs-title):not(.sb-unstyled *) {
+  margin: 0 0 var(--space-3);
+  font-size: 30px;
+  font-weight: var(--weight-semibold);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+/* Первый абзац после заголовка страницы — описание, как подзаголовок у Fumadocs */
+.sbdocs-wrapper .sbdocs.sbdocs-content h1 + p:not(.sb-unstyled *),
+.sbdocs-wrapper .sbdocs.sbdocs-content .sbdocs-title + * p {
+  margin-bottom: var(--space-6);
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.sbdocs-wrapper .sbdocs.sbdocs-content h2:not(.sb-unstyled *) {
+  /* Storybook складывает заголовок с якорем в колонку — маркер встал бы отдельной строкой */
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  margin: var(--space-12) 0 var(--space-3);
+  padding: 0;
+  border: none;
+  font-size: 22px;
+  font-weight: var(--weight-semibold);
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  color: var(--text);
+}
+
+.sbdocs-wrapper .sbdocs.sbdocs-content h3:not(.sb-unstyled *) {
+  margin: var(--space-8) 0 var(--space-2);
+  font-size: 17px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+/* TUI-маркер у заголовков разделов — тот же `>`, что у Heading marker в ките */
+.sbdocs-wrapper .sbdocs.sbdocs-content h2:not(.sb-unstyled *)::before {
+  content: var(--tui-marker);
+  margin-right: var(--tui-marker-gap);
+  font-family: var(--font-mono);
+  font-weight: var(--weight-medium);
+  color: var(--accent-text);
+}
+
+.sbdocs-wrapper .sbdocs.sbdocs-content a:not(.sb-unstyled *, .sb-anchor *) {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--accent-text) 70%, transparent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+.sbdocs-wrapper .sbdocs.sbdocs-content a:not(.sb-unstyled *, .sb-anchor *):hover {
+  text-decoration-color: var(--accent-text);
+}
+
+.sbdocs-wrapper .sbdocs.sbdocs-content :is(ul, ol):not(.sb-unstyled *) {
+  padding-left: var(--space-5);
+}
+
+.sbdocs-wrapper .sbdocs.sbdocs-content li:not(.sb-unstyled *)::marker {
+  color: var(--text-subtle);
+}
+
+.sbdocs-wrapper .sbdocs.sbdocs-content hr:not(.sb-unstyled *) {
+  border: none;
+  border-top: 1px solid var(--border);
+}
+
+.sbdocs-wrapper .sbdocs.sbdocs-content blockquote:not(.sb-unstyled *) {
+  margin: var(--space-4) 0;
+  padding: var(--space-2) var(--space-4);
+  background: var(--surface-1);
+  border: none;
+  border-left: 2px solid var(--accent);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  color: var(--text-muted);
+}
+
+/* --- Код ----------------------------------------------------------------------------- */
+.sbdocs-wrapper .sbdocs.sbdocs-content :not(pre) > code:not(.sb-unstyled *) {
+  padding: 1px 5px;
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.sbdocs-wrapper .sbdocs.sbdocs-content pre:not(.sb-unstyled *) {
+  margin: var(--space-4) 0;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  box-shadow: none;
+}
+
+.sbdocs-wrapper .sbdocs.sbdocs-content pre:not(.sb-unstyled *) code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.7;
+  font-variant-ligatures: none;
+}
+
+/* --- Таблицы (remark-gfm) — карточкой, шапка моно-капителью ------------------------------- */
+.sbdocs-wrapper .sbdocs.sbdocs-content table:not(.sb-unstyled *, .sb-unstyled) {
+  display: table;
+  width: 100%;
+  margin: var(--space-4) 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.sbdocs-wrapper .sbdocs.sbdocs-content table:not(.sb-unstyled *) tr {
+  background: none;
+  border: none;
+}
+
+.sbdocs-wrapper .sbdocs.sbdocs-content table:not(.sb-unstyled *) :is(th, td) {
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  vertical-align: top;
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.sbdocs-wrapper .sbdocs.sbdocs-content table:not(.sb-unstyled *) th {
+  border-top: none;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+  background: var(--surface-2);
+}
+
+.sbdocs-wrapper .sbdocs.sbdocs-content table:not(.sb-unstyled *) td {
+  background: var(--surface-1);
+  color: color-mix(in oklab, var(--text) 86%, transparent);
+}
+
+/* --- Превью историй: карточка с мягким свечением акцента снизу, как у примеров Fumadocs ---- */
+.sbdocs.sbdocs-preview {
+  overflow: hidden;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  box-shadow: none;
+}
+
+.sbdocs .docs-story {
+  background:
+    radial-gradient(
+      80% 60% at 50% 115%,
+      color-mix(in oklab, var(--accent) calc(var(--fx-glow) * 16%), transparent),
+      transparent 70%
+    ),
+    var(--bg);
+}
+
+/* --- Таблица пропсов: строки-карточки, имена моно цветом акцента, как TypeTable у Fumadocs -- */
+.docblock-argstable.sb-unstyled .docblock-argstable-body {
+  border-radius: var(--radius-2xl);
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.docblock-argstable.sb-unstyled
+  .docblock-argstable-body
+  > tr
+  > td:first-of-type
+  > span:first-of-type {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: var(--weight-medium);
+  color: var(--accent-text);
+}
+
+/* --- Оглавление справа: активный пункт — цвет акцента ----------------------------------- */
+.toc-wrapper .is-active-link {
+  color: var(--accent-text);
+}

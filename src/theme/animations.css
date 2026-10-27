@@ -1,0 +1,240 @@
+/*
+ * Глобальные keyframes для появления всплывающего (меню, поповер, подсказка, диалог, тост). Глобальные,
+ * а не в модулях, чтобы один набор движения был у всех слоёв и у новых примитивов владельца.
+ * Только transform / opacity / filter. Без отскока: десктопное приложение, не мобильное.
+ *
+ * В модулях keyframes подключаются ТОЛЬКО через переменные `--anim-*`: CSS Modules локализуют имя в
+ * `animation: haunt-pop-in …` (получается `_haunt-pop-in_hash`), keyframes не находятся, анимация не
+ * запускается, `animationend` не приходит — и Radix Presence никогда не размонтирует закрытое меню.
+ * Значение переменной модули не трогают. Другую длительность задаёт `animation-duration` следом.
+ */
+
+:root {
+  --anim-pop-in: haunt-pop-in var(--duration-base) var(--ease-out);
+  --anim-pop-out: haunt-pop-out var(--duration-fast) var(--ease-out);
+  --anim-fade-in: haunt-fade-in var(--duration-base) var(--ease-out);
+  --anim-fade-out: haunt-fade-out var(--duration-base) var(--ease-out);
+  --anim-rise-in: haunt-rise-in var(--duration-slow) var(--ease-out);
+  --anim-sink-out: haunt-sink-out var(--duration-base) var(--ease-out);
+  --anim-slide-in-right: haunt-slide-in-right var(--duration-slow) var(--ease-out);
+  --anim-expand: haunt-expand var(--duration-base) var(--ease-out);
+  --anim-collapse: haunt-collapse var(--duration-base) var(--ease-out);
+  --anim-blink: haunt-blink 1.1s step-end infinite;
+  --anim-pop: haunt-pop var(--duration-slow) var(--ease-out);
+  --anim-count-in: haunt-count-in var(--duration-base) var(--ease-out);
+  --anim-pulse-soft: haunt-pulse-soft 2.4s var(--ease-in-out) 3;
+  --anim-shimmer: haunt-shimmer 1.8s var(--ease-in-out) infinite;
+  --anim-beam: haunt-beam 2.8s linear infinite;
+  --anim-typing: haunt-typing 1.2s var(--ease-in-out) infinite;
+  --anim-drift: haunt-drift 14s linear infinite;
+}
+
+@keyframes haunt-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-2px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes haunt-pop-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+@keyframes haunt-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes haunt-fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+/* Диалог появляется из глубины: масштаб и лёгкое размытие (0 при выключенных эффектах) */
+@keyframes haunt-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+    filter: blur(var(--fx-depth-blur, 0px));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes haunt-sink-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(4px) scale(0.99);
+  }
+}
+
+/* Тост въезжает сбоку (вьюпорт справа внизу) */
+@keyframes haunt-slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Раскрытие Collapsible/Accordion: Radix отдаёт высоту содержимого переменной */
+@keyframes haunt-expand {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+
+  to {
+    height: var(--radix-collapsible-content-height, var(--radix-accordion-content-height));
+    opacity: 1;
+  }
+}
+
+@keyframes haunt-collapse {
+  from {
+    height: var(--radix-collapsible-content-height, var(--radix-accordion-content-height));
+    opacity: 1;
+  }
+
+  to {
+    height: 0;
+    opacity: 0;
+  }
+}
+
+/* Мигание каретки — ступенчато, как в терминале */
+@keyframes haunt-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* --- Эффекты (уровень задаёт data-effects, см. effects.css) ------------------------------ */
+
+/* «Поп» при выборе реакции или включении чипа */
+@keyframes haunt-pop {
+  0% {
+    transform: scale(1);
+  }
+
+  40% {
+    transform: scale(1.12);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Новое значение счётчика въезжает снизу */
+@keyframes haunt-count-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5em);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Мягкая пульсация индикатора непрочитанного — конечная, не вечная */
+@keyframes haunt-pulse-soft {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.55;
+    transform: scale(0.85);
+  }
+}
+
+/* Перелив скелетона: блик едет слева направо, только transform */
+@keyframes haunt-shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* Бегущий отблеск по рамке: угол конического градиента (зарегистрирован @property в effects.css) */
+@keyframes haunt-beam {
+  to {
+    --beam-angle: 360deg;
+  }
+}
+
+/* Волна точек «печатает…» */
+@keyframes haunt-typing {
+  0%,
+  60%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+/* Бесшовный дрейф полосы шириной 200 %: вторая половина повторяет первую, сдвиг на половину незаметен */
+@keyframes haunt-drift {
+  from {
+    transform: translateX(-50%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}

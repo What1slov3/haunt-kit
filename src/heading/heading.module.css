@@ -1,0 +1,103 @@
+/*
+ * Ручки стиля «сигнал» (signal/signal.css): шрифт, ширина, регистр, трекинг и множитель кегля заголовка.
+ * Запасные значения — вид основы, поэтому без стиля заголовок не меняется.
+ */
+.heading {
+  margin: 0;
+  font-family: var(--heading-font, inherit);
+  font-stretch: var(--heading-stretch, inherit);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--heading-tracking, -0.01em);
+  text-transform: var(--heading-case, inherit);
+  text-wrap: balance;
+}
+
+.size-4xl {
+  font-size: calc(var(--text-4xl) * var(--heading-scale, 1));
+  letter-spacing: var(--heading-tracking, -0.02em);
+}
+
+.size-3xl {
+  font-size: calc(var(--text-3xl) * var(--heading-scale, 1));
+  letter-spacing: var(--heading-tracking, -0.015em);
+}
+
+.size-2xl {
+  font-size: calc(var(--text-2xl) * var(--heading-scale, 1));
+}
+
+.size-xl {
+  font-size: calc(var(--text-xl) * var(--heading-scale, 1));
+}
+
+.size-lg {
+  font-size: calc(var(--text-lg) * var(--heading-scale, 1));
+  line-height: var(--leading-snug);
+}
+
+.size-md {
+  font-size: calc(var(--text-md) * var(--heading-scale, 1));
+  line-height: var(--leading-snug);
+}
+
+.size-sm {
+  font-size: calc(var(--text-sm) * var(--heading-scale, 1));
+  line-height: var(--leading-snug);
+}
+
+.weight-normal {
+  font-weight: var(--weight-normal);
+}
+
+.weight-medium {
+  font-weight: var(--weight-medium);
+}
+
+.weight-semibold {
+  font-weight: var(--weight-semibold);
+}
+
+.weight-bold {
+  font-weight: var(--weight-bold);
+}
+
+.tone-default {
+  color: var(--text);
+}
+
+.tone-muted {
+  color: var(--text-muted);
+}
+
+.tone-subtle {
+  color: var(--text-subtle);
+}
+
+.tone-accent {
+  color: var(--accent-text);
+}
+
+.truncate {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-wrap: initial;
+}
+
+.marker::before {
+  content: var(--tui-marker);
+  margin-right: var(--tui-marker-gap);
+  font-family: var(--font-mono);
+  font-weight: var(--weight-medium);
+  color: var(--accent-text);
+}
+
+/* Капитель моно: заголовок категории каналов, группы участников */
+.overline {
+  font-family: var(--micro-font, var(--font-mono));
+  font-size: var(--micro-size, var(--text-xs));
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--micro-tracking, 0.06em);
+  text-transform: uppercase;
+  color: var(--text-subtle);
+}

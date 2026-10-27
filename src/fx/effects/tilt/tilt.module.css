@@ -1,0 +1,46 @@
+.root {
+  position: relative;
+}
+
+.surface {
+  position: relative;
+  transform: perspective(var(--tilt-perspective)) rotateX(var(--tilt-rx, 0deg))
+    rotateY(var(--tilt-ry, 0deg));
+  transition: transform var(--duration-release) var(--ease-release);
+  will-change: transform;
+}
+
+/* Пока курсор на карточке — короткий переход: наклон успевает за мышью, но не дёргается по кадрам */
+.surface[data-active] {
+  transform: perspective(var(--tilt-perspective)) rotateX(var(--tilt-rx, 0deg))
+    rotateY(var(--tilt-ry, 0deg)) scale(var(--tilt-scale));
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-out);
+}
+
+.glare {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--duration-slow) var(--ease-out);
+}
+
+.surface[data-active] .glare {
+  opacity: calc(0.6 * var(--fx-glow));
+}
+
+/* Пятно вдвое больше карточки: сдвиг на 25 % своего размера — центр у края карточки. Только transform */
+.spot {
+  position: absolute;
+  inset: -50%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in oklab, var(--fx-spotlight-color) 28%, transparent),
+    transparent 45%
+  );
+  transform: translate(var(--glare-x, 0%), var(--glare-y, 0%));
+  transition: transform var(--duration-fast) var(--ease-out);
+}

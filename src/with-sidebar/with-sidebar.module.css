@@ -1,0 +1,31 @@
+/*
+ * Приём «Sidebar» из Every Layout: у боковой части основа — её ширина, у основной — ноль и огромный
+ * коэффициент роста, так что основная забирает всё свободное место. Когда основной не хватает
+ * `--content-min`, флекс переносит боковую на следующую строку, и там она растягивается на всю ширину.
+ */
+.root {
+  display: flex;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.root[data-align='start'] {
+  align-items: flex-start;
+}
+
+.root > * {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.root[data-side='end'] > :last-child,
+.root[data-side='start'] > :first-child {
+  flex-basis: var(--side-width, var(--aside-width));
+}
+
+.root[data-side='end'] > :first-child,
+.root[data-side='start'] > :last-child {
+  flex-basis: 0;
+  flex-grow: 999;
+  min-inline-size: var(--content-min);
+}

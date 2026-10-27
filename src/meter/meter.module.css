@@ -1,0 +1,146 @@
+.root {
+  --meter-color: var(--accent);
+  --meter-height: 6px;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+  width: 100%;
+  min-width: 0;
+}
+
+.sm {
+  --meter-height: 4px;
+}
+
+.md {
+  --meter-height: 6px;
+}
+
+.accent {
+  --meter-color: var(--accent);
+}
+
+.warning {
+  --meter-color: var(--warning);
+}
+
+.danger {
+  --meter-color: var(--danger);
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-width: 0;
+  font-size: var(--text-sm);
+}
+
+.label {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--text-muted);
+}
+
+.value {
+  flex-shrink: 0;
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.warning .value,
+.danger .value {
+  color: var(--meter-color);
+}
+
+/* Риски порогов выступают за дорожку, поэтому дорожка с overflow: hidden — внутри, а не сама шкала */
+.bar {
+  position: relative;
+  height: var(--meter-height);
+}
+
+.track {
+  height: 100%;
+  overflow: hidden;
+  background: var(--surface-3);
+  border-radius: var(--radius-full);
+  /* Фикс для Safari: скругление не обрезает transform без этого (как у Progress) */
+  transform: translateZ(0);
+}
+
+.indicator {
+  width: 100%;
+  height: 100%;
+  background: var(--meter-color);
+  border-radius: var(--radius-full);
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+.tick {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 1px;
+  /* Риска по центру порога, а не начинается на нём */
+  transform: translateX(-50%);
+  border-radius: 1px;
+  opacity: 0.7;
+}
+
+.tickWarning {
+  background: var(--warning);
+}
+
+.tickDanger {
+  background: var(--danger);
+}
+
+/* --- Деления: TUI-полоса, заполненное — тоном, пустое в зоне порога — тихим тоном зоны ----------- */
+.segments {
+  display: flex;
+  gap: 2px;
+  height: 100%;
+}
+
+.segment {
+  flex: 1;
+  min-width: 0;
+  background: var(--surface-3);
+  border-radius: 1px;
+  transition: background-color var(--duration-base) var(--ease-out);
+}
+
+.segment[data-zone='warning'] {
+  background: color-mix(in oklab, var(--warning) 22%, var(--surface-3));
+}
+
+.segment[data-zone='danger'] {
+  background: color-mix(in oklab, var(--danger) 22%, var(--surface-3));
+}
+
+.segment[data-filled] {
+  background: var(--meter-color);
+}
+
+/* Без TUI деления сливаются в обычную шкалу: те же доли, но без «терминальной» нарезки */
+[data-tui='off'] .segments {
+  gap: 0;
+}
+
+[data-tui='off'] .segment {
+  border-radius: 0;
+}
+
+[data-tui='off'] .segment:first-child {
+  border-radius: var(--radius-full) 0 0 var(--radius-full);
+}
+
+[data-tui='off'] .segment:last-child {
+  border-radius: 0 var(--radius-full) var(--radius-full) 0;
+}

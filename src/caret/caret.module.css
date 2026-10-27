@@ -1,0 +1,17 @@
+.caret {
+  display: inline-block;
+  vertical-align: text-bottom;
+  height: 1.05em;
+  background: currentColor;
+  animation: var(--anim-blink);
+}
+
+.block {
+  width: var(--caret-width);
+  opacity: 0.85;
+}
+
+.bar {
+  width: 1.5px;
+  border-radius: 1px;
+}

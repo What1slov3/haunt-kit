@@ -1,0 +1,163 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: var(--control-sm);
+}
+
+.volume {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: 240px;
+}
+
+.volumeIcon {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.slider {
+  flex: 1;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--item-min), 1fr));
+  gap: var(--space-1-5);
+}
+
+.sound {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-width: 0;
+  min-height: 72px;
+  padding: var(--space-2) var(--space-1-5);
+  overflow: hidden;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 1px 0 var(--edge-highlight);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    transform var(--duration-release) var(--ease-release),
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+.sound:hover:not(:disabled) {
+  background: var(--state-hover-bg);
+  border-color: var(--border-strong);
+}
+
+/* Нажатие вдавливает сразу, отпускание возвращает мягко — как у Button (решение 10a) */
+.sound:active:not(:disabled) {
+  transform: scale(var(--press-scale));
+  transition-duration: var(--duration-press);
+}
+
+.sound:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.sound[aria-pressed='true'] {
+  background: var(--state-selected-bg);
+  border-color: var(--state-selected-border);
+  color: var(--state-selected-fg);
+}
+
+.glyph {
+  display: inline-flex;
+  font-size: var(--text-3xl);
+  line-height: 1;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.sound:hover:not(:disabled) .glyph {
+  transform: scale(1.08);
+}
+
+.label {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.playing {
+  position: absolute;
+  top: var(--space-1);
+  right: var(--space-1);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* Без движения «играет» читается подписью: эквалайзер стоит, текст виден всегда */
+.playingText {
+  color: var(--accent-text);
+  font-family: var(--micro-font, var(--font-mono));
+  font-size: var(--micro-size, var(--text-xs));
+  letter-spacing: var(--micro-tracking, 0.04em);
+  text-transform: uppercase;
+}
+
+.eq {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 1px;
+  height: 10px;
+}
+
+.eq > span {
+  width: 2px;
+  height: 100%;
+  background: var(--accent-text);
+  transform-origin: bottom;
+  animation: soundboard-eq 0.9s var(--ease-in-out) infinite alternate;
+  animation-play-state: var(--fx-play);
+}
+
+.eq > span:nth-child(2) {
+  animation-delay: -0.3s;
+}
+
+.eq > span:nth-child(3) {
+  animation-delay: -0.6s;
+}
+
+/* Эквалайзер — только scaleY; играет, пока звук звучит, — движение по причине */
+@keyframes soundboard-eq {
+  from {
+    transform: scaleY(0.3);
+  }
+
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.empty {
+  margin: 0;
+  padding: var(--space-4);
+  color: var(--text-subtle);
+  font-size: var(--text-sm);
+  text-align: center;
+}

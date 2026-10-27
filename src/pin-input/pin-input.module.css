@@ -1,0 +1,53 @@
+/* Рамка и состояния ячейки — field-frame.module.css; ячейка квадратная, высота и кегль из пары размера */
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+}
+
+.cell {
+  font-family: var(--font-mono);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  caret-color: var(--accent-text);
+  outline: none;
+}
+
+.cell.sm {
+  padding: 0;
+  width: var(--control-sm);
+  height: var(--control-sm);
+}
+
+.cell.md {
+  padding: 0;
+  width: var(--control-md);
+  height: var(--control-md);
+}
+
+.cell.lg {
+  padding: 0;
+  width: var(--control-lg);
+  height: var(--control-lg);
+}
+
+/* Заполненная ячейка чуть плотнее пустой: видно, сколько осталось ввести */
+.cell[data-filled]:not(:focus, [data-invalid]) {
+  border-color: var(--field-border-hover);
+}
+
+.cell::selection {
+  background: transparent;
+}
+
+.cell:disabled {
+  cursor: not-allowed;
+}
+
+/* Тире между группами: тихое, не TUI-знак — разбивка кода, а не украшение */
+.separator {
+  width: var(--space-2);
+  height: 1px;
+  background: var(--border-strong);
+}

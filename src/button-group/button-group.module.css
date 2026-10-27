@@ -1,0 +1,37 @@
+.group {
+  display: inline-flex;
+  align-items: center;
+}
+
+.spaced {
+  gap: var(--space-1-5);
+}
+
+/* Склейка: рамки соседей накладываются на 1 px, скругление остаётся только у крайних углов */
+.attached > * + * {
+  margin-left: -1px;
+}
+
+.attached > :not(:first-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.attached > :not(:last-child) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* Наведённая или в фокусе — поверх соседей, иначе её рамку и кольцо фокуса закроет следующая */
+.attached > :hover,
+.attached > :focus-visible {
+  z-index: 1;
+}
+
+/* У залитых рамки нет — между кнопками тонкая тёмная черта по их цвету */
+.attached > [data-variant='primary'] + [data-variant='primary'],
+.attached > [data-variant='accent'] + [data-variant='accent'],
+.attached > [data-variant='danger'] + [data-variant='danger'] {
+  margin-left: 0;
+  border-left-color: color-mix(in oklab, black 22%, transparent);
+}

@@ -1,0 +1,32 @@
+/* До первого расчёта — сетка той же ширины колонок: без JavaScript галерея остаётся галереей */
+.root {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--masonry-min), 1fr));
+  align-items: start;
+  gap: var(--masonry-gap);
+  min-width: 0;
+}
+
+/* Расставлено: плитки в абсолютных позициях из masonry-layout.ts, высота контейнера — из расчёта */
+.root[data-ready] {
+  position: relative;
+  display: block;
+}
+
+.root[data-ready] > .tile {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.root[data-settled] > .tile {
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+:global([data-effects='off']) .root > .tile {
+  transition: none;
+}
+
+.tile {
+  min-width: 0;
+}

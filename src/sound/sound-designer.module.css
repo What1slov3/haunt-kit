@@ -1,0 +1,356 @@
+/*
+ * Генератор звуков — рабочий стол: сверху основа, характер и действия, под ними форма волны и сводка,
+ * дальше голоса карточками. Плотность — как у остальных форм кита: контролы sm, поля через Field.
+ */
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+  padding: var(--space-4);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: inset 0 1px 0 var(--edge-highlight);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-3);
+}
+
+/* Форма волны цвета акцента на тёмной подложке, сводка — моно под ней */
+.scope {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+}
+
+.waveform {
+  display: block;
+  width: 100%;
+  height: 72px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  color: var(--accent-text);
+}
+
+.stats {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.issues {
+  margin: 0;
+  padding-left: var(--space-4);
+}
+
+.voicesHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.label {
+  margin-right: auto;
+  font-family: var(--micro-font, var(--font-mono));
+  font-size: var(--micro-size, var(--text-xs));
+  letter-spacing: var(--micro-tracking, 0.06em);
+  text-transform: uppercase;
+  color: var(--text-subtle);
+}
+
+/* Карточки — по своей высоте: раскрытый тембр одной не растягивает соседей */
+.voices {
+  display: grid;
+  align-items: start;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.voice {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+}
+
+/* Шум — пунктиром: источник без высоты тона, его видно с одного взгляда по списку */
+.voice[data-kind='noise'] {
+  border-style: dashed;
+}
+
+.voiceHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.voiceTitle {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--text);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.sliders {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3) var(--space-4);
+}
+
+.spec summary {
+  cursor: pointer;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.spec[open] summary {
+  margin-bottom: var(--space-2);
+}
+
+/* Тембр и движение — под раскрытием: у большинства звуков это не трогают */
+.motion summary {
+  cursor: pointer;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.motion[open] summary {
+  margin-bottom: var(--space-3);
+}
+
+/*
+ * Сетка шагов: подпись ноты и по клетке на шаг. Каждая четвёртая клетка — доля такта, её край ярче:
+ * ритм читается без цифр. Клетка под курсором проигрывания подсвечена.
+ */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.stepGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-x: auto;
+  padding: var(--space-2);
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+}
+
+.stepRow {
+  display: grid;
+  grid-template-columns: 32px repeat(var(--steps), minmax(18px, 1fr));
+  gap: 2px;
+  align-items: center;
+}
+
+.stepNote {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-subtle);
+}
+
+.cell {
+  height: 18px;
+  padding: 0;
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--duration-fast) ease;
+}
+
+.cell[data-beat] {
+  border-color: var(--border);
+}
+
+.cell:hover {
+  background: var(--surface-3);
+}
+
+.cell[data-playhead] {
+  background: var(--accent-soft-strong);
+}
+
+.cell[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.cell:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+/* Помещение и эхо — рядом: оба про хвост звука */
+.effects {
+  display: grid;
+  align-items: start;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-3);
+}
+
+.effect {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+}
+
+.impulse {
+  display: block;
+  width: 100%;
+  height: 56px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--accent-text);
+}
+
+/* Строка тоники ярче — опора лада видна сразу; чёрные клавиши хроматики — темнее */
+.stepRow[data-root] .stepNote {
+  color: var(--accent-text);
+}
+
+.stepRow[data-accidental] .cell:not([aria-pressed='true']) {
+  background: var(--surface-2);
+}
+
+/*
+ * Клавиатура тоники: белые клавиши — приподнятые плашки над колодцем, чёрные — тёмные, на стыке белых
+ * (`--after` — номер белой слева). Цвета — токены клавиш темы: в тёмной белые приглушены, иначе
+ * слоновая кость резала бы глаз рядом с остальным интерфейсом.
+ */
+.keys {
+  --key-width: 18px;
+  --key-gap: 1px;
+
+  position: relative;
+  display: flex;
+  gap: var(--key-gap);
+  height: 40px;
+  padding: 2px;
+  background: var(--segment-well);
+  border-radius: var(--radius-md);
+  box-shadow: var(--segment-inset);
+}
+
+.whiteKey,
+.blackKey {
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  transition: background-color var(--duration-base) var(--ease-out);
+}
+
+.whiteKey {
+  width: var(--key-width);
+  height: 100%;
+  background: var(--key-white);
+  border-radius: 1px 1px 4px 4px;
+  box-shadow:
+    0 0 0 1px var(--border-subtle),
+    inset 0 1px 0 var(--edge-highlight-strong);
+}
+
+.whiteKey:hover {
+  background: color-mix(in oklab, var(--key-white) 80%, var(--accent) 20%);
+}
+
+.blackKey {
+  position: absolute;
+  top: 2px;
+  left: calc(2px + (var(--after) + 1) * (var(--key-width) + var(--key-gap)) - 6px);
+  z-index: 1;
+  width: 11px;
+  height: 58%;
+  background: var(--key-black);
+  border-radius: 0 0 3px 3px;
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--shadow-ink) 50%, transparent);
+}
+
+.blackKey:hover {
+  background: color-mix(in oklab, var(--key-black) 75%, var(--accent) 25%);
+}
+
+.whiteKey[aria-checked='true'],
+.blackKey[aria-checked='true'] {
+  background: var(--accent);
+  box-shadow: 0 0 10px color-mix(in oklab, var(--accent) 45%, transparent);
+}
+
+/* Рисунок лада в списке: 12 точек — полутоны, закрашены ступени, тоника — акцентом */
+.dots {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+}
+
+.dot[data-on] {
+  background: var(--text-muted);
+  box-shadow: none;
+}
+
+.dot[data-root] {
+  background: var(--accent-text);
+}
+
+/*
+ * Плитки инструментов — та же сегментированная группа, что везде, только пункты выше: форма удара над
+ * подписью. Класс пункта утроен по специфичности: высота пунктов группы задана правилом из двух
+ * классов, порядок CSS-модулей не должен решать, чья высота победит
+ */
+.instruments .instrument.instrument {
+  flex-direction: column;
+  gap: 2px;
+  height: auto;
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--text-xs);
+}
+
+.strike {
+  display: block;
+  width: 48px;
+  height: 16px;
+  color: var(--text-subtle);
+}
+
+.instrument[aria-checked='true'] .strike {
+  color: var(--accent-text);
+}
+
+/* В ряду шагов контролы разной высоты (клавиатура, плитки) — подписи ровняются по верху, а не по низу */
+.stepsToolbar {
+  align-items: flex-start;
+}

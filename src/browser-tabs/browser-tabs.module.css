@@ -1,0 +1,250 @@
+/*
+ * Полоса вкладок: нижняя линия — inset-тень полосы, открытая вкладка закрашивает её своим фоном и
+ * «вливается» в контент под ней, как в браузере. Тень, а не border: border сдвинул бы вкладки на пиксель.
+ */
+.root {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-1);
+  min-width: 0;
+  height: calc(var(--control-lg) + var(--space-1));
+  padding: 0 var(--space-1);
+  box-shadow: inset 0 -1px 0 var(--border);
+}
+
+.scroller {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+
+.scroller::-webkit-scrollbar {
+  display: none;
+}
+
+/* Затухание у края, за которым есть вкладки: видно, что полоса прокручивается */
+.scroller[data-overflow-start] {
+  mask-image: linear-gradient(to right, transparent, #000 var(--space-6));
+}
+
+.scroller[data-overflow-end] {
+  mask-image: linear-gradient(to left, transparent, #000 var(--space-6));
+}
+
+.scroller[data-overflow-start][data-overflow-end] {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 var(--space-6),
+    #000 calc(100% - var(--space-6)),
+    transparent
+  );
+}
+
+.list {
+  display: flex;
+  align-items: flex-end;
+  gap: 1px;
+  height: 100%;
+  width: max-content;
+  min-width: 100%;
+}
+
+.tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  width: 184px;
+  height: var(--control-lg);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  color: var(--text-muted);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
+}
+
+.tab[data-pinned] {
+  width: var(--control-lg);
+}
+
+.tab:hover:not([data-active]) {
+  background: var(--state-hover-bg);
+  color: var(--text);
+}
+
+/* Открытая — фон контента (Surface panel level 3) и рамка без нижней стороны: продолжается в контент */
+.tab[data-active] {
+  z-index: 1;
+  background: var(--panel-3);
+  color: var(--text);
+  box-shadow:
+    inset 1px 0 0 var(--border),
+    inset -1px 0 0 var(--border),
+    inset 0 1px 0 var(--border);
+}
+
+.tab[data-dragging] {
+  z-index: 2;
+  transition: none;
+  box-shadow:
+    inset 0 0 0 1px var(--border-strong),
+    var(--shadow-float);
+  border-radius: var(--radius-lg);
+}
+
+/* Пока тянут — соседи едут, а курсор не меняется на текстовый над подписями */
+.root[data-dragging] {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.tabButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0 var(--space-2);
+  background: transparent;
+  border: none;
+  /* Концентрично вкладке: у кнопки нет отступа, радиус тот же */
+  border-radius: inherit;
+  color: inherit;
+  font-size: var(--text-md);
+  text-align: left;
+  touch-action: pan-y;
+}
+
+.tab[data-closable] .tabButton {
+  padding-right: calc(var(--space-2) + 16px);
+}
+
+.tab[data-pinned] .tabButton {
+  justify-content: center;
+  padding: 0;
+}
+
+.icon {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--text-subtle);
+}
+
+.tab[data-active] .icon {
+  color: var(--accent-text);
+}
+
+.label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.tab:has(.dot, .count) .label {
+  font-weight: var(--weight-medium);
+}
+
+.dot {
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  animation: var(--anim-pop-in);
+}
+
+/* У закреплённой точка — в углу иконки: подписи нет, места рядом тоже */
+.tab[data-pinned] .dot {
+  position: absolute;
+  top: 6px;
+  right: 7px;
+}
+
+.count {
+  flex-shrink: 0;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 16px;
+  text-align: center;
+  animation: var(--anim-pop-in);
+}
+
+.tab[data-pinned] .count {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 14px;
+  height: 14px;
+  line-height: 14px;
+}
+
+/* Крестик виден на открытой и под курсором: на остальных он мешал бы читать подпись */
+.close {
+  position: absolute;
+  top: 50%;
+  right: var(--space-1-5);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-subtle);
+  opacity: 0;
+  transform: translateY(-50%);
+  transition:
+    opacity var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+}
+
+.tab:hover .close,
+.tab[data-active] .close,
+.tab:focus-within .close {
+  opacity: 1;
+}
+
+.close:hover {
+  background: var(--state-hover-bg);
+  color: var(--text);
+}
+
+/* Фокус с клавиатуры — внутрь вкладки: снаружи кольцо срезала бы полоса прокрутки */
+.tabButton:focus-visible {
+  outline-offset: -2px;
+}
+
+.menu,
+.actions {
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.menuContent {
+  max-height: min(360px, var(--radix-dropdown-menu-content-available-height));
+  overflow-y: auto;
+}

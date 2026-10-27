@@ -1,0 +1,131 @@
+.root {
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: var(--z-background);
+  background: var(--bg);
+}
+
+.fixed {
+  position: fixed;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.low {
+  --ambient-opacity: 0.1;
+  --ambient-dot-alpha: 0.06;
+  --ambient-particle-alpha: 0.4;
+}
+
+/* --- Пятна -------------------------------------------------------------------------- */
+.blob {
+  position: absolute;
+  width: 60vmax;
+  height: 60vmax;
+  border-radius: var(--radius-full);
+  opacity: var(--ambient-opacity);
+  filter: blur(var(--blur-ambient));
+  /* Слой в композиторе: анимируется только transform, blur считается один раз */
+  will-change: transform;
+  animation: drift var(--duration-ambient) var(--ease-in-out) infinite alternate;
+}
+
+.blob1 {
+  top: -25vmax;
+  left: -15vmax;
+  background: var(--ambient-1);
+}
+
+.blob2 {
+  right: -20vmax;
+  top: 5vmax;
+  background: var(--ambient-2);
+  animation-duration: calc(var(--duration-ambient) * 1.3);
+  animation-delay: -12s;
+}
+
+.blob3 {
+  left: 15vmax;
+  bottom: -30vmax;
+  background: var(--ambient-3);
+  animation-duration: calc(var(--duration-ambient) * 0.85);
+  animation-delay: -20s;
+}
+
+@keyframes drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(5vmax, -4vmax, 0) scale(1.06);
+  }
+
+  100% {
+    transform: translate3d(-4vmax, 5vmax, 0) scale(0.96);
+  }
+}
+
+/* --- Волна от действия (вариант с пятнами) ----------------------------------------- */
+.rippleLayer {
+  position: absolute;
+  inset: 0;
+}
+
+.ripple {
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  margin: -120px 0 0 -120px;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-full);
+  box-shadow: 0 0 24px var(--accent-glow);
+  transform: scale(0.1);
+  animation: ripple 720ms var(--ease-out) forwards;
+}
+
+@keyframes ripple {
+  from {
+    transform: scale(0.1);
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+/* --- Точечная сетка ------------------------------------------------------------------- */
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Шум — SVG-турбулентность инлайном: без картинки, без запроса; плитка повторяется */
+.noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+[data-theme='light'] .noise {
+  opacity: 0.025;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blob {
+    animation: none;
+  }
+
+  .ripple {
+    display: none;
+  }
+}

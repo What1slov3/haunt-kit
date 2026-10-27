@@ -1,0 +1,79 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.horizontal {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  background: var(--field-bg);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-full);
+  transition: border-color var(--duration-base) var(--ease-out);
+}
+
+.item:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.item[data-state='checked'] {
+  border-color: var(--accent);
+}
+
+.item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  animation: var(--anim-fade-in);
+  animation-duration: var(--duration-fast);
+}
+
+.row {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  cursor: pointer;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.label {
+  font-size: var(--text-md);
+  line-height: 16px;
+  color: var(--text);
+}
+
+.description {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+/* Пояснение — комментарий `// …`, как подсказка Field; знак из TUI-токена, без TUI его нет */
+.description::before {
+  content: var(--tui-hint);
+  margin-right: var(--tui-hint-gap);
+  font-family: var(--font-mono);
+  color: var(--text-subtle);
+}

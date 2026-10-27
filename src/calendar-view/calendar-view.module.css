@@ -1,0 +1,387 @@
+.root {
+  --lane: 20px;
+  --gutter: var(--space-16);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+  font-size: var(--text-md);
+  color: var(--text);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* --- Месяц ----------------------------------------------------------------------------- */
+
+.month {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--border);
+}
+
+.weekdays > span {
+  padding: var(--space-1) var(--space-2);
+  font-family: var(--font-tui);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-subtle);
+}
+
+.week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-rows: var(--control-sm) repeat(var(--lanes), var(--lane)) var(--lane);
+  row-gap: 1px;
+  padding-bottom: var(--space-1);
+}
+
+.week + .week {
+  border-top: 1px solid var(--border-subtle);
+}
+
+.cell {
+  grid-row: 1 / -1;
+  /* Ячейка — подложка под строками полос; растягивается на нижний отступ недели */
+  margin-bottom: calc(-1 * var(--space-1));
+}
+
+.cell:not(:nth-child(7n)) {
+  border-right: 1px solid var(--border-subtle);
+}
+
+.cell[data-outside] {
+  background: var(--surface-1);
+}
+
+.dayNumber {
+  grid-row: 1;
+  align-self: center;
+  justify-self: start;
+  min-width: var(--lane);
+  height: var(--lane);
+  margin-left: var(--space-1);
+  padding: 0 var(--space-1);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.dayNumber:hover {
+  background: var(--state-hover-bg);
+  color: var(--text);
+}
+
+.dayNumber[data-outside] {
+  color: var(--text-disabled);
+}
+
+/* Сегодня — заливка акцента с его контрастным текстом (≥ 4.5:1 у всех пресетов) */
+.dayNumber[data-today] {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.bar,
+.timed {
+  --tone: var(--accent);
+  --tone-soft: var(--accent-soft);
+
+  min-width: 0;
+  overflow: hidden;
+  background: var(--tone-soft);
+  border: none;
+  font-size: var(--text-xs);
+  text-align: left;
+  color: var(--text);
+  cursor: pointer;
+  transition: filter var(--duration-fast) var(--ease-out);
+}
+
+.bar:hover,
+.timed:hover {
+  filter: brightness(1.15);
+}
+
+.bar[data-tone='neutral'],
+.timed[data-tone='neutral'] {
+  --tone: var(--text-subtle);
+  --tone-soft: var(--surface-3);
+}
+
+.bar[data-tone='success'],
+.timed[data-tone='success'] {
+  --tone: var(--success);
+  --tone-soft: var(--success-soft);
+}
+
+.bar[data-tone='warning'],
+.timed[data-tone='warning'] {
+  --tone: var(--warning);
+  --tone-soft: var(--warning-soft);
+}
+
+.bar[data-tone='danger'],
+.timed[data-tone='danger'] {
+  --tone: var(--danger);
+  --tone-soft: var(--danger-soft);
+}
+
+.bar[data-tone='info'],
+.timed[data-tone='info'] {
+  --tone: var(--info);
+  --tone-soft: var(--info-soft);
+}
+
+/* Полоса: тон — фоном и полоской слева, текст — цветом текста; продолжение — прямой край без полоски */
+.bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  height: calc(var(--lane) - 2px);
+  margin: 0 var(--space-1);
+  padding: 0 var(--space-1-5);
+  border-radius: var(--radius-sm);
+  box-shadow: inset 2px 0 0 var(--tone);
+}
+
+.bar[data-before] {
+  margin-left: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  box-shadow: none;
+}
+
+.bar[data-after] {
+  margin-right: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* Событие со временем в месяце — строкой с точкой, а не плашкой: плашка — это «весь день» */
+.chip {
+  background: transparent;
+  box-shadow: none;
+}
+
+.chip:hover {
+  background: var(--state-hover-bg);
+  filter: none;
+}
+
+.dot {
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--tone);
+}
+
+.chipTime {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  color: var(--text-subtle);
+}
+
+.barTitle {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.more {
+  justify-self: start;
+  height: var(--lane);
+  margin: 0 var(--space-1);
+  padding: 0 var(--space-1-5);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.more:hover {
+  background: var(--state-hover-bg);
+  color: var(--text);
+}
+
+/* --- Неделя ---------------------------------------------------------------------------- */
+
+.weekView {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.weekHead,
+.allDay,
+.timeGrid {
+  display: grid;
+  grid-template-columns: var(--gutter) repeat(7, minmax(0, 1fr));
+}
+
+.weekHead {
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--border);
+}
+
+.weekDay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-0-5);
+  padding: var(--space-1-5) 0;
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.weekDay:hover {
+  background: var(--state-hover-bg);
+}
+
+.weekDayName {
+  font-family: var(--font-tui);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-subtle);
+}
+
+.weekDayNumber {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--control-sm);
+  height: var(--control-sm);
+  border-radius: var(--radius-full);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.weekDay[data-today] .weekDayNumber {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.allDay {
+  border-bottom: 1px solid var(--border);
+}
+
+.gutterLabel {
+  align-self: center;
+  padding: 0 var(--space-1);
+  font-size: var(--text-xs);
+  text-align: right;
+  color: var(--text-subtle);
+}
+
+.allDayLanes {
+  display: grid;
+  grid-column: 2 / -1;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-rows: repeat(var(--rows), var(--lane));
+  padding: var(--space-1) 0;
+}
+
+.timeScroll {
+  overflow-y: auto;
+}
+
+.timeGrid {
+  height: calc(var(--hours) * var(--hour));
+}
+
+.hours {
+  display: grid;
+  grid-template-rows: repeat(var(--hours), var(--hour));
+}
+
+.hourLabel {
+  padding-right: var(--space-1-5);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--text-subtle);
+  transform: translateY(-50%);
+}
+
+/* Часовые линии — фоном колонки, а не элементами: 24 × 7 узлов ради волоса не нужны */
+.dayColumn {
+  position: relative;
+  border-left: 1px solid var(--border-subtle);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--border-subtle) 0 1px,
+    transparent 1px var(--hour)
+  );
+}
+
+.dayColumn[data-today] {
+  background-color: color-mix(in oklab, var(--accent) 5%, transparent);
+}
+
+.timed {
+  position: absolute;
+  left: calc(var(--column) / var(--columns) * 100% + 2px);
+  display: flex;
+  flex-direction: column;
+  width: calc(100% / var(--columns) - 4px);
+  padding: var(--space-0-5) var(--space-1-5);
+  border-radius: var(--radius-sm);
+  box-shadow: inset 2px 0 0 var(--tone);
+}
+
+.timedTitle {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-weight: var(--weight-medium);
+}
+
+.timedTime {
+  overflow: hidden;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}

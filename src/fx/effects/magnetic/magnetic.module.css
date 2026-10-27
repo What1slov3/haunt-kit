@@ -1,0 +1,14 @@
+.root {
+  display: inline-flex;
+}
+
+.content {
+  display: inline-flex;
+  transition: transform var(--duration-release) var(--ease-release);
+}
+
+/* Пока курсор рядом — короткий переход: кнопка успевает за мышью без рывков по кадрам */
+.content[data-pulled] {
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-out);
+}

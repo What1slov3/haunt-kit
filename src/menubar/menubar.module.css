@@ -1,0 +1,57 @@
+/*
+ * Полоса меню окна: плотная, 28 px (--row-compact), триггеры 24 px с кеглем 12 — пара sm, как у кнопок.
+ * Полоса без скругления (край окна), поэтому радиус триггера — свой токен, а не формула от соседа.
+ */
+.root {
+  display: flex;
+  align-items: center;
+  gap: var(--space-0-5);
+  height: var(--row-compact);
+  padding: 0 var(--space-1);
+  user-select: none;
+}
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  height: var(--control-sm);
+  padding: 0 var(--space-2);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font: inherit;
+  font-size: var(--text-sm);
+  line-height: 1;
+  cursor: default;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+/* Наведение и фокус с клавиатуры — одно: Radix ставит data-highlighted и туда, и туда */
+.trigger:hover,
+.trigger[data-highlighted] {
+  background: var(--state-hover-bg);
+  color: var(--text);
+}
+
+.trigger[data-state='open'] {
+  background: var(--state-active-bg);
+  color: var(--text);
+}
+
+.trigger[data-disabled] {
+  color: var(--text-disabled);
+  pointer-events: none;
+}
+
+/* Меню окна шире выпадающего: подписи + сочетания справа */
+.content {
+  min-width: 220px;
+}
+
+/* Точка lucide мелкая в своём квадрате — радио-отметка должна читаться как флажок рядом */
+.radioDot {
+  transform: scale(2);
+}

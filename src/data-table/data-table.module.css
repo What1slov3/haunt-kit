@@ -1,0 +1,178 @@
+.root {
+  --table-row: var(--row-default);
+  --table-pad-x: var(--space-3);
+
+  position: relative;
+  overflow: auto;
+  min-width: 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  /* Скругление режет и липкую шапку: overflow ≠ visible обрезает содержимое по радиусу */
+  border-radius: var(--radius-lg);
+}
+
+.compact {
+  --table-row: var(--row-compact);
+  --table-pad-x: var(--space-2);
+}
+
+.default {
+  --table-row: var(--row-default);
+}
+
+/* separate, а не collapse: со схлопнутыми рамками липкая шапка теряет нижнюю границу при прокрутке */
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--text-md);
+  color: var(--text);
+}
+
+.head {
+  height: var(--table-row);
+  padding: 0 var(--table-pad-x);
+  /* Непрозрачный фон: строки уезжают под липкую шапку и не должны просвечивать */
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-muted);
+  white-space: nowrap;
+  text-align: start;
+}
+
+.sticky .head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.sortButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  height: var(--control-sm);
+  /* Кнопка выходит на поля ячейки, чтобы подсветка наведения не прилипала к тексту */
+  margin: 0 calc(-1 * var(--space-1-5));
+  padding: 0 var(--space-1-5);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  color: inherit;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.sortButton:hover {
+  background: var(--state-hover-bg);
+  color: var(--text);
+}
+
+.sortButton[data-active] {
+  color: var(--text);
+}
+
+.sortIcon {
+  color: var(--text-subtle);
+  opacity: 0.6;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.sortButton:hover .sortIcon,
+.sortButton[data-active] .sortIcon {
+  opacity: 1;
+}
+
+.sortButton[data-active] .sortIcon {
+  color: var(--accent-text);
+}
+
+.align-end .sortButton {
+  flex-direction: row-reverse;
+}
+
+.cell {
+  height: var(--table-row);
+  padding: 0 var(--table-pad-x);
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+
+.row:last-child .cell {
+  border-bottom: none;
+}
+
+.row {
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.row:hover {
+  background: var(--state-hover-bg);
+}
+
+.row[data-clickable] {
+  cursor: pointer;
+}
+
+/* Кольцо фокуса внутрь: снаружи его обрезала бы область прокрутки */
+.row:focus-visible {
+  outline-offset: -2px;
+}
+
+.row[data-selected] {
+  background: var(--state-selected-bg);
+}
+
+/* Метка выбранной строки — полоса акцента у первой ячейки: тон фона один слишком тихий в длинной таблице */
+.row[data-selected] .cell:first-child {
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+
+.align-start {
+  text-align: start;
+}
+
+.align-center {
+  text-align: center;
+}
+
+.align-end {
+  text-align: end;
+}
+
+.numeric {
+  font-family: var(--font-mono);
+  font-size: 0.95em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.empty {
+  padding: var(--space-6) var(--table-pad-x);
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* Виртуальный режим: ширины колонок — из colgroup, а не из содержимого окна строк, иначе они
+ * прыгали бы на каждой прокрутке. Якорь браузера выключен: позицию при измерении держит окно */
+.virtual {
+  overflow-anchor: none;
+}
+
+.virtual .table {
+  table-layout: fixed;
+}
+
+/* Фиксированная колонка обрезает, а не раздвигает: аватар или бейдж не налезает на соседнюю */
+.virtual .cell {
+  overflow: hidden;
+}
+
+/* Распорка окна: только высота, без отступов и рамок */
+.spacer td {
+  padding: 0;
+  border: none;
+}

@@ -1,0 +1,64 @@
+/* Контейнер запросов — сама раскладка: решает её ширина, которую в AppShell меняют панели */
+.root {
+  position: relative;
+  display: flex;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  container: chat / inline-size;
+}
+
+.main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Лента забирает всю высоту между шапкой и композером; прокрутка — у неё самой */
+.feed {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* max-content: у прижатого к середине слоя иначе ширина — половина ленты, и подпись переносится */
+.overlay {
+  position: absolute;
+  bottom: var(--space-3);
+  left: 50%;
+  width: max-content;
+  z-index: var(--z-raised);
+  transform: translateX(-50%);
+}
+
+.composer {
+  flex: none;
+  padding: 0 var(--space-4) var(--space-4);
+}
+
+.panel {
+  flex: none;
+  width: var(--panel-width);
+  min-height: 0;
+  overflow-y: auto;
+  border-left: 1px solid var(--border-subtle);
+}
+
+/* Узко: панель — поверх ленты справа, на стекле, чтобы лента не сжималась в полоску */
+@container chat (max-width: 720px) {
+  .panel {
+    position: absolute;
+    inset-block: 0;
+    right: 0;
+    z-index: var(--z-overlay);
+    width: min(100%, var(--panel-width));
+    background: var(--glass);
+    backdrop-filter: var(--glass-filter);
+    -webkit-backdrop-filter: var(--glass-filter);
+    box-shadow: var(--shadow-float);
+  }
+}

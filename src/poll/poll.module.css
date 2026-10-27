@@ -1,0 +1,251 @@
+/*
+ * Опрос — карточка с рядами вариантов. Ряд и голосования, и итогов — одной высоты и с одним скруглением,
+ * поэтому смена режима не двигает разметку. Ряды отстоят от угла карточки на её отступ: по формуле
+ * концентричности (12 − 12 − 1) угол вышел бы прямым, поэтому у них радиус панели. Полоса итога — scaleX от
+ * левого края: только transform.
+ */
+.poll {
+  --poll-pad: var(--space-3);
+  --row-radius: var(--radius-lg);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+  max-width: 440px;
+  padding: var(--poll-pad);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  box-shadow: inset 0 1px 0 var(--edge-highlight);
+  color: var(--text);
+}
+
+.poll::before {
+  content: var(--frame-ticks-content, none);
+  position: absolute;
+  inset: -1px;
+  background: var(--frame-ticks, none);
+  pointer-events: none;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.kind,
+.rule {
+  color: var(--text-subtle);
+  font-family: var(--micro-font, var(--font-mono));
+  font-size: var(--micro-size, var(--text-xs));
+  letter-spacing: var(--micro-tracking, 0.06em);
+  text-transform: uppercase;
+}
+
+.question {
+  font-family: var(--heading-font, inherit);
+  font-size: var(--text-xl);
+  font-stretch: var(--heading-stretch, normal);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  overflow-wrap: anywhere;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.option,
+.result {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--control-lg);
+  padding: var(--space-1) var(--space-3);
+  overflow: hidden;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--row-radius);
+  font-size: var(--text-md);
+}
+
+.option {
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+.option:hover {
+  background: var(--state-hover-bg);
+  border-color: var(--border-strong);
+}
+
+.option[data-checked] {
+  background: var(--state-selected-bg);
+  border-color: var(--state-selected-border);
+}
+
+.option:has(.input:disabled:not(:checked)) {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Радио и флажок — родные (клавиатура и группа по name), визуально скрыты; вид — индикатор рядом */
+.input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+}
+
+.indicator {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: var(--field-bg);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-full);
+  color: transparent;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+.square {
+  border-radius: var(--radius-xs);
+}
+
+.option[data-checked] .indicator {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+/* Фокус с клавиатуры — на индикаторе: сам input невидим */
+.input:focus-visible + .indicator {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+.emoji {
+  position: relative;
+  z-index: 1;
+  font-size: var(--text-lg);
+  line-height: 1;
+}
+
+.optionLabel {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.resultLabel {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.bar {
+  position: absolute;
+  inset: 0;
+  background: var(--accent-soft);
+  transform: scaleX(var(--ratio));
+  transform-origin: left center;
+  transition: transform var(--duration-slow) var(--ease-out);
+  animation: poll-bar-in 520ms var(--ease-out);
+}
+
+/* Полосы набегают с нуля, когда итоги появились (конец — собственный transform) */
+@keyframes poll-bar-in {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+.result[data-mine] .bar {
+  background: var(--accent-soft-strong);
+}
+
+.result[data-mine] {
+  border-color: var(--state-selected-border);
+}
+
+.mineIcon {
+  flex-shrink: 0;
+  color: var(--accent-text);
+}
+
+/* Лидер завершённого опроса — заметнее остальных */
+.result[data-leading] {
+  font-weight: var(--weight-semibold);
+}
+
+.result[data-leading] .bar {
+  background: color-mix(in oklab, var(--accent) 34%, transparent);
+}
+
+.percent {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.result[data-leading] .percent,
+.result[data-mine] .percent {
+  color: var(--text);
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+  color: var(--text-subtle);
+  font-size: var(--text-sm);
+}
+
+.flag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.flag::before {
+  content: '·';
+  margin-right: var(--space-1);
+}

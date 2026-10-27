@@ -1,0 +1,110 @@
+.viewport {
+  position: fixed;
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 360px;
+  max-width: calc(100vw - var(--space-8));
+  margin: 0;
+  padding: var(--space-4);
+  list-style: none;
+  outline: none;
+}
+
+.bottom-right {
+  right: 0;
+  bottom: 0;
+}
+
+.top-right {
+  top: 0;
+  right: 0;
+}
+
+.toast {
+  --toast-accent: var(--text-muted);
+
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-3);
+  background: var(--glass);
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--toast-accent);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-float);
+  color: var(--text);
+}
+
+.toast[data-state='open'] {
+  animation: var(--anim-slide-in-right);
+}
+
+.toast[data-state='closed'] {
+  animation: var(--anim-fade-out);
+}
+
+/* Свайп — Radix отдаёт смещение переменной; возврат — через transition */
+.toast[data-swipe='move'] {
+  transform: translateX(var(--radix-toast-swipe-move-x));
+}
+
+.toast[data-swipe='cancel'] {
+  transform: translateX(0);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.toast[data-swipe='end'] {
+  animation: var(--anim-fade-out);
+  animation-duration: var(--duration-fast);
+}
+
+.success {
+  --toast-accent: var(--success);
+}
+
+.warning {
+  --toast-accent: var(--warning);
+}
+
+.danger {
+  --toast-accent: var(--danger);
+}
+
+.info {
+  --toast-accent: var(--info);
+}
+
+.icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--toast-accent);
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+  padding-top: 2px;
+}
+
+.title {
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  overflow-wrap: anywhere;
+}
+
+.description {
+  margin-top: 2px;
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.close {
+  flex-shrink: 0;
+}

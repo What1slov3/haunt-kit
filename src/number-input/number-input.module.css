@@ -1,0 +1,66 @@
+/*
+ * Рамка и состояния — field-frame.module.css. Кнопки ± стоят в рамке на равном отступе со всех
+ * сторон, поэтому их скругление концентрично рамке: её радиус минус отступ и border.
+ */
+.root {
+  --step-inset: calc((var(--control-height) - 2px - var(--step-size)) / 2);
+
+  cursor: text;
+}
+
+.root.sm {
+  --control-height: var(--control-sm);
+  --step-size: calc(var(--control-sm) - 8px);
+
+  padding: 0 var(--step-inset);
+}
+
+.root.md {
+  --control-height: var(--control-md);
+  --step-size: calc(var(--control-md) - 8px);
+
+  padding: 0 var(--step-inset);
+}
+
+.root.lg {
+  --control-height: var(--control-lg);
+  --step-size: calc(var(--control-lg) - 8px);
+
+  padding: 0 var(--step-inset);
+}
+
+.root .step {
+  width: var(--step-size);
+  height: var(--step-size);
+  border-radius: calc(var(--radius-md) - var(--step-inset) - 1px);
+}
+
+.input {
+  flex: 1;
+  width: 4ch;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-mono);
+  font-size: inherit;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.input::placeholder {
+  color: var(--text-subtle);
+}
+
+.input:disabled {
+  cursor: not-allowed;
+}
+
+.suffix {
+  flex-shrink: 0;
+  margin-left: calc(-1 * var(--space-1));
+  font-size: var(--text-sm);
+  color: var(--text-subtle);
+}

@@ -1,0 +1,52 @@
+/*
+ * Плашка в строке текста: не меняет высоту строки (padding только по горизонтали, line-height родителя)
+ * и не рвётся переносом. Цвета — от акцента пространства или от цвета роли (--mention-color).
+ */
+.mention {
+  --mention-bg: var(--accent-soft);
+  --mention-bg-hover: var(--accent-soft-strong);
+  --mention-fg: var(--accent-text);
+
+  display: inline;
+  padding: 0 var(--space-0-5);
+  margin: 0;
+  background: var(--mention-bg);
+  border: none;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-weight: var(--weight-medium);
+  line-height: inherit;
+  color: var(--mention-fg);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+/* Цвет роли — по тем же формулам, что производные акцента в tokens.css: контраст текста держится в обеих темах */
+.colored {
+  --mention-bg: color-mix(in oklab, var(--mention-color) var(--accent-soft-amount), transparent);
+  --mention-bg-hover: color-mix(in oklab, var(--mention-color) 26%, transparent);
+  --mention-fg: color-mix(
+    in oklab,
+    var(--mention-color),
+    var(--accent-text-toward) var(--accent-text-amount)
+  );
+}
+
+.mention:hover {
+  background: var(--mention-bg-hover);
+}
+
+.mention:focus-visible {
+  outline-offset: 0;
+}
+
+/* Упомянули меня — ярче: сплошная заливка акцента, как отметка в Discord */
+.mention[data-self] {
+  --mention-bg: var(--accent-soft-strong);
+  --mention-bg-hover: color-mix(in oklab, var(--accent) 38%, transparent);
+}
+
+.prefix {
+  opacity: 0.75;
+}

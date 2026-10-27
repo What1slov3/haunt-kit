@@ -1,0 +1,101 @@
+/*
+ * Callout в духе Fumadocs: тихая карточка с нейтральной рамкой и полоской цвета статуса слева, а не
+ * заливка статусом — на странице с несколькими подсказками цветные плашки спорили бы между собой.
+ * Баннер над чатом (banner) остаётся тонированным: это состояние экрана, его надо заметить сразу.
+ */
+.callout {
+  --callout-color: var(--text-subtle);
+  --callout-bg: var(--surface-1);
+
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3) var(--space-2) calc(var(--space-3) + 2px);
+  background: var(--callout-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  color: var(--text);
+}
+
+/* Полоска — отдельным слоем внутри рамки, со своим скруглением: border-left ломал бы углы карточки */
+.callout::before {
+  content: '';
+  position: absolute;
+  top: var(--space-2);
+  bottom: var(--space-2);
+  left: var(--space-1-5);
+  width: 2px;
+  border-radius: 1px;
+  background: var(--callout-color);
+  opacity: 0.9;
+}
+
+.banner {
+  --callout-bg: color-mix(in oklab, var(--callout-color) 12%, var(--panel-3));
+
+  padding: var(--space-1-5) var(--space-3);
+  border-color: color-mix(in oklab, var(--callout-color) 28%, transparent);
+  border-right: none;
+  border-left: none;
+  border-radius: 0;
+}
+
+.banner::before {
+  display: none;
+}
+
+.icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--callout-color);
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+}
+
+.text {
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.title + .text {
+  margin-top: 2px;
+}
+
+.action {
+  display: flex;
+  flex-shrink: 0;
+  gap: var(--space-1);
+}
+
+.neutral {
+  --callout-color: var(--text-subtle);
+}
+
+.info {
+  --callout-color: var(--info);
+}
+
+.success {
+  --callout-color: var(--success);
+}
+
+.warning {
+  --callout-color: var(--warning);
+}
+
+.danger {
+  --callout-color: var(--danger);
+}

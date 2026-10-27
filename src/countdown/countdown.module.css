@@ -1,0 +1,87 @@
+.root {
+  --digits-size: var(--text-3xl);
+
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  color: var(--text);
+}
+
+.sm {
+  --digits-size: var(--text-xl);
+}
+
+.lg {
+  --digits-size: var(--text-4xl);
+}
+
+.parts {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.part {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* Табличные цифры: ширина не дрожит, когда 1 сменяется на 0 */
+.digits {
+  min-width: 2ch;
+  font-family: var(--font-display, var(--font-sans));
+  font-size: var(--digits-size);
+  font-stretch: var(--display-stretch, normal);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  text-align: center;
+}
+
+/* Двоеточие — посередине промежутка между единицами, в кегль цифр; в разметке его нет, скринридер читает слова */
+.plain .parts {
+  gap: 0;
+}
+
+.plain .part {
+  position: relative;
+}
+
+.plain .part + .part {
+  margin-left: var(--space-4);
+}
+
+.plain .part + .part::before {
+  content: ':';
+  position: absolute;
+  top: 0;
+  left: calc(var(--space-4) / -2);
+  color: var(--text-subtle);
+  font-size: var(--digits-size);
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+  transform: translateX(-50%);
+}
+
+.unit {
+  color: var(--text-subtle);
+  font-family: var(--micro-font, var(--font-mono));
+  font-size: var(--micro-size, var(--text-xs));
+  letter-spacing: var(--micro-tracking, 0.06em);
+  text-transform: uppercase;
+}
+
+.flap .parts {
+  gap: var(--space-1-5);
+}
+
+.done {
+  color: var(--accent-text);
+  font-family: var(--heading-font, inherit);
+  font-size: var(--text-xl);
+  font-stretch: var(--heading-stretch, normal);
+  font-weight: var(--weight-semibold);
+}

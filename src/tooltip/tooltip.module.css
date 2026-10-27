@@ -1,0 +1,31 @@
+.content {
+  z-index: var(--z-tooltip);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: 280px;
+  padding: 4px 8px;
+  background: var(--inverse-bg);
+  color: var(--inverse-fg);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  box-shadow: var(--shadow-soft);
+  transform-origin: var(--radix-tooltip-content-transform-origin);
+  animation: var(--anim-pop-in);
+  animation-duration: var(--duration-fast);
+}
+
+.content[data-state='closed'] {
+  animation: var(--anim-fade-out);
+  animation-duration: var(--duration-fast);
+}
+
+/* Внутри инверсной подсказки Kbd тоже инверсный */
+.shortcut {
+  --kbd-bg: color-mix(in oklab, var(--inverse-fg) 12%, transparent);
+  --kbd-border: color-mix(in oklab, var(--inverse-fg) 25%, transparent);
+
+  color: inherit;
+}

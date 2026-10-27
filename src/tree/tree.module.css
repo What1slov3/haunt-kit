@@ -1,0 +1,134 @@
+.root {
+  /* Позиционирована: окно виртуализации меряет отступ строк через offsetTop до неё */
+  position: relative;
+  overflow: auto;
+  min-width: 0;
+}
+
+/*
+ * Фокус живёт на дереве, а видна активная строка (aria-activedescendant): кольцо вокруг всего списка
+ * не говорит, где курсор. Поэтому своё правило фокуса вместо общего.
+ */
+.tree {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: var(--space-1);
+  border-radius: var(--radius-lg);
+  outline: none;
+}
+
+.row {
+  --indent: 16px;
+
+  display: flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  min-width: 0;
+  height: var(--row-compact);
+  padding: 0 var(--space-2) 0 calc(var(--space-1) + var(--level) * var(--indent));
+  /* Строка внутри дерева с отступом space-1: радиус концентричен рамке дерева */
+  border-radius: calc(var(--radius-lg) - var(--space-1));
+  font-size: var(--text-md);
+  color: var(--text-muted);
+  cursor: default;
+  user-select: none;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.row:hover {
+  background: var(--state-hover-bg);
+  color: var(--text);
+}
+
+.row[data-selected] {
+  background: var(--state-selected-bg);
+  color: var(--state-selected-fg);
+  box-shadow: inset 0 0 0 1px var(--state-selected-border);
+}
+
+.row[aria-disabled='true'] {
+  opacity: 0.5;
+}
+
+.tree:focus-visible .row[data-active] {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+
+.chevron {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--text-subtle);
+}
+
+.chevron :global(svg) {
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.chevron[data-open] :global(svg) {
+  transform: rotate(90deg);
+}
+
+.icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--text-subtle);
+}
+
+.row[data-selected] .icon {
+  color: var(--accent-text);
+}
+
+.label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.meta,
+.failed {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-subtle);
+}
+
+.failed {
+  color: var(--danger);
+}
+
+/* Перетаскивание: взятая строка бледнеет, место броска — черта акцента или подсветка ветки */
+.tree[data-dragging] {
+  cursor: grabbing;
+}
+
+.tree[data-dragging] .row {
+  cursor: grabbing;
+}
+
+.row[data-dragging] {
+  opacity: 0.45;
+}
+
+.row[data-drop='before'] {
+  box-shadow: inset 0 2px 0 var(--accent);
+}
+
+.row[data-drop='after'] {
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+.row[data-drop='inside'] {
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1px var(--accent-soft-strong);
+  color: var(--text);
+}

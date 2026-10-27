@@ -1,0 +1,178 @@
+/* Полоса 36 px: контролы 28 по центру; фон — самый глубокий слой, как рейл */
+.root {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: calc(var(--control-lg) + var(--space-1));
+  min-width: 0;
+  padding: 0 var(--space-2);
+  background: var(--panel-1);
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  user-select: none;
+}
+
+/* Кнопки окна Windows и Linux стоят вплотную к правому краю, как у системных окон */
+.root:not([data-platform='mac']) {
+  padding-right: 0;
+}
+
+.slot {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.search {
+  flex: 0 1 420px;
+}
+
+.search > * {
+  flex: 1;
+}
+
+.drag {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: var(--space-4);
+  height: 100%;
+}
+
+.title {
+  min-width: 0;
+  overflow: hidden;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.root[data-inactive] .title {
+  color: var(--text-subtle);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: 100%;
+}
+
+/* --- macOS: «светофор» 12 px; знаки проявляются на наведении всей группы, как в системе --- */
+[data-platform='mac'] .controls {
+  gap: var(--space-2);
+  padding: 0 var(--space-1);
+}
+
+.light {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  box-shadow: inset 0 0 0 0.5px var(--border-strong);
+  color: var(--shadow-ink);
+}
+
+.lightClose {
+  background: var(--danger);
+}
+
+.lightMinimize {
+  background: var(--warning);
+}
+
+.lightMaximize {
+  background: var(--success);
+}
+
+.light:disabled {
+  cursor: default;
+}
+
+.root[data-inactive] .light {
+  background: var(--surface-3);
+}
+
+.glyph {
+  width: 8px;
+  height: 8px;
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.controls:hover .glyph,
+.controls:focus-within .glyph {
+  opacity: 0.7;
+}
+
+/* --- Windows: прямоугольные кнопки во всю высоту, закрыть — красным --------------------- */
+.windowButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 100%;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.windowButton:hover:not(:disabled) {
+  background: var(--state-hover-bg);
+  color: var(--text);
+}
+
+.windowButton:active:not(:disabled) {
+  background: var(--state-active-bg);
+}
+
+/* Белый на заливке опасности — исключение правила токенов (README: «белый текст на заливке статуса») */
+.closeButton:hover:not(:disabled) {
+  background: var(--danger-strong);
+  color: #ffffff;
+}
+
+.windowButton:disabled {
+  color: var(--text-disabled);
+}
+
+.windowButton:focus-visible {
+  outline-offset: -2px;
+}
+
+/* --- Linux (GNOME / libadwaita): круглые кнопки 24 px с подложкой ------------------------ */
+[data-platform='linux'] .controls {
+  gap: var(--space-2);
+  padding: 0 var(--space-2);
+}
+
+[data-platform='linux'] .windowButton {
+  width: var(--control-sm);
+  height: var(--control-sm);
+  background: var(--surface-2);
+  border-radius: var(--radius-full);
+}
+
+[data-platform='linux'] .windowButton:hover:not(:disabled) {
+  background: var(--surface-3);
+}
+
+[data-platform='linux'] .closeButton:hover:not(:disabled) {
+  background: var(--danger-strong);
+}
+
+.windowButton:focus-visible,
+.light:focus-visible {
+  z-index: 1;
+}

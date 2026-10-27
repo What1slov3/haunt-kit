@@ -1,0 +1,179 @@
+/* Рамка, размеры и состояния триггера — field-frame.module.css; здесь — внутренности и список */
+.trigger {
+  justify-content: space-between;
+  min-width: 160px;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+}
+
+.trigger:focus-visible {
+  border-color: var(--field-border-focus);
+  box-shadow: var(--field-ring);
+}
+
+.trigger:disabled {
+  cursor: not-allowed;
+}
+
+/* Шеврон справа ближе к краю, чем текст слева: оптическая компенсация, как у Select */
+.trigger.sm,
+.trigger.md {
+  padding-right: var(--space-1-5);
+}
+
+.trigger.lg {
+  padding-right: var(--space-2);
+}
+
+.value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.trigger[data-placeholder] .value {
+  color: var(--text-subtle);
+}
+
+.triggerIcon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.chevron {
+  flex-shrink: 0;
+  color: var(--text-subtle);
+}
+
+.content {
+  z-index: var(--z-popover);
+  display: flex;
+  flex-direction: column;
+  width: max(var(--radix-popover-trigger-width), 240px);
+  max-width: min(400px, calc(100vw - 16px));
+  max-height: min(360px, var(--radix-popover-content-available-height));
+  overflow: hidden;
+  background: var(--glass);
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-float);
+  color: var(--text);
+  outline: none;
+  transform-origin: var(--radix-popover-content-transform-origin);
+  animation: var(--anim-pop-in);
+}
+
+.content[data-state='closed'] {
+  animation: var(--anim-pop-out);
+}
+
+.header {
+  flex-shrink: 0;
+  padding: var(--space-1);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Поле поиска стоит в поповере на отступе 4 px — скругление концентрично ему */
+.header .search {
+  border-radius: calc(var(--radius-lg) - var(--space-1) - 1px);
+}
+
+.list {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: var(--space-1);
+  overflow-y: auto;
+  list-style: none;
+}
+
+/* Виртуальный список: позицию при измерении пунктов держит окно, якорь браузера сдвигал бы её второй раз */
+.list[data-virtual] {
+  /* position — окно меряет отступ пунктов по offsetTop от списка */
+  position: relative;
+  overflow-anchor: none;
+}
+
+.spacer {
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.list:empty {
+  display: none;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--row-compact);
+  padding: var(--space-1) var(--space-2);
+  /* Концентрично поповеру: его радиус минус padding списка и border */
+  border-radius: calc(var(--radius-lg) - var(--space-1) - 1px);
+  font-size: var(--text-md);
+  color: var(--text);
+  cursor: default;
+  user-select: none;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.option[data-active] {
+  background: var(--state-active-bg);
+}
+
+.option[data-disabled] {
+  color: var(--text-disabled);
+}
+
+.optionIcon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.optionText {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.optionLabel,
+.optionDescription {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.optionDescription {
+  font-size: var(--text-sm);
+  color: var(--text-subtle);
+}
+
+/* Совпадение — цветом и весом, без заливки: подсветка не должна спорить с активным пунктом */
+.match {
+  background: transparent;
+  color: var(--accent-text);
+  font-weight: var(--weight-semibold);
+}
+
+.check {
+  flex-shrink: 0;
+  margin-left: auto;
+  color: var(--accent-text);
+}
+
+.more {
+  flex-shrink: 0;
+  padding: var(--space-1-5) var(--space-3);
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-subtle);
+}

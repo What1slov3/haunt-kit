@@ -1,0 +1,84 @@
+/*
+ * Засечки — четыре уголка из двух рамок. В покое отодвинуты наружу на --lock-shift и приглушены;
+ * «навелись» — сходятся к углам transform-ом, цвет акцента, свечение drop-shadow по --fx-glow.
+ * Анимируются только transform, opacity, filter; при reduced-motion переход глушит global.css.
+ */
+.frame {
+  --tick: var(--frame-tick, 10px);
+  --tick-width: max(1px, var(--frame-tick-width, 1px));
+  --tick-color: var(--border-strong);
+  --tick-active: var(--text);
+  --lock-shift: 5px;
+  --lock-gap: var(--space-1);
+
+  position: relative;
+  display: block;
+  padding: var(--lock-gap);
+}
+
+.inline {
+  display: inline-block;
+}
+
+.accent {
+  --tick-color: color-mix(in oklab, var(--accent-text) 55%, transparent);
+  --tick-active: var(--accent-text);
+}
+
+.tick {
+  position: absolute;
+  width: var(--tick);
+  height: var(--tick);
+  border: 0 solid var(--tick-color);
+  pointer-events: none;
+  opacity: 0.7;
+  transition:
+    transform var(--duration-slow) var(--ease-out),
+    opacity var(--duration-base) var(--ease-out),
+    filter var(--duration-base) var(--ease-out);
+}
+
+.tick[data-corner='tl'] {
+  top: 0;
+  left: 0;
+  border-top-width: var(--tick-width);
+  border-left-width: var(--tick-width);
+  transform: translate(calc(var(--lock-shift) * -1), calc(var(--lock-shift) * -1));
+}
+
+.tick[data-corner='tr'] {
+  top: 0;
+  right: 0;
+  border-top-width: var(--tick-width);
+  border-right-width: var(--tick-width);
+  transform: translate(var(--lock-shift), calc(var(--lock-shift) * -1));
+}
+
+.tick[data-corner='br'] {
+  right: 0;
+  bottom: 0;
+  border-right-width: var(--tick-width);
+  border-bottom-width: var(--tick-width);
+  transform: translate(var(--lock-shift), var(--lock-shift));
+}
+
+.tick[data-corner='bl'] {
+  bottom: 0;
+  left: 0;
+  border-bottom-width: var(--tick-width);
+  border-left-width: var(--tick-width);
+  transform: translate(calc(var(--lock-shift) * -1), var(--lock-shift));
+}
+
+/* Цвет рамки не анимируется (border-color — перерисовка, а не композитор): он меняется сразу, движение и
+ * свечение — плавно */
+.frame[data-active] .tick,
+.interactive:hover .tick,
+.interactive:focus-within .tick {
+  border-color: var(--tick-active);
+  opacity: 1;
+  transform: none;
+  filter: drop-shadow(
+    0 0 calc(var(--fx-glow, 0) * 4px) color-mix(in oklab, var(--tick-active) 70%, transparent)
+  );
+}

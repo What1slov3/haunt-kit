@@ -1,0 +1,116 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Руководство/Storybook изнутри" />
+
+# Storybook изнутри
+
+Как устроен сам каталог: где конфиг, как истории получают тему и язык, почему страницы документации сделаны из
+компонентов кита, как работают тулбар, `play`-функции и тесты. Полная версия с историей решений —
+`packages/ui/.storybook/README.md`.
+
+## Файлы
+
+| Файл                             | Что делает                                                                                         |
+| -------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `.storybook/main.ts`             | что собирать (`src/**/*.mdx`, `src/**/*.stories.tsx`), аддоны, remark-плагины MDX, таблица пропсов |
+| `.storybook/preview.tsx`         | декоратор вокруг каждой истории, параметры, порядок сайдбара (`storySort`)                         |
+| `.storybook/haunt-globals.ts`    | десять переключателей тулбара: значения, чтение из адреса, применение к `<html>`                   |
+| `.storybook/docs-container.tsx`  | обёртка страниц документации: провайдеры, фон, тема интерфейса документации                        |
+| `.storybook/mdx-components.tsx`  | элементы MDX → компоненты кита (`Heading`, `Text`, `Link`, `CodeBlock`, `Callout`, `Divider`)      |
+| `.storybook/mdx.module.css`      | ритм страниц MDX: отступы прозы, таблицы, списки                                                   |
+| `.storybook/preview.css`         | холст, превью историй, таблица пропсов, оглавление, проза описаний autodocs                        |
+| `.storybook/storybook-themes.ts` | тема интерфейса Storybook (тёмная и светлая), знак Haunt в шапке сайдбара                          |
+| `.storybook/manager.ts`          | интерфейс следует теме из тулбара                                                                  |
+| `.storybook/manager-head.html`   | то, чего тема Storybook не умеет: активный пункт сайдбара тоном акцента, капитель групп            |
+
+## Как история получает окружение
+
+Компоненты не знают про Storybook. Каждую историю оборачивает декоратор `withHauntTheme` — то же, что даёт
+приложению его корень:
+
+```text
+UiStringsProvider (язык из тулбара)
+└─ ThemeProvider (key = тема: читает её с <html> один раз при монтировании)
+   ├─ AmbientBackground (если выбран фон)
+   ├─ MotionProvider
+   │  └─ история
+   └─ Toaster
+```
+
+Глобалы тулбара применяются к `<html>` **до рендера**, а не в эффекте: иначе первый кадр, снимок и проверки
+`play` видели бы прошлую тему.
+
+Страница документации — не история, декоратор её не оборачивает. Поэтому у неё своя обёртка
+`HauntDocsContainer` с теми же провайдерами: живые примеры прямо в MDX (как на страницах руководства) получают
+тему, язык и подсказки, а сама страница перекрашивается вместе с тулбаром.
+
+## Страницы документации из компонентов кита
+
+Элементы MDX подменены через `parameters.docs.components`:
+
+| В MDX            | Рисует                                                                            |
+| ---------------- | --------------------------------------------------------------------------------- |
+| `#`, `##`, `###` | `Heading` (у `##` — TUI-маркер `>`), с якорем для оглавления                      |
+| абзац            | `Text as="p"`                                                                     |
+| ссылка           | `Link`; внешняя — со значком, на другую страницу каталога — переходом в менеджере |
+| `` `код` ``      | моно в рамке                                                                      |
+| блок ` ``` `     | `CodeBlock` с подсветкой, номерами строк от 7 строк и заголовком из `title="…"`   |
+| `> цитата`       | `Callout tone="info"` — заметка                                                   |
+| таблица          | карточка с моно-капителью в шапке                                                 |
+| `---`            | `Divider`                                                                         |
+
+Каждый корень получает класс `sb-unstyled`: собственные стили документации Storybook написаны как
+`:not(.sb-unstyled, .sb-unstyled *)` и такие элементы не трогают. Описания autodocs Storybook рендерит сам —
+для них осталась проза в `preview.css`.
+
+Ссылка на другую страницу каталога пишется как `[текст](?path=/docs/<id>--docs)`: страница живёт во фрейме, и
+ссылка уходит в менеджер событием `NAVIGATE_URL`, а не открывает каталог внутри фрейма. Якорь `#раздел` —
+прокрутка в пределах страницы.
+
+## Тулбар
+
+| Глобал         | Значения                  | Что ставит                                    |
+| -------------- | ------------------------- | --------------------------------------------- |
+| `theme`        | `dark` / `light`          | `data-theme` на `<html>` и тему интерфейса    |
+| `accent`       | пресеты `accentPresets`   | `--accent`, `--accent-2`, `--accent-contrast` |
+| `background`   | `none`, фоны кита и `fx`  | `AmbientBackground` под историей и страницей  |
+| `reaction`     | `off` / `quiet` / `vivid` | реакция живого фона                           |
+| `effects`      | `off` / `subtle` / `rich` | `data-effects`                                |
+| `tui`          | `on` / `off`              | `data-tui`                                    |
+| `style`        | `base` / `signal`         | `data-style`                                  |
+| `signalFont`   | десять шрифтов            | `data-signal-font`                            |
+| `signalAccent` | акценты «сигнала»         | `data-signal-accent`                          |
+| `locale`       | `ru` / `en`               | `UiStringsProvider` и `lang` на `<html>`      |
+
+Выбор живёт в адресе (`&globals=theme:light;tui:off`), а не в `localStorage` приложения: Storybook не меняет
+настройки `pnpm dev:web`. Новый глобал — в `hauntGlobalTypes` и `applyGlobals` (`haunt-globals.ts`).
+
+## Истории и автодокументация
+
+- **CSF3**: объект `meta` с `title` (группа/компонент), `component`, `args`, и истории — объекты с `args`,
+  `render`, `play`. `satisfies Meta<typeof X>` — типы `args` выводятся из пропсов.
+- **`tags: ['autodocs']`** — страница Docs собирается сама: описание из `parameters.docs.description.component`,
+  таблица пропсов из TypeScript и JSDoc (`react-docgen-typescript`; пропсы HTML и Radix из `node_modules` в
+  таблицу не попадают), истории с кодом.
+- **Controls**: `argTypes` прячут то, что не настраивается с панели (`{ control: false }` для узлов и функций).
+- **Порядок в сайдбаре** — `storySort.order` в `preview.tsx`: новая группа или страница руководства — туда же.
+
+## `play` и тесты
+
+- `play` выполняется после рендера: `userEvent` кликает и печатает, `expect` проверяет, ход виден на панели
+  **Interactions**.
+- Помощники — `lib/stories/play-helpers.ts`: `screen()` (порталы живут в `<body>`), `expectVisible` (появление
+  начинается с прозрачности), `expectGone` (слой должен размонтироваться — главный регресс кита),
+  `clickOutside` (модальный Radix ставит `pointer-events: none` на `<body>`), `pressEscape`, `expectFocused`.
+- `vitest.config.ts` — два проекта: `unit` в jsdom и `storybook`, где каждая история — тест в настоящем
+  Chromium через `@vitest/browser-playwright`. Оба входят в `pnpm test` пакета.
+- Тосты живут в общей очереди модуля: истории тостов чистят её (`toast.clear()`) перед проверкой.
+
+## Сборка
+
+`pnpm --filter @haunt/ui build-storybook` → `packages/ui/storybook-static` — обычный статический сайт (HTML, JS,
+CSS): любой статический сервер, GitHub Pages, Cloudflare Pages, S3. Папка — в `.gitignore`, `.prettierignore`
+и ignores eslint.
+
+Изменения `main.ts` (аддоны, remark-плагины, globs) требуют перезапуска dev-сервера; `preview.tsx`, CSS,
+истории и MDX подхватываются на лету.

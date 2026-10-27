@@ -1,0 +1,198 @@
+/*
+ * Журнал в клетках сетки TUI: окно BoxFrame, строка — var(--tui-leading), отступ — один знак. Высота
+ * области строк округляется вниз до целого числа строк: прижатый к низу журнал не режет верхнюю строку,
+ * остаток (меньше строки) уходит в зазор под верхней линией рамки.
+ */
+.root {
+  background: var(--background);
+  font-size: var(--text-sm);
+}
+
+/* Моно и шаг строки — здесь, а не на рамке: без TUI рамка берёт шрифт страницы, а журнал остаётся моно */
+.pane {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-family: var(--font-mono);
+  line-height: var(--tui-leading);
+}
+
+.body {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 0;
+}
+
+.viewport {
+  height: round(down, 100%, 1lh);
+  overflow-y: auto;
+  padding: 0 1ch;
+  --scrollbar-radius: var(--tui-scrollbar-radius);
+}
+
+/* Виртуальный режим: позицию при измерении строк держит окно, якорь браузера сдвигал бы её второй раз */
+.viewport[data-virtual] {
+  /* position — окно меряет отступ строк по offsetTop от области прокрутки */
+  position: relative;
+  overflow-anchor: none;
+}
+
+/* Фокус в журнале или в строке ввода — рамка и разделитель в цвете акцента, как активная панель tmux */
+.root:focus-within {
+  --box-color: var(--accent-text);
+}
+
+.viewport:focus-visible {
+  outline: none;
+}
+
+.line {
+  display: flex;
+  align-items: baseline;
+  gap: 1ch;
+  min-width: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.time {
+  flex-shrink: 0;
+  color: var(--text-subtle);
+}
+
+/* Ширина под самое длинное имя уровня: колонка текста не скачет от строки к строке */
+.level {
+  flex-shrink: 0;
+  width: 4ch;
+  font-weight: var(--weight-semibold);
+}
+
+.line[data-level='debug'] .level {
+  color: var(--text-subtle);
+}
+
+.line[data-level='info'] .level {
+  color: var(--info);
+}
+
+.line[data-level='warn'] .level {
+  color: var(--warning);
+}
+
+.line[data-level='error'] .level,
+.line[data-level='error'] .text {
+  color: var(--danger);
+}
+
+.line[data-level='debug'] .text {
+  color: var(--text-muted);
+}
+
+/* Источник — метка, поэтому в скобках словаря TUI: без TUI остаётся просто приглушённое слово */
+.source {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.source::before {
+  content: var(--tui-bracket-open);
+  color: var(--text-subtle);
+}
+
+.source::after {
+  content: var(--tui-bracket-close);
+  color: var(--text-subtle);
+}
+
+.text {
+  flex: 1;
+  min-width: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* «новые строки ↓» — строка состояния в обратном цвете акцента на всю ширину, как в less */
+.newLines {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 0 1ch;
+  background: var(--accent);
+  border: none;
+  font: inherit;
+  line-height: inherit;
+  color: var(--accent-contrast);
+  text-align: left;
+}
+
+.newLines:hover {
+  background: var(--accent-hover);
+}
+
+/* Разделитель над строкой ввода — на знак шире содержимого с каждой стороны, поверх «│» рамки */
+.rule {
+  display: flex;
+  flex-shrink: 0;
+  margin: 0 -1ch;
+  color: var(--box-color);
+  white-space: pre;
+  user-select: none;
+}
+
+.ruleRun {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  contain: inline-size;
+}
+
+.input {
+  flex-shrink: 0;
+  padding: 0 1ch;
+}
+
+/* --- Без TUI: рамка кита со скруглением, плашка вместо строки состояния ------------------ */
+:global([data-tui='off']) .root .viewport {
+  height: 100%;
+  padding: var(--space-2) var(--space-3);
+}
+
+/* Без TUI рамки из знаков нет — фокус области показывает общее кольцо кита, внутрь */
+:global([data-tui='off']) .root .viewport:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+
+:global([data-tui='off']) .root .rule {
+  display: none;
+}
+
+:global([data-tui='off']) .root .pane {
+  line-height: var(--leading-normal);
+}
+
+:global([data-tui='off']) .root .body {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+:global([data-tui='off']) .root .input {
+  margin: var(--space-1-5);
+}
+
+:global([data-tui='off']) .root .newLines {
+  right: auto;
+  bottom: var(--space-2);
+  left: 50%;
+  height: var(--control-sm);
+  padding: 0 var(--space-3);
+  background: var(--glass);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-float);
+  font-size: var(--text-xs);
+  color: var(--accent-text);
+  translate: -50% 0;
+}

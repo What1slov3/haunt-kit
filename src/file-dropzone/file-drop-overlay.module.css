@@ -1,0 +1,87 @@
+/*
+ * Слой на весь экран: затемнение со стеклом и рамка на отступе от краёв окна — тот же язык, что у
+ * FileDropzone (пунктир — «сюда можно положить»), только размером с экран. Указатель не ловит: бросок
+ * получает элемент под курсором, а слой слушает окно.
+ */
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  display: flex;
+  padding: var(--space-4);
+  background: color-mix(in oklab, var(--background) 62%, transparent);
+  backdrop-filter: blur(calc(var(--fx-blur) * 2)) saturate(120%);
+  -webkit-backdrop-filter: blur(calc(var(--fx-blur) * 2)) saturate(120%);
+  pointer-events: none;
+  animation: var(--anim-fade-in);
+  animation-duration: var(--duration-fast);
+}
+
+.frame {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  background: color-mix(in oklab, var(--accent) 8%, transparent);
+  border: 2px dashed var(--accent-text);
+  border-radius: var(--radius-2xl);
+  text-align: center;
+}
+
+/* Свечение рамки — отдельным слоем: его сила идёт за уровнем эффектов, рамка — нет */
+.frame::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  box-shadow:
+    0 0 0 4px var(--accent-soft),
+    0 0 48px var(--accent-glow);
+  opacity: var(--fx-glow);
+  pointer-events: none;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: var(--accent);
+  border-radius: var(--radius-xl);
+  color: var(--accent-contrast);
+  box-shadow: 0 8px 32px var(--accent-glow);
+  animation: var(--anim-rise-in);
+}
+
+.title {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  letter-spacing: -0.015em;
+  color: var(--text);
+}
+
+.description {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+/* Тянут то, что не подойдёт: тон ошибки ещё до броска, бросок погасит курсор «нельзя» */
+.root[data-drag='reject'] .frame {
+  background: color-mix(in oklab, var(--danger) 8%, transparent);
+  border-color: var(--danger);
+}
+
+.root[data-drag='reject'] .frame::after {
+  box-shadow: 0 0 0 4px var(--danger-soft);
+}
+
+.root[data-drag='reject'] .icon {
+  background: var(--danger-strong);
+  color: #ffffff;
+  box-shadow: none;
+}

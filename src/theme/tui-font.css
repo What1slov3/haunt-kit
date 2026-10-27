@@ -1,0 +1,12 @@
+/*
+ * Глифы TUI — псевдографика, блоки, брайль и стрелки Powerline ровно в клетку JetBrains Mono
+ * (генератор — `scripts/tui-font.ts`). Стоит первым в `--font-mono`, но по `unicode-range` берёт только
+ * свои знаки: остальной текст и `1ch` — от JetBrains Mono. `block`: на долю секунды знака не видно,
+ * зато рамка не мелькает системным шрифтом с разрывами.
+ */
+@font-face {
+  font-family: 'Haunt TUI';
+  src: url('./fonts/haunt-tui.woff') format('woff');
+  font-display: block;
+  unicode-range: U+2500-259F, U+2800-28FF, U+E0B0-E0BF;
+}

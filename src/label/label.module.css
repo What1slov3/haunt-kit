@@ -1,0 +1,39 @@
+/* Метка — TUI-место: моно и на шаг мельче гротеска (моно шире); без TUI — обычная подпись 12 px */
+.label {
+  --label-size: var(--micro-size, var(--text-xs));
+
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  min-width: 0;
+  font-family: var(--font-tui);
+  font-size: var(--label-size);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--micro-tracking, 0.01em);
+  text-transform: var(--micro-case, inherit);
+  color: var(--text-muted);
+  user-select: none;
+}
+
+[data-tui='off'] .label {
+  --label-size: var(--text-sm);
+}
+
+.required {
+  color: var(--danger);
+}
+
+/* [опц.] — скобки из TUI-токенов, без TUI остаётся слово */
+.optional {
+  font-weight: var(--weight-normal);
+  color: var(--text-subtle);
+}
+
+.optional::before {
+  content: var(--tui-bracket-open);
+}
+
+.optional::after {
+  content: var(--tui-bracket-close);
+}

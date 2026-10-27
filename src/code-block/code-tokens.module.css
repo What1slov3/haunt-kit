@@ -1,0 +1,20 @@
+/*
+ * Палитра подсветки — переменные темы shiki `--code-*` (shiki-loader.ts) из токенов кита: светлая тема и
+ * акцент пространства меняют подсветку сами. Ключевые слова — цветом акцента (код читается «в цвет
+ * сообщества»), строки, константы и функции — статусными оттенками, приглушёнными к тексту, чтобы блок не
+ * пестрил на тихом фоне. Отдельным классом — чтобы те же цвета брали CodeBlock, DiffView и JsonInspector
+ * (`composes: tokens from '../code-block/code-tokens.module.css'`).
+ */
+.tokens {
+  --code-foreground: var(--text);
+  --code-background: transparent;
+  --code-token-keyword: var(--accent-text);
+  --code-token-string: color-mix(in oklab, var(--success) 78%, var(--text));
+  --code-token-string-expression: var(--code-token-string);
+  --code-token-constant: color-mix(in oklab, var(--warning) 82%, var(--text));
+  --code-token-function: color-mix(in oklab, var(--info) 82%, var(--text));
+  --code-token-parameter: var(--text);
+  --code-token-punctuation: var(--text-muted);
+  --code-token-comment: var(--text-subtle);
+  --code-token-link: var(--accent-text);
+}

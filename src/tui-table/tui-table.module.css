@@ -1,0 +1,90 @@
+/*
+ * Таблица — строки моно-текста в клетках сетки: ячейка (w + 2)ch (знак отступа по бокам), между ними
+ * «│» шириной 1ch, разделитель — полная строка знаков. Высота строки — var(--tui-leading), поэтому
+ * вертикали соседних строк сходятся без зазоров.
+ */
+.root {
+  display: inline-flex;
+  flex-direction: column;
+  max-width: 100%;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--tui-leading);
+  color: var(--text);
+  white-space: pre;
+}
+
+.row,
+.rule {
+  display: flex;
+  flex-shrink: 0;
+  width: max-content;
+}
+
+.rule,
+.bar {
+  color: var(--tui-line);
+  user-select: none;
+}
+
+.cellWrap {
+  display: flex;
+}
+
+.cell {
+  box-sizing: border-box;
+  width: calc((var(--w) + 2) * 1ch);
+  padding: 0 1ch;
+  overflow: hidden;
+}
+
+.cell[data-align='right'] {
+  text-align: right;
+}
+
+.cell[data-align='center'] {
+  text-align: center;
+}
+
+.head .cell {
+  font-weight: var(--weight-semibold);
+  color: var(--text-muted);
+}
+
+/* Пустая таблица: подпись во всю ширину без рамки — ширина таблицы минус две вертикали */
+.empty {
+  width: calc((var(--table-width) - 2) * 1ch);
+  color: var(--text-subtle);
+  text-align: center;
+}
+
+/* --- Без TUI: те же данные моно, тонкие рамки кита вместо знаков ------------------------ */
+:global([data-tui='off']) .root {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  line-height: var(--leading-normal);
+}
+
+:global([data-tui='off']) .root .rule,
+:global([data-tui='off']) .root .bar {
+  display: none;
+}
+
+:global([data-tui='off']) .root .row + .row {
+  border-top: 1px solid var(--border);
+}
+
+:global([data-tui='off']) .root .head {
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-1);
+}
+
+:global([data-tui='off']) .root .cellWrap + .cellWrap .cell {
+  box-shadow: inset 1px 0 0 var(--border-subtle);
+}
+
+:global([data-tui='off']) .root .cell {
+  padding: var(--space-1) 1ch;
+}

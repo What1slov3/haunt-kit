@@ -1,0 +1,13 @@
+.root {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.glyphs {
+  white-space: pre-wrap;
+}
+
+/* Пока идёт шум — тон акцента: видно, что текст «принимается», а не что в нём опечатки */
+.glyphs[data-scrambling] {
+  color: var(--accent-text);
+}

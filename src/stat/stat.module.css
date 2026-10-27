@@ -1,0 +1,81 @@
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+/* Моно-капитель, как Heading overline; через --font-tui — без TUI подпись становится гротеском */
+.label {
+  font-family: var(--font-tui);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+}
+
+.body {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.value {
+  min-width: 0;
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
+  /* Табличные цифры: соседние плитки и обновления числа не прыгают по ширине */
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.lg .value {
+  font-size: var(--text-4xl);
+}
+
+.chart {
+  flex-shrink: 0;
+  /* Линия стоит на базовой линии числа, а не висит над ним */
+  padding-bottom: var(--space-1);
+}
+
+.footer {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1-5);
+  font-size: var(--text-sm);
+}
+
+.change {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-0-5);
+  font-family: var(--font-mono);
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+.arrow {
+  font-size: 0.75em;
+}
+
+.success {
+  color: var(--success);
+}
+
+.danger {
+  color: var(--danger);
+}
+
+.neutral {
+  color: var(--text-muted);
+}
+
+.hint {
+  color: var(--text-subtle);
+}

@@ -1,0 +1,174 @@
+/*
+ * Рамка и состояния — field-frame.module.css. Теги переносятся, поле растёт по высоте; в одну строку
+ * высота та же, что у Input: вертикальный отступ = (высота − рамки − тег) / 2.
+ */
+.root {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+  min-width: 200px;
+}
+
+.fullWidth {
+  display: flex;
+  width: 100%;
+}
+
+.frame {
+  /* Отступ текста от края — как у Input того же размера */
+  --frame-text-inset: var(--space-2);
+
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  cursor: text;
+}
+
+.frame.sm {
+  --tag-height: 18px;
+  --frame-pad: calc((var(--control-sm) - 2px - var(--tag-height)) / 2);
+
+  padding: var(--frame-pad);
+}
+
+.frame.md {
+  --tag-height: 20px;
+  --frame-pad: calc((var(--control-md) - 2px - var(--tag-height)) / 2);
+
+  padding: var(--frame-pad);
+}
+
+.frame.lg {
+  --tag-height: 24px;
+  --frame-text-inset: var(--space-3);
+  --frame-pad: calc((var(--control-lg) - 2px - var(--tag-height)) / 2);
+
+  padding: var(--frame-pad);
+}
+
+/* Список не участвует в раскладке: теги и ввод переносятся одним потоком */
+.tags {
+  display: contents;
+  list-style: none;
+}
+
+.tag {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-0-5);
+  max-width: 100%;
+  height: var(--tag-height);
+  padding: 0 var(--space-0-5) 0 var(--space-2);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  color: var(--text);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  cursor: default;
+}
+
+.sm .tag {
+  padding-left: var(--space-1-5);
+  font-size: var(--text-xs);
+}
+
+.tagText {
+  min-width: 0;
+  max-width: 200px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Кнопка-крестик — круг внутри таблетки: её высота минус рамки и зазор 2 px сверху и снизу */
+.remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: calc(var(--tag-height) - 2px - 2 * var(--space-0-5));
+  height: calc(var(--tag-height) - 2px - 2 * var(--space-0-5));
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-full);
+  color: var(--text-subtle);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.remove:hover:not(:disabled) {
+  background: var(--state-hover-bg);
+  color: var(--text);
+}
+
+/* Дубль: уже стоящий тег «попает» и вспыхивает тоном акцента — вспышка гаснет сама */
+.flash {
+  animation: var(--anim-pop);
+  animation-play-state: var(--fx-play);
+}
+
+.flash::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border: 1px solid var(--state-selected-border);
+  border-radius: inherit;
+  background: var(--state-selected-bg);
+  pointer-events: none;
+  animation: tag-flash 900ms var(--ease-out) forwards;
+}
+
+@keyframes tag-flash {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+/* Ввод выравнивает текст по полю, когда тегов нет, и отступает от последнего тега */
+.input {
+  flex: 1 0 64px;
+  min-width: 64px;
+  height: var(--tag-height);
+  padding: 0 calc(var(--frame-text-inset) - var(--frame-pad));
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: inherit;
+}
+
+.input::placeholder {
+  color: var(--text-subtle);
+}
+
+.input:disabled {
+  cursor: not-allowed;
+}
+
+/* Ошибка — как у Field: `! текст`, знак из TUI-токена */
+.error {
+  display: flex;
+  gap: 0.5em;
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+  color: var(--danger);
+  animation: var(--anim-fade-in);
+}
+
+.error::before {
+  content: var(--tui-error);
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-weight: var(--weight-bold);
+}
+
+[data-tui='off'] .error {
+  gap: 0;
+}

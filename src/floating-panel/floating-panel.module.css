@@ -1,0 +1,143 @@
+/*
+ * Место — только transform (left/top нулевые): перемещение не трогает раскладку. Прилипание после
+ * отпускания доезжает переходом transform; пока тянут — без перехода, панель идёт за курсором.
+ */
+.root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  /* Над приложением, под модальными слоями: диалог поверх голоса закрывает и его */
+  z-index: calc(var(--z-overlay) - 1);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.root[data-gesture] {
+  transition: none;
+}
+
+.panel {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  background: var(--glass);
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow:
+    var(--shadow-float),
+    inset 0 1px 0 var(--edge-highlight);
+  color: var(--text);
+  animation: var(--anim-pop-in);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-shrink: 0;
+  height: var(--control-lg);
+  padding: 0 var(--space-1) 0 var(--space-3);
+  border-bottom: 1px solid var(--border);
+  /* Концентрично панели: шапка стоит вплотную к рамке, радиус — внешний минус рамка */
+  border-radius: calc(var(--radius-xl) - 1px) calc(var(--radius-xl) - 1px) 0 0;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.root[data-gesture] .header,
+.root[data-gesture] .pill {
+  cursor: grabbing;
+}
+
+.header:focus-visible {
+  outline-offset: -2px;
+}
+
+.title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+/* Угол-ручка: зона 14 px поверх рамки, курсор по диагонали */
+.corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  touch-action: none;
+}
+
+.corner[data-corner='top-left'] {
+  top: -4px;
+  left: -4px;
+  cursor: nwse-resize;
+}
+
+.corner[data-corner='top-right'] {
+  top: -4px;
+  right: -4px;
+  cursor: nesw-resize;
+}
+
+.corner[data-corner='bottom-left'] {
+  bottom: -4px;
+  left: -4px;
+  cursor: nesw-resize;
+}
+
+.corner[data-corner='bottom-right'] {
+  right: -4px;
+  bottom: -4px;
+  cursor: nwse-resize;
+}
+
+/* Пилюля — то же стекло, но во всю высоту контрола и полным скруглением */
+.pill {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  max-width: 280px;
+  height: var(--control-lg);
+  padding: 0 var(--space-1) 0 var(--space-3);
+  background: var(--glass);
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  box-shadow:
+    var(--shadow-float),
+    inset 0 1px 0 var(--edge-highlight);
+  color: var(--text);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  animation: var(--anim-pop-in);
+}
+
+.pillTitle {
+  min-width: 0;
+  overflow: hidden;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Кнопки пилюли круглые: квадрат в полном скруглении торчал бы углами */
+.pill button {
+  border-radius: var(--radius-full);
+}

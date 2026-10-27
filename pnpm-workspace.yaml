@@ -1,0 +1,3 @@
+allowBuilds:
+  # Vite использует esbuild; его postinstall проверяет бинарь под платформу
+  esbuild: true

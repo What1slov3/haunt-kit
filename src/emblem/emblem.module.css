@@ -1,0 +1,11 @@
+.emblem {
+  flex-shrink: 0;
+  color: var(--text);
+  /* Острые стыки шевронов и прямые концы дуг: знак как штамп, а не иконка с мягкими концами */
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+}
+
+.accent .accent {
+  color: var(--accent-text);
+}

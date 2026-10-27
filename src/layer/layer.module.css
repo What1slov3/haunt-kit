@@ -1,0 +1,50 @@
+.layer {
+  display: grid;
+  min-width: 0;
+}
+
+.layer > * {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+
+/* Слой прижимается к своему месту: первое значение — по вертикали, второе — по горизонтали */
+.item[data-place='fill'] {
+  place-self: stretch;
+}
+
+.item[data-place='top-start'] {
+  place-self: start start;
+}
+
+.item[data-place='top'] {
+  place-self: start center;
+}
+
+.item[data-place='top-end'] {
+  place-self: start end;
+}
+
+.item[data-place='start'] {
+  place-self: center start;
+}
+
+.item[data-place='center'] {
+  place-self: center;
+}
+
+.item[data-place='end'] {
+  place-self: center end;
+}
+
+.item[data-place='bottom-start'] {
+  place-self: end start;
+}
+
+.item[data-place='bottom'] {
+  place-self: end center;
+}
+
+.item[data-place='bottom-end'] {
+  place-self: end end;
+}

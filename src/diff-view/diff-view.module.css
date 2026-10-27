@@ -1,0 +1,200 @@
+/*
+ * Добавленное — тоном успеха, удалённое — тоном ошибки: мягкий фон строки и плотнее — изменённые слова.
+ * Цвета подсветки синтаксиса — общие `--code-*` (code-tokens.module.css), как у CodeBlock.
+ */
+.root {
+  composes: tokens from '../code-block/code-tokens.module.css';
+
+  --diff-add: var(--success-soft);
+  --diff-add-strong: color-mix(in oklab, var(--success) 30%, transparent);
+  --diff-del: var(--danger-soft);
+  --diff-del-strong: color-mix(in oklab, var(--danger) 30%, transparent);
+
+  min-width: 0;
+  overflow: hidden;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  color: var(--text);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--control-lg);
+  padding: 0 var(--space-3);
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.side {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.stats {
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: var(--space-1-5);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+.statAdded {
+  color: var(--success);
+}
+
+.statRemoved {
+  color: var(--danger);
+}
+
+.scroll {
+  overflow: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.7;
+  font-variant-ligatures: none;
+  tab-size: 2;
+}
+
+.split {
+  table-layout: fixed;
+}
+
+.number {
+  width: 1%;
+  padding: 0 var(--space-2);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+  color: var(--text-disabled);
+  user-select: none;
+  vertical-align: top;
+}
+
+.split .number {
+  width: 4ch;
+}
+
+.sign {
+  width: 2ch;
+  padding-left: var(--space-1);
+  color: var(--text-subtle);
+  user-select: none;
+  vertical-align: top;
+}
+
+.split .sign {
+  width: 3ch;
+}
+
+.code {
+  padding-right: var(--space-4);
+  white-space: pre;
+}
+
+.split .code {
+  overflow: hidden;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.split .code + .number {
+  border-left: 1px solid var(--border);
+}
+
+td[data-type='insert'] {
+  background: var(--diff-add);
+}
+
+td[data-type='delete'] {
+  background: var(--diff-del);
+}
+
+td[data-type='empty'] {
+  background: var(--surface-2);
+}
+
+.sign[data-type='insert'] {
+  color: var(--success);
+}
+
+.sign[data-type='delete'] {
+  color: var(--danger);
+}
+
+.ins,
+.del {
+  border-radius: 2px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.ins {
+  background: var(--diff-add-strong);
+}
+
+.del {
+  background: var(--diff-del-strong);
+}
+
+/* В тексте по словам удалённое ещё и зачёркнуто: без цвета правку видно по линии */
+.words .del {
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in oklab, var(--danger) 70%, transparent);
+}
+
+.foldRow td {
+  padding: 0;
+  background: var(--surface-2);
+}
+
+.fold {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  width: 100%;
+  height: var(--control-sm);
+  padding: 0 var(--space-3);
+  background: transparent;
+  border: none;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-align: left;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.fold:hover {
+  background: var(--state-hover-bg);
+  color: var(--text);
+}
+
+.same {
+  padding: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--text-subtle);
+}
+
+.wordsRoot {
+  padding: var(--space-3);
+}
+
+.words {
+  margin: 0;
+  font-size: var(--text-lg);
+  line-height: var(--leading-normal);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

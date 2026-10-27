@@ -1,0 +1,49 @@
+/*
+ * Локальные keyframes здесь можно: они объявлены в этом же модуле, и окончания анимации никто не ждёт.
+ * animation-timeline — после сокращённой записи: `animation` сбрасывает его в auto.
+ */
+.root[data-scroll='timeline'] {
+  animation: reveal-from linear both;
+  animation-timeline: view();
+  animation-range: var(--reveal-range);
+}
+
+.rise {
+  --reveal-transform: translateY(16px);
+}
+
+.fade {
+  --reveal-transform: none;
+}
+
+.scale {
+  --reveal-transform: scale(0.96);
+}
+
+@keyframes reveal-from {
+  from {
+    opacity: 0;
+    transform: var(--reveal-transform);
+    filter: blur(var(--fx-depth-blur));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+/* Запасной путь: до появления в окне — в начальном кадре, потом переход один раз */
+.root[data-scroll='observe'] {
+  opacity: 0;
+  transform: var(--reveal-transform);
+  transition:
+    opacity var(--duration-slow) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
+}
+
+.root[data-scroll='observe'][data-inview] {
+  opacity: 1;
+  transform: none;
+}

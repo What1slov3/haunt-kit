@@ -1,0 +1,171 @@
+/* Сброс и базовые стили документа. Токены — в tokens.css, шрифт подключается в theme/index.ts */
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  font-weight: var(--weight-normal);
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* Цифры одной ширины, чтобы счётчики и время в списках не прыгали */
+  font-variant-numeric: tabular-nums;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+figure,
+ul,
+ol {
+  margin: 0;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: var(--accent-text);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+code,
+kbd,
+samp {
+  font-family: var(--font-mono);
+}
+
+/*
+ * Полоса прокрутки — одна на весь кит и такая же, как у ScrollArea: тонкий скруглённый ползунок без кнопок,
+ * дорожки нет. Без этого Windows рисует системную серую полосу со стрелками. Chromium и WebKit (WebView2 и
+ * WKWebView в Tauri) — через ::-webkit-scrollbar. Стандартные scrollbar-width / scrollbar-color — только для
+ * Firefox: в Chromium 121+ любое из них на элементе отключает ::-webkit-scrollbar и возвращает системную.
+ */
+::-webkit-scrollbar {
+  width: var(--scrollbar-size);
+  height: var(--scrollbar-size);
+  background: transparent;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Поля у концов дорожки: в блоке со скруглёнными углами ползунок не упирается в угол */
+::-webkit-scrollbar-track:vertical {
+  margin-block: var(--space-1);
+}
+
+::-webkit-scrollbar-track:horizontal {
+  margin-inline: var(--space-1);
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+/* Толщину ползунка задаёт прозрачная рамка: под курсором она тоньше — ползунок шире, а дорожка не меняется */
+::-webkit-scrollbar-thumb {
+  min-width: 24px;
+  min-height: 24px;
+  background-color: var(--scrollbar-thumb);
+  background-clip: padding-box;
+  border: var(--scrollbar-inset) solid transparent;
+  border-radius: var(--scrollbar-radius);
+}
+
+:hover::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb-hover);
+}
+
+::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:active {
+  border-width: calc(var(--scrollbar-inset) / 2);
+  background-color: var(--scrollbar-thumb-active);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+  }
+}
+
+/* Единый видимый фокус для клавиатуры; мышь колец не показывает. Поля — через :focus-within (field-frame) */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+/* Крупные заголовки и цифры: плотный трекинг и табличные цифры задаёт body, здесь только h1–h3 */
+h1,
+h2,
+h3 {
+  letter-spacing: -0.015em;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+::selection {
+  background: var(--accent-soft-strong);
+}
+
+/*
+ * Движение гаснет целиком: экраны с Motion слушают ту же настройку через MotionProvider (@haunt/ui/motion).
+ * Спиннер и каретка исключены: без них состояние «грузится» и место ввода не видны.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *:not([data-motion-keep]),
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

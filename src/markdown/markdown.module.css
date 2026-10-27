@@ -1,0 +1,193 @@
+/*
+ * Текст сообщения: 14 px, плотные блоки. Отступ между блоками 6 px — меньше межстрочного «воздуха» соседних
+ * сообщений, так абзацы одного сообщения читаются вместе. Длинные ссылки и слова переносятся.
+ */
+.root {
+  min-width: 0;
+  font-size: var(--text-lg);
+  line-height: var(--leading-normal);
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+/* Сброс — до отступа между блоками: при равной специфичности позже стоящий `margin: 0` его стирал */
+.root :where(p, h1, h2, h3, h4, h5, h6, blockquote, ul, ol),
+.root > * {
+  margin: 0;
+}
+
+.root > * + * {
+  margin-top: var(--space-1-5);
+}
+
+/* Превью — строка в строке: блоков нет, обрезание многоточием решает родитель (`Text truncate`) */
+.inline {
+  display: inline;
+}
+
+/* Пока рендер грузится — исходный текст с переносами, той же высоты строки */
+.fallback {
+  white-space: pre-wrap;
+}
+
+.inline.fallback {
+  white-space: normal;
+}
+
+.root :where(h1, h2, h3, h4, h5, h6) {
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+}
+
+.root h1 {
+  font-size: var(--text-2xl);
+}
+
+.root h2 {
+  font-size: var(--text-xl);
+}
+
+.root :where(h3, h4, h5, h6) {
+  font-size: var(--text-lg);
+}
+
+.root blockquote {
+  padding-left: var(--space-3);
+  border-left: 3px solid var(--border-strong);
+  color: var(--text-muted);
+}
+
+.root blockquote > * + * {
+  margin-top: var(--space-1);
+}
+
+/* Сброс кита снимает маркеры списков — в тексте сообщения они нужны */
+.root :where(ul, ol) {
+  padding-left: 1.5em;
+}
+
+.root ul {
+  list-style: disc;
+}
+
+.root ol {
+  list-style: decimal;
+}
+
+.root li + li,
+.root li > :where(ul, ol) {
+  margin-top: var(--space-0-5);
+}
+
+.root li::marker {
+  color: var(--text-subtle);
+}
+
+/* Список задач GFM: классы ставит remark-gfm, поэтому :global */
+.root :global(.contains-task-list) {
+  padding-left: 0;
+  list-style: none;
+}
+
+.task {
+  margin: 0 var(--space-1-5) 0 0;
+  vertical-align: -2px;
+  accent-color: var(--accent);
+}
+
+.root hr {
+  height: 0;
+  border: none;
+  border-top: 1px solid var(--border);
+}
+
+.code {
+  padding: 0 var(--space-1);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  font-variant-ligatures: none;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.codeBlock {
+  max-width: 100%;
+}
+
+/* Таблица шире сообщения прокручивается внутри рамки, а не раздвигает ленту */
+.tableWrap {
+  /* Рамка по таблице, а не на всю ширину сообщения */
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.tableWrap table {
+  border-collapse: collapse;
+  font-size: var(--text-md);
+}
+
+.tableWrap :where(th, td) {
+  padding: var(--space-1) var(--space-2);
+  text-align: left;
+}
+
+.tableWrap :where(th, td)[align='center'] {
+  text-align: center;
+}
+
+.tableWrap :where(th, td)[align='right'] {
+  text-align: right;
+}
+
+.tableWrap th {
+  background: var(--surface-2);
+  font-weight: var(--weight-semibold);
+}
+
+.tableWrap tr + tr td,
+.tableWrap tbody tr:first-child td {
+  border-top: 1px solid var(--border);
+}
+
+.emoji {
+  font-size: 1.2em;
+  line-height: 1;
+  vertical-align: -0.1em;
+}
+
+/* Спойлер: плашка, текст под ней прозрачен; переносится по строкам вместе с фоном */
+.spoiler {
+  padding: 0 var(--space-0-5);
+  background: var(--surface-3);
+  border-radius: var(--radius-sm);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--duration-base) var(--ease-out);
+}
+
+.spoiler:not([data-revealed]):hover {
+  background: var(--surface-active);
+}
+
+.spoiler[data-revealed] {
+  background: var(--highlight);
+  cursor: auto;
+  user-select: auto;
+}
+
+.spoilerContent {
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-out);
+}
+
+.spoiler[data-revealed] .spoilerContent {
+  opacity: 1;
+}

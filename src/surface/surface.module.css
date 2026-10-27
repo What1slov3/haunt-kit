@@ -1,0 +1,64 @@
+.surface {
+  position: relative;
+  background: var(--surface-bg);
+  color: var(--text);
+  transition:
+    background-color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+}
+
+.level-1 {
+  --surface-bg: var(--surface-1);
+  --panel-bg: var(--panel-1);
+}
+
+.level-2 {
+  --surface-bg: var(--surface-2);
+  --panel-bg: var(--panel-2);
+}
+
+.level-3 {
+  --surface-bg: var(--surface-3);
+  --panel-bg: var(--panel-3);
+}
+
+/* Панель: ободок счётчиков рейла внутри — цвета панели, а не корневого фона; блик по верхней кромке */
+.panel {
+  --surface-bg: var(--panel-bg);
+  --avatar-ring: var(--panel-bg);
+
+  box-shadow: inset 0 1px 0 var(--edge-highlight);
+}
+
+.border {
+  border: 1px solid var(--border);
+}
+
+.glass {
+  background: var(--glass);
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+  box-shadow: inset 0 1px 0 var(--edge-highlight);
+}
+
+.floating {
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow-float);
+}
+
+.floating.glass {
+  background: var(--glass);
+}
+
+.interactive {
+  cursor: pointer;
+}
+
+.interactive:hover {
+  background: var(--state-hover-bg);
+  border-color: var(--border-strong);
+}
+
+.interactive:active {
+  transform: scale(0.995);
+}

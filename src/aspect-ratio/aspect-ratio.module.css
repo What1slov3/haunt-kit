@@ -1,0 +1,44 @@
+/* Radix кладёт содержимое в абсолютный слой поверх распорки — className уходит на этот слой */
+.root {
+  overflow: hidden;
+}
+
+.root > :is(img, video, canvas, picture) {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.framed {
+  background: var(--surface-2);
+}
+
+.framed::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--border);
+  pointer-events: none;
+}
+
+.radius-none {
+  border-radius: 0;
+}
+
+.radius-md {
+  border-radius: var(--radius-md);
+}
+
+.radius-lg {
+  border-radius: var(--radius-lg);
+}
+
+.radius-xl {
+  border-radius: var(--radius-xl);
+}
+
+.radius-2xl {
+  border-radius: var(--radius-2xl);
+}

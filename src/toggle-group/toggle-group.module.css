@@ -1,0 +1,106 @@
+/*
+ * Сегментированная группа — колодец с приподнятой плашкой. Колодец темнее поверхности и вдавлен (тень
+ * сверху внутрь), плашка выбранного над ним светлее, с бликом по кромке и мягкой тенью: выбранное видно
+ * объёмом, а не только цветом. Размеры совпадают с кнопками и полями той же высоты (sm — 24 px и 12 px
+ * текста, md — 28 и 13), чтобы стоять с ними в одном ряду.
+ */
+.root {
+  position: relative;
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  background: var(--segment-well);
+  border-radius: var(--radius-md);
+  box-shadow: var(--segment-inset);
+}
+
+.item {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1-5);
+  flex-shrink: 0;
+  padding: 0 var(--space-2);
+  background: transparent;
+  border: none;
+  /* Концентрично колодцу: радиус группы минус padding */
+  border-radius: calc(var(--radius-md) - 2px);
+  font-family: var(--control-font, inherit);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--control-tracking, inherit);
+  text-transform: var(--control-case, inherit);
+  color: var(--text-muted);
+  white-space: nowrap;
+  transition: color var(--duration-base) var(--ease-out);
+}
+
+.item:hover:not(:disabled) {
+  color: var(--text);
+}
+
+/* Состояние — по aria: single-группа ставит пунктам aria-checked, multiple — aria-pressed. Не data-state:
+ * Tooltip вокруг пункта перезаписывает его своим closed/open */
+.item[aria-checked='true'],
+.item[aria-pressed='true'] {
+  color: var(--text);
+}
+
+/* Плашка выбранного: у single одна на группу и переезжает (toggle-group-parts.tsx), у multiple — на
+ * каждом выбранном пункте */
+.thumb,
+.root:not(.single) .item[aria-pressed='true'] {
+  border-radius: calc(var(--radius-md) - 2px);
+  background: var(--segment-thumb);
+  box-shadow: var(--segment-raise);
+}
+
+.thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.thumb[data-hidden] {
+  opacity: 0;
+}
+
+.thumb[data-ready] {
+  transition:
+    transform var(--duration-release) var(--ease-release),
+    width var(--duration-release) var(--ease-release),
+    height var(--duration-release) var(--ease-release),
+    opacity var(--duration-base) var(--ease-out);
+}
+
+/* Без эффектов плашка встаёт на место сразу; reduced-motion гасит переход глобально (global.css) */
+:global([data-effects='off']) .thumb {
+  transition: none;
+}
+
+.item:disabled {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+.sm .item {
+  height: 20px;
+  font-size: var(--text-sm);
+}
+
+.md .item {
+  height: 24px;
+  font-size: var(--text-md);
+}
+
+.md .item:not(.iconOnly) {
+  padding: 0 10px;
+}
+
+.iconOnly {
+  padding: 0;
+  aspect-ratio: 1;
+}

@@ -1,0 +1,34 @@
+/*
+ * Кнопка копирования прижата к правому краю рамки на том же отступе, что сверху и снизу, — поэтому
+ * её скругление концентрично рамке: радиус рамки минус отступ и border.
+ */
+.root {
+  --copy-inset: calc((var(--control-height) - 2px - var(--copy-size)) / 2);
+}
+
+.root.sm {
+  --control-height: var(--control-sm);
+  --copy-size: calc(var(--control-sm) - 8px);
+
+  padding-right: var(--copy-inset);
+}
+
+.root.md {
+  --control-height: var(--control-md);
+  --copy-size: calc(var(--control-md) - 8px);
+
+  padding-right: var(--copy-inset);
+}
+
+.root.lg {
+  --control-height: var(--control-lg);
+  --copy-size: calc(var(--control-lg) - 8px);
+
+  padding-right: var(--copy-inset);
+}
+
+.root .copy {
+  width: var(--copy-size);
+  height: var(--copy-size);
+  border-radius: calc(var(--radius-md) - var(--copy-inset) - 1px);
+}

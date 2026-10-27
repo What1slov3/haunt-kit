@@ -1,0 +1,160 @@
+.wrapper {
+  --avatar-size: 32px;
+  --status-size: 10px;
+
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+}
+
+.xs {
+  --avatar-size: 20px;
+  --status-size: 7px;
+}
+
+.sm {
+  --avatar-size: 24px;
+  --status-size: 8px;
+}
+
+.md {
+  --avatar-size: 32px;
+  --status-size: 10px;
+}
+
+.lg {
+  --avatar-size: 40px;
+  --status-size: 12px;
+}
+
+.xl {
+  --avatar-size: 64px;
+  --status-size: 16px;
+}
+
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--surface-2);
+  user-select: none;
+}
+
+/* Скругление — переменной на обёртке: от неё считается кольцо speaking, а контейнер, который сам
+ * обрезает аватар (плитка рейла), обнуляет её у себя */
+.circle {
+  --avatar-radius: calc(var(--avatar-size) / 2);
+}
+
+.rounded {
+  --avatar-radius: calc(var(--avatar-size) * 0.25);
+}
+
+.wrapper,
+.root {
+  border-radius: var(--avatar-radius);
+}
+
+/* Рамка — ручка косметики --avatar-frame (box-shadow по скруглению аватара); без неё рамки нет */
+.wrapper {
+  box-shadow: var(--avatar-frame, none);
+}
+
+.speaking {
+  --beam-color-1: var(--success);
+  --beam-color-2: var(--info);
+  --edge-offset: 3px;
+  --edge-width: 2px;
+}
+
+/* Кольцо вынесено наружу на --edge-offset: чтобы дуги были концентричны, радиус растёт на тот же вынос.
+ * [data-beam] в селекторе — чтобы перебить общий `[data-beam]::before` из effects.css при любом порядке */
+.speaking[data-beam]::before {
+  border-radius: calc(var(--avatar-radius) + var(--edge-offset));
+}
+
+/* Вырез под точку статуса — маской, а не обводкой цвета подложки: прозрачен на любом фоне (панель,
+ * плитка, градиент, стекло), и аватару не нужно знать, на чём он лежит */
+.with-status {
+  --status-cut: calc(var(--status-size) / 2 + 2px);
+  --status-center: calc(100% - var(--status-size) / 2);
+}
+
+.with-status .root {
+  mask-image: radial-gradient(
+    circle at var(--status-center) var(--status-center),
+    transparent var(--status-cut),
+    #000 calc(var(--status-cut) + 0.5px)
+  );
+}
+
+/* То же отверстие в кольце speaking. Слои снизу вверх: обод (полный слой минус content-box), затем
+ * пересечение с отверстием. Центр сдвинут на вынос: ::before больше аватара на --edge-offset с каждой стороны */
+.with-status.speaking[data-beam]::before {
+  --ring-center: calc(100% - var(--edge-offset) - var(--status-size) / 2);
+  --ring-hole: radial-gradient(
+    circle at var(--ring-center) var(--ring-center),
+    transparent var(--status-cut),
+    #000 calc(var(--status-cut) + 0.5px)
+  );
+
+  -webkit-mask:
+    var(--ring-hole),
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: source-in, xor;
+  mask:
+    var(--ring-hole),
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: intersect, exclude;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: calc(var(--avatar-size) * 0.38);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  background: hsl(var(--avatar-hue) 42% 44%);
+}
+
+.status {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: var(--status-size);
+  height: var(--status-size);
+  border-radius: var(--radius-full);
+}
+
+.status-online {
+  background: var(--success);
+}
+
+.status-idle {
+  background: var(--warning);
+}
+
+.status-dnd {
+  background: var(--danger);
+}
+
+.status-offline {
+  background: var(--text-subtle);
+}

@@ -1,0 +1,109 @@
+/* Цвета подсветки `--code-*` — в code-tokens.module.css, общие с DiffView и JsonInspector */
+.root {
+  composes: tokens from './code-tokens.module.css';
+
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  color: var(--text);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--control-lg);
+  padding: 0 var(--space-1) 0 var(--space-3);
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.icon {
+  display: inline-flex;
+  color: var(--text-subtle);
+}
+
+.title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.language {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-subtle);
+}
+
+.copy {
+  flex-shrink: 0;
+}
+
+.copy[data-copied] {
+  color: var(--success);
+}
+
+/* Без шапки кнопка висит в углу и видна по наведению — как у Fumadocs */
+.copyFloating {
+  position: absolute;
+  top: var(--space-1-5);
+  right: var(--space-1-5);
+  z-index: 1;
+  background: var(--glass);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.root:hover .copyFloating,
+.copyFloating:focus-visible,
+.copyFloating[data-copied] {
+  opacity: 1;
+}
+
+.pre {
+  margin: 0;
+  padding: var(--space-3) 0;
+  overflow: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.7;
+  tab-size: 2;
+  /* Без лигатур: в примере кода «=>» и «===» должны выглядеть так, как их набирают */
+  font-variant-ligatures: none;
+}
+
+.code {
+  display: grid;
+  min-width: max-content;
+  font: inherit;
+  counter-reset: haunt-line;
+}
+
+.line {
+  padding: 0 var(--space-4);
+  white-space: pre;
+}
+
+/* Выделенная строка — тон акцента и отметка слева, как подсветка строк у Fumadocs */
+.line[data-highlighted] {
+  background: var(--accent-soft);
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+
+.numbered .line::before {
+  content: counter(haunt-line);
+  counter-increment: haunt-line;
+  display: inline-block;
+  width: 2ch;
+  margin-right: var(--space-4);
+  text-align: right;
+  color: var(--text-disabled);
+  user-select: none;
+}

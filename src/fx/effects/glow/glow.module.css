@@ -1,0 +1,41 @@
+.root {
+  position: relative;
+  display: inline-flex;
+  /* Свой контекст наложения: свечение ложится за ребёнком, но над фоном родителя */
+  isolation: isolate;
+}
+
+.root::before {
+  content: '';
+  position: absolute;
+  inset: calc(-1 * var(--glow-spread));
+  z-index: -1;
+  border-radius: calc(var(--glow-radius) + var(--glow-spread));
+  background: var(--glow-color);
+  filter: blur(var(--glow-blur));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-slow) var(--ease-out);
+}
+
+.root[data-active]::before {
+  opacity: calc(var(--glow-strength) * var(--fx-glow));
+}
+
+.root[data-active][data-pulse]::before {
+  animation: glow-breathe 2.4s var(--ease-in-out) infinite;
+  animation-play-state: var(--fx-play);
+}
+
+@keyframes glow-breathe {
+  0%,
+  100% {
+    opacity: calc(var(--glow-strength) * var(--fx-glow));
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: calc(var(--glow-strength) * var(--fx-glow) * 0.45);
+    transform: scale(0.96);
+  }
+}

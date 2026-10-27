@@ -1,0 +1,100 @@
+.root {
+  min-width: 0;
+}
+
+.list {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  font-size: var(--text-md);
+}
+
+.item {
+  display: flex;
+  min-width: 0;
+}
+
+/* Корень и многоточие не сжимаются; длинные подписи середины и текущая страница обрезаются */
+.item:first-child,
+.item:has(.more) {
+  flex-shrink: 0;
+}
+
+.crumb {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  min-width: 0;
+  max-width: 18em;
+  height: var(--control-sm);
+  padding: 0 var(--space-1);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: inherit;
+  white-space: nowrap;
+}
+
+.link {
+  cursor: pointer;
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+}
+
+.link:hover {
+  background: var(--state-hover-bg);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.more[data-state='open'] {
+  background: var(--state-active-bg);
+  color: var(--text);
+}
+
+.more {
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+}
+
+.current {
+  color: var(--text);
+  font-weight: var(--weight-medium);
+}
+
+.icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--text-subtle);
+}
+
+.text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/*
+ * Разделитель пути — `/` моно. Своего TUI-токена у пути пока нет (`--tui-separator` — разделитель пунктов
+ * строки, `│`, другое значение); fallback держит знак, пока токен не появится в tokens.css.
+ */
+.separator {
+  display: flex;
+  flex-shrink: 0;
+  padding: 0 var(--space-0-5);
+  font-family: var(--font-mono);
+  color: var(--text-disabled);
+  user-select: none;
+}
+
+.separator::before {
+  content: var(--tui-path);
+}
+
+/* Пункт меню — ссылка: подчёркивание глобального a:hover тут лишнее, подсветку даёт сам пункт */
+.menuLink,
+.menuLink:hover {
+  text-decoration: none;
+}

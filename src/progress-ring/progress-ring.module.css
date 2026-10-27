@@ -1,0 +1,92 @@
+.root {
+  --ring-color: var(--accent);
+
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.accent {
+  --ring-color: var(--accent);
+}
+
+.success {
+  --ring-color: var(--success);
+}
+
+.warning {
+  --ring-color: var(--warning);
+}
+
+.danger {
+  --ring-color: var(--danger);
+}
+
+/* Начало дуги — сверху: SVG рисует окружность от «трёх часов» */
+.svg {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+
+.track {
+  fill: none;
+  stroke: var(--surface-3);
+}
+
+/*
+ * Исключение из «анимируются только transform / opacity / filter»: длину дуги transform не задаёт, а
+ * stroke-dashoffset перерисовывает лишь обод в 2–4 px одного SVG. Переход короткий и только при смене
+ * значения, постоянно ничего не движется
+ */
+.indicator {
+  fill: none;
+  stroke: var(--ring-color);
+  stroke-linecap: round;
+  transition: stroke-dashoffset var(--duration-slow) var(--ease-out);
+}
+
+/* Неопределённое — вращается весь SVG (transform), длина дуги стоит */
+.spinning {
+  animation: ring-spin 0.9s linear infinite;
+}
+
+@keyframes ring-spin {
+  from {
+    transform: rotate(-90deg);
+  }
+
+  to {
+    transform: rotate(270deg);
+  }
+}
+
+.center {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  font-family: var(--font-mono);
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--text);
+}
+
+.md .center {
+  font-size: var(--text-xs);
+}
+
+.lg .center {
+  font-size: var(--text-lg);
+}
+
+.sm .center {
+  font-size: 9px;
+}
+
+.unit {
+  font-size: 0.75em;
+  color: var(--text-muted);
+}

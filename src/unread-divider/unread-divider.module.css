@@ -1,0 +1,35 @@
+.root {
+  display: flex;
+  align-items: center;
+  gap: 1ch;
+  width: 100%;
+  min-height: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--accent-text);
+}
+
+.label {
+  flex: none;
+  white-space: nowrap;
+}
+
+.label::before {
+  content: var(--tui-bracket-open) ' ' / '';
+}
+
+.label::after {
+  content: ' ' var(--tui-bracket-close) / '';
+}
+
+.line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent-text), transparent);
+}
+
+:global([data-tui='off']) .root .label::before,
+:global([data-tui='off']) .root .label::after {
+  content: none;
+}

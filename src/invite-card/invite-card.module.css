@@ -1,0 +1,132 @@
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+  max-width: 440px;
+  padding: var(--space-3);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  box-shadow: inset 0 1px 0 var(--edge-highlight);
+  color: var(--text);
+}
+
+.card::before {
+  content: var(--frame-ticks-content, none);
+  position: absolute;
+  inset: -1px;
+  background: var(--frame-ticks, none);
+  pointer-events: none;
+}
+
+.overline {
+  color: var(--text-subtle);
+  font-family: var(--micro-font, var(--font-mono));
+  font-size: var(--micro-size, var(--text-xs));
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--micro-tracking, 0.06em);
+  text-transform: uppercase;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+/* Значок 48 px — между xl-аватаром (64) и lg (40): у приглашения он главный, но не крупнее имени */
+.card .avatar {
+  --avatar-size: 48px;
+}
+
+.emblem,
+.brokenIcon {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  overflow: hidden;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: calc(48px * 0.25);
+}
+
+.brokenIcon {
+  background: var(--danger-soft);
+  border-color: color-mix(in oklab, var(--danger) 30%, var(--border));
+  color: var(--danger);
+}
+
+.card[data-state='expired'] .brokenIcon {
+  background: var(--warning-soft);
+  border-color: color-mix(in oklab, var(--warning) 30%, var(--border));
+  color: var(--warning);
+}
+
+.body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-0-5);
+  min-width: 0;
+}
+
+.name {
+  overflow: hidden;
+  font-family: var(--heading-font, inherit);
+  font-size: var(--text-xl);
+  font-stretch: var(--heading-stretch, normal);
+  font-weight: var(--weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card[data-state='expired'] .name,
+.card[data-state='invalid'] .name {
+  color: var(--text-muted);
+  font-size: var(--text-lg);
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  text-overflow: ellipsis;
+}
+
+.stat {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: var(--text-subtle);
+  border-radius: var(--radius-full);
+}
+
+.online {
+  background: var(--success);
+}
+
+.description {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+}
+
+.expires {
+  color: var(--text-subtle);
+  font-size: var(--text-xs);
+}

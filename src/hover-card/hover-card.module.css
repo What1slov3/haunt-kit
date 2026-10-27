@@ -1,0 +1,24 @@
+.content {
+  z-index: var(--z-popover);
+  width: 280px;
+  max-width: calc(100vw - 16px);
+  padding: var(--space-3);
+  background: var(--glass);
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-float);
+  color: var(--text);
+  transform-origin: var(--radix-hover-card-content-transform-origin);
+  animation: var(--anim-pop-in);
+}
+
+.content[data-state='closed'] {
+  animation: var(--anim-pop-out);
+}
+
+.flush {
+  padding: 0;
+  overflow: hidden;
+}

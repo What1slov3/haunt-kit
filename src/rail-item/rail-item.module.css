@@ -1,0 +1,173 @@
+.item {
+  --rail-size: 40px;
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: var(--rail-size);
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.plate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--rail-size);
+  height: var(--rail-size);
+  overflow: hidden;
+  /* Форма не меняется на наведении: место узнают по ауре вокруг плитки, а не по скруглению */
+  border-radius: var(--radius-lg);
+  color: var(--text-muted);
+  transition:
+    background-color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out),
+    color var(--duration-base) var(--ease-out);
+}
+
+/* Аватар сообщества заполняет плитку целиком; углы режет плитка: переменная и радиус — на самом аватаре
+ * (селектор сильнее его класса формы), иначе круглая картинка в квадратной плитке «сигнала» */
+.item.tile .plate > * {
+  --avatar-radius: 0;
+
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+
+.ghost .plate {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+
+/* У плитки рамка — внутренняя линия поверх содержимого, а не border вокруг него: border отодвигает
+ * аватар внутрь и обводит его тёмной полосой подложки */
+.tile .plate {
+  position: relative;
+  background: var(--surface-2);
+}
+
+.tile .plate::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--border);
+  pointer-events: none;
+  transition: box-shadow var(--duration-base) var(--ease-out);
+}
+
+.tile[data-active] .plate::after {
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+}
+
+/* Аватар человека (профиль) — как есть: без плитки и без обрезки, чтобы точка статуса не срезалась */
+.plain .plate,
+.plain:hover .plate,
+.plain[data-active] .plate {
+  overflow: visible;
+  /* Круг — чтобы и фокус-кольцо шло по аватару */
+  border-radius: var(--radius-full);
+}
+
+/* Фокус обводит плитку по её скруглению, а не всю строку рейла */
+.item:focus-visible {
+  outline: none;
+}
+
+.item:focus-visible .plate {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.accent .plate {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+/* Наведение — тонкое кольцо на отступе от плитки: предвестник ауры открытого пространства */
+.item:hover .plate {
+  color: var(--text);
+  box-shadow:
+    0 0 0 2px var(--rail-gap-color, var(--avatar-ring, var(--background))),
+    0 0 0 3px var(--border-strong);
+}
+
+.ghost:hover .plate {
+  background: var(--state-selected-bg);
+  border-color: var(--state-selected-border);
+  color: var(--state-selected-fg);
+}
+
+/* Открытое пространство — аура: кольцо акцента на отступе и мягкое свечение его цветом */
+.item[data-active] .plate {
+  border-color: var(--border-strong);
+  color: var(--text);
+  box-shadow:
+    0 0 0 2px var(--rail-gap-color, var(--avatar-ring, var(--background))),
+    0 0 0 3.5px var(--accent-text),
+    0 0 16px 2px color-mix(in oklab, var(--accent) calc(var(--fx-glow) * 55%), transparent);
+}
+
+/* Непрочитанное — точка в правом верхнем углу плитки, с ободком цвета фона: вырезана из угла */
+/*
+ * Точка — поверх плитки, на её правом верхнем углу (заходит внутрь на 7 px): в разметке она раньше плитки,
+ * и без z-index плитка рисовалась поверх, оставляя видной только верхушку в зазоре — точка читалась как
+ * принадлежащая соседу сверху
+ */
+.indicator {
+  position: absolute;
+  z-index: 1;
+  top: calc(50% - var(--rail-size) / 2 - 1px);
+  left: calc(50% + var(--rail-size) / 2 - 7px);
+  width: 8px;
+  height: 8px;
+  background: var(--accent-text);
+  border-radius: var(--radius-pill, var(--radius-full));
+  box-shadow: 0 0 0 2px var(--rail-gap-color, var(--avatar-ring, var(--background)));
+  opacity: 0;
+  transform: scale(0.4);
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
+}
+
+.item[data-unread] .indicator {
+  opacity: 1;
+  transform: none;
+  /* Три мягких удара при появлении непрочитанного — не вечная пульсация */
+  animation: var(--anim-pulse-soft);
+  animation-play-state: var(--fx-play);
+}
+
+/* Счётчик встаёт на место точки */
+.item:has(.count) .indicator {
+  opacity: 0;
+}
+
+.count {
+  position: absolute;
+  z-index: 1;
+  top: calc(50% - var(--rail-size) / 2 - 4px);
+  left: calc(50% + var(--rail-size) / 2 - 10px);
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  background: var(--danger-strong);
+  color: #ffffff;
+  border-radius: var(--radius-pill, var(--radius-full));
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: var(--weight-semibold);
+  line-height: 16px;
+  text-align: center;
+  /* Ободок цвета панели вырезает бейдж из плитки; свечение — упоминание ждёт прочтения */
+  box-shadow:
+    0 0 0 2px var(--rail-gap-color, var(--avatar-ring, var(--background))),
+    0 0 10px color-mix(in oklab, var(--danger) calc(var(--fx-glow) * 60%), transparent);
+  animation: var(--anim-pop-in);
+}

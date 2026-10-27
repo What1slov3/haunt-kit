@@ -1,0 +1,451 @@
+/*
+ * Стиль «сигнал» — дополнение к основной теме, а не замена: включается `data-style="signal"` на <html> или
+ * любом контейнере (SignalScope). Без атрибута ни одно правило файла не срабатывает, и кит выглядит как
+ * раньше. Язык — технический, как разметка на чертеже или упаковке: кислотный акцент на почти-чёрном и на
+ * «бумаге», прямые углы и срезы, засечки, моно-капитель с трекингом, дисплейный гротеск в заголовках.
+ *
+ * Как устроено (по образцу [data-theme] и [data-tui] в theme/tokens.css):
+ * - Стиль переопределяет токены основы (цвета, радиусы) — компоненты читают те же имена.
+ * - «Ручки», которых в основе нет (`--heading-font`, `--micro-case`, `--radius-pill`, `--frame-ticks`…),
+ *   компоненты читают с запасным значением, равным виду основы: без стиля переменная не объявлена, и
+ *   срабатывает запасное значение.
+ * - Переключатели внутри стиля — атрибуты на любом контейнере: `data-signal-font`, `data-signal-accent`.
+ *   Они задают «сырые» `--signal-*`, а токены, которые от них зависят, объявлены заново на каждом элементе
+ *   с атрибутом: var() вычисляется там, где объявлен, и иначе потомок унаследовал бы значение предка.
+ *
+ * Первые четыре кандидата (Archivo, Space Grotesk, Big Shoulders, Chakra Petch) без кириллицы — русский
+ * текст в заголовках рисуется следующим шрифтом стека (Inter). Unbounded, Oswald, Exo 2 и Tektur — с
+ * кириллицей: у них заголовок на русском той же гарнитурой.
+ */
+
+/* --- Тема-независимое: форма, линии, типографика ------------------------------------- */
+[data-style='signal'] {
+  /* Углы прямые: стиль режет углы срезом (`--chamfer`), а не скругляет. Пары «внешний − отступ»
+   * (calc(var(--radius-lg) - …)) уходят в минус и прижимаются к 0 — концентричность сохраняется */
+  --radius-xs: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  /* Таблетки бейджей, чипов, переключателя и прогресса — тоже прямые. `--radius-full` не трогаем: им
+   * скруглены аватары людей, спиннер, радиокнопки — там круг несёт смысл, а не стиль */
+  --radius-pill: 0px;
+
+  /* Срез угла (ChamferPanel) и засечки рамок (CornerFrame, Card, Dialog) */
+  --chamfer-sm: 6px;
+  --chamfer: 10px;
+  --chamfer-lg: 18px;
+  --frame-tick: 8px;
+  --frame-tick-width: 1px;
+
+  /* Линии: волосяная 1 px, штрих разделителей, шаг и угол диагональной штриховки */
+  --hairline: 1px;
+  --dash: 4px;
+  --dash-gap: 3px;
+  --hatch-gap: 6px;
+  --hatch-angle: -45deg;
+
+  /* Микро-подписи — моно капителью с широким трекингом: метки, индексы, серийники, группы меню */
+  --micro-font: var(--font-mono);
+  --micro-size: 10px;
+  --micro-tracking: 0.14em;
+  --micro-case: uppercase;
+
+  /* Контролы — моно-капитель: кнопки, вкладки, сегменты */
+  --control-font: var(--font-mono);
+  --control-case: uppercase;
+  --control-tracking: 0.06em;
+}
+
+/*
+ * Дисплейный шрифт и его поправки. Объявлены заново на каждом элементе с data-signal-font: иначе потомок
+ * унаследовал бы --font-display, уже вычисленный на контейнере стиля. По умолчанию — Archivo широкий:
+ * ближе всего к языку постеров; выбор — за владельцем (тулбар Storybook, витрина).
+ */
+[data-style='signal'],
+[data-style='signal'] [data-signal-font] {
+  --font-display: var(--signal-font, 'Archivo Variable'), var(--font-sans);
+  --display-stretch: var(--signal-font-stretch, 125%);
+  --display-weight: var(--signal-font-weight, 700);
+  --display-tracking: var(--signal-font-tracking, 0.01em);
+  /* Множитель кегля: сравнение шрифтов честное, только если прописные одной высоты, а у узких и
+   * широких гарнитур высота прописных при одном кегле разная */
+  --display-scale: var(--signal-font-scale, 1.06);
+  --display-case: uppercase;
+
+  --heading-font: var(--font-display);
+  --heading-stretch: var(--display-stretch);
+  --heading-tracking: var(--display-tracking);
+  --heading-scale: var(--display-scale);
+  --heading-case: var(--display-case);
+}
+
+/*
+ * Кандидаты. Множитель кегля выравнивает высоту прописных по Inter (0.73 em): высота «H» измерена
+ * measureText в браузере — Archivo 0.69 (у обеих ширин), Space Grotesk 0.70, Big Shoulders 0.80,
+ * Chakra Petch 0.70, Unbounded 0.75, Oswald 0.81, Exo 2 0.69, Tektur 0.70 (у обеих ширин; кириллическая
+ * «Н» той же высоты); scale = 0.73 / высота. Тогда заголовок в «сигнале» той же высоты, что в основе,
+ * а лист сравнения (docs/signal.mdx) честный. Трекинг: широким — меньше, узким — больше.
+ */
+[data-signal-font='space-grotesk'] {
+  --signal-font: 'Space Grotesk Variable';
+  --signal-font-stretch: normal;
+  --signal-font-weight: 600;
+  --signal-font-tracking: -0.01em;
+  --signal-font-scale: 1.04;
+}
+
+[data-signal-font='archivo'] {
+  --signal-font: 'Archivo Variable';
+  --signal-font-stretch: 125%;
+  --signal-font-weight: 700;
+  --signal-font-tracking: 0.01em;
+  --signal-font-scale: 1.06;
+}
+
+[data-signal-font='archivo-narrow'] {
+  --signal-font: 'Archivo Variable';
+  --signal-font-stretch: 62%;
+  --signal-font-weight: 700;
+  --signal-font-tracking: 0.02em;
+  --signal-font-scale: 1.06;
+}
+
+[data-signal-font='big-shoulders'] {
+  --signal-font: 'Big Shoulders Display Variable';
+  --signal-font-stretch: normal;
+  --signal-font-weight: 800;
+  --signal-font-tracking: 0.03em;
+  --signal-font-scale: 0.91;
+}
+
+[data-signal-font='chakra'] {
+  --signal-font: 'Chakra Petch';
+  --signal-font-stretch: normal;
+  --signal-font-weight: 600;
+  --signal-font-tracking: 0.02em;
+  --signal-font-scale: 1.04;
+}
+
+/* С кириллицей */
+[data-signal-font='unbounded'] {
+  --signal-font: 'Unbounded Variable';
+  --signal-font-stretch: normal;
+  --signal-font-weight: 700;
+  --signal-font-tracking: 0;
+  --signal-font-scale: 0.97;
+}
+
+[data-signal-font='oswald'] {
+  --signal-font: 'Oswald Variable';
+  --signal-font-stretch: normal;
+  --signal-font-weight: 600;
+  --signal-font-tracking: 0.03em;
+  --signal-font-scale: 0.9;
+}
+
+[data-signal-font='exo-2'] {
+  --signal-font: 'Exo 2 Variable';
+  --signal-font-stretch: normal;
+  --signal-font-weight: 700;
+  --signal-font-tracking: 0.01em;
+  --signal-font-scale: 1.06;
+}
+
+/* Ось ширины Tektur — 75–100 %: «широкий» — его обычная ширина, узкий — нижний край оси */
+[data-signal-font='tektur'] {
+  --signal-font: 'Tektur Variable';
+  --signal-font-stretch: 100%;
+  --signal-font-weight: 700;
+  --signal-font-tracking: 0.01em;
+  --signal-font-scale: 1.04;
+}
+
+[data-signal-font='tektur-narrow'] {
+  --signal-font: 'Tektur Variable';
+  --signal-font-stretch: 75%;
+  --signal-font-weight: 700;
+  --signal-font-tracking: 0.02em;
+  --signal-font-scale: 1.04;
+}
+
+/*
+ * Акцент стиля — кислотный, поверх него тёмные чернила (контраст ≥ 5.7 у всех четырёх). Объявлен на
+ * контейнере стиля и на элементах с data-signal-accent; AccentScope внутри стиля по-прежнему переопределяет
+ * его инлайн-стилем — акцент пространства главнее акцента стиля.
+ */
+[data-style='signal'],
+[data-style='signal'] [data-signal-accent] {
+  --accent: var(--signal-accent, #d2ff1f);
+  --accent-2: var(--signal-accent-2, #2de2ff);
+  --accent-contrast: var(--signal-accent-contrast, #0b0b0a);
+}
+
+[data-signal-accent='lime'] {
+  --signal-accent: #d2ff1f;
+  --signal-accent-2: #2de2ff;
+  --signal-accent-contrast: #0b0b0a;
+}
+
+[data-signal-accent='magenta'] {
+  --signal-accent: #ff2d9b;
+  --signal-accent-2: #ff6a13;
+  --signal-accent-contrast: #0b0b0a;
+}
+
+[data-signal-accent='cyan'] {
+  --signal-accent: #2de2ff;
+  --signal-accent-2: #d2ff1f;
+  --signal-accent-contrast: #0b0b0a;
+}
+
+[data-signal-accent='orange'] {
+  --signal-accent: #ff6a13;
+  --signal-accent-2: #ff2d9b;
+  --signal-accent-contrast: #0b0b0a;
+}
+
+/*
+ * --- Тёмная (основная): почти-чёрный с теплом, текст цвета бумаги -------------------------
+ * Контраст (WCAG, на фоне / на card): text 16.8 / 15.7, muted 7.9 / 7.7, subtle 5.0 / 5.0; статусы ≥ 5.4;
+ * белый на *-strong ≥ 5.8; чернила на акцентах ≥ 5.7; текст из акцента ≥ 6.0.
+ * Проверка — packages/ui/test-results/signal/contrast.mjs.
+ *
+ * Какая палитра у стиля — решает ближайший элемент с темой, а не порядок правил: тема бывает и снаружи
+ * стиля (страница, ThemeScope), и внутри него, и на том же элементе. Поэтому палитры — в @scope от
+ * элемента с темой: при равной специфичности побеждает более близкий корень (scope proximity), и
+ * «светлая страница → тёмный ThemeScope → стиль» даёт тёмную палитру. Три селектора: стиль на самом
+ * корне темы, стиль внутри него, корень темы внутри стиля (ThemeScope в «сигнале»). :root — корень
+ * тёмной по умолчанию, как в tokens.css; у <html data-theme="light"> светлый блок ниже побеждает порядком.
+ * Без поддержки @scope (старые движки) стиль остаётся с палитрой основы — форма и типографика работают.
+ */
+@scope (:root, [data-theme='dark']) {
+  :scope[data-style='signal'],
+  [data-style='signal'],
+  [data-style='signal'] :scope {
+    color-scheme: dark;
+
+    --background: #0b0b0a;
+    --foreground: #eeede6;
+    --card: #141413;
+    --card-foreground: #eeede6;
+    --popover: #171716;
+    --popover-foreground: #e6e5de;
+    --muted: #1c1c1a;
+    --muted-foreground: rgba(238, 237, 230, 0.66);
+    --primary: #eeede6;
+    --primary-foreground: #0b0b0a;
+    --secondary: #1c1c1a;
+    --secondary-foreground: #eeede6;
+    --highlight: rgba(238, 237, 230, 0.07);
+    --highlight-foreground: #eeede6;
+
+    --panel-1: rgba(8, 8, 7, 0.92);
+    --panel-2: rgba(12, 12, 11, 0.92);
+    --panel-3: rgba(20, 20, 19, 0.94);
+
+    --surface-1: rgba(238, 237, 230, 0.03);
+    --surface-2: rgba(238, 237, 230, 0.05);
+    --surface-3: rgba(238, 237, 230, 0.08);
+    --surface-hover: rgba(238, 237, 230, 0.055);
+    --surface-active: rgba(238, 237, 230, 0.09);
+    --field-bg: rgba(238, 237, 230, 0.025);
+    --field-bg-hover: rgba(238, 237, 230, 0.045);
+    --glass: rgba(20, 20, 19, 0.86);
+
+    /* Рамки чуть заметнее основы: линия — главный элемент чертежа */
+    --border-subtle: rgba(238, 237, 230, 0.08);
+    --border: rgba(238, 237, 230, 0.14);
+    --border-strong: rgba(238, 237, 230, 0.24);
+
+    --text: #eeede6;
+    --text-muted: rgba(238, 237, 230, 0.68);
+    --text-subtle: rgba(238, 237, 230, 0.52);
+    --text-disabled: rgba(238, 237, 230, 0.32);
+
+    --success: #7dfc6a;
+    --success-soft: rgba(125, 252, 106, 0.14);
+    --success-strong: #2b6a14;
+    --warning: #ff8a1f;
+    --warning-soft: rgba(255, 138, 31, 0.16);
+    --warning-strong: #a63f00;
+    --danger: #ff4d7a;
+    --danger-soft: rgba(255, 77, 122, 0.16);
+    --danger-strong: #c8103f;
+    --info: #33e0ff;
+    --info-soft: rgba(51, 224, 255, 0.14);
+    --info-strong: #006a82;
+
+    --shadow-ink: #000000;
+    --shadow-soft-alpha: 0.4;
+    --shadow-float-alpha: 0.6;
+    /* Блик кромки почти погашен: поверхности стиля плоские, как печать, а не стекло */
+    --edge-highlight: rgba(238, 237, 230, 0.035);
+    --edge-highlight-strong: rgba(238, 237, 230, 0.06);
+    --grain-alpha: 0.05;
+
+    --ambient-1: var(--accent);
+    --ambient-2: #2de2ff;
+    --ambient-3: #ff2d9b;
+    --ambient-opacity: 0.14;
+    --ambient-dot-color: #eeede6;
+    --ambient-dot-alpha: 0.08;
+    --ambient-particle-alpha: 0.75;
+
+    /* Акцент уже светлый: текст из него — лишь чуть светлее, чтобы не выцвел до пастели */
+    --accent-text-toward: white;
+    --accent-text-amount: 10%;
+    --accent-soft-amount: 16%;
+    --accent-hover-toward: white;
+
+    --fx-spotlight-color: #eeede6;
+
+    /* Псевдонимы основы и всё, что ссылается на цвета темы, — заново: var() вычисляется там, где объявлен */
+    --bg: var(--background);
+    --bg-elevated: var(--popover);
+    --inverse-bg: var(--primary);
+    --inverse-fg: var(--primary-foreground);
+    --frame-tick-color: var(--text-subtle);
+    --hatch-color: var(--border-strong);
+    /* Плашка штрихкода и QR: тёмное на светлом в любой теме, бумага вместо белого */
+    --code-plate: #eeede6;
+    --code-ink: #0b0b0a;
+  }
+}
+
+/* --- «Бумага»: тёплый светлый #ecebe4, чернила почти чёрные ------------------------------
+ * Контраст (на фоне / на card): text 16.4 / 15.1, muted 6.9 / 6.6, subtle 4.9 / 4.7; статусы ≥ 4.7;
+ * текст из акцентов (50 % к чёрному в oklab) ≥ 5.1. Акцент как заливка — тот же кислотный: на бумаге он
+ * читается плашкой с чёрным текстом, а не цветом текста */
+@scope ([data-theme='light']) {
+  :scope[data-style='signal'],
+  [data-style='signal'],
+  [data-style='signal'] :scope {
+    color-scheme: light;
+
+    --background: #ecebe4;
+    --foreground: #0c0c0b;
+    --card: #e3e2d9;
+    --card-foreground: #0c0c0b;
+    --popover: #f3f2ec;
+    --popover-foreground: #141413;
+    --muted: #e0dfd6;
+    --muted-foreground: rgba(12, 12, 11, 0.64);
+    --primary: #0c0c0b;
+    --primary-foreground: #ecebe4;
+    --secondary: #dfded5;
+    --secondary-foreground: #0c0c0b;
+    --highlight: rgba(12, 12, 11, 0.07);
+    --highlight-foreground: #0c0c0b;
+
+    --panel-1: rgba(224, 223, 214, 0.92);
+    --panel-2: rgba(236, 235, 228, 0.92);
+    --panel-3: rgba(243, 242, 236, 0.94);
+
+    --surface-1: rgba(12, 12, 11, 0.03);
+    --surface-2: rgba(12, 12, 11, 0.05);
+    --surface-3: rgba(12, 12, 11, 0.08);
+    --surface-hover: rgba(12, 12, 11, 0.05);
+    --surface-active: rgba(12, 12, 11, 0.09);
+    --field-bg: rgba(250, 249, 244, 0.6);
+    --field-bg-hover: rgba(250, 249, 244, 0.85);
+    --glass: rgba(243, 242, 236, 0.88);
+
+    --border-subtle: rgba(12, 12, 11, 0.08);
+    --border: rgba(12, 12, 11, 0.16);
+    --border-strong: rgba(12, 12, 11, 0.3);
+
+    --text: #0c0c0b;
+    --text-muted: rgba(12, 12, 11, 0.7);
+    --text-subtle: rgba(12, 12, 11, 0.6);
+    --text-disabled: rgba(12, 12, 11, 0.36);
+
+    --success: #2b6a14;
+    --success-soft: rgba(125, 252, 106, 0.3);
+    --success-strong: #2b6a14;
+    --warning: #a63f00;
+    --warning-soft: rgba(255, 138, 31, 0.24);
+    --warning-strong: #a63f00;
+    --danger: #b80d3a;
+    --danger-soft: rgba(255, 77, 122, 0.2);
+    --danger-strong: #b80d3a;
+    --info: #006a82;
+    --info-soft: rgba(51, 224, 255, 0.26);
+    --info-strong: #006a82;
+
+    --shadow-ink: #1a1a17;
+    --shadow-soft-alpha: 0.08;
+    --shadow-float-alpha: 0.16;
+    --edge-highlight: rgba(255, 255, 250, 0.4);
+    --edge-highlight-strong: rgba(255, 255, 250, 0.6);
+    --grain-alpha: 0.04;
+
+    --ambient-1: var(--accent);
+    --ambient-2: #2de2ff;
+    --ambient-3: #ff2d9b;
+    --ambient-opacity: 0.32;
+    --ambient-dot-color: #0c0c0b;
+    --ambient-dot-alpha: 0.1;
+    --ambient-particle-alpha: 0.6;
+
+    --accent-text-toward: black;
+    --accent-text-amount: 50%;
+    /* Кислотный тон на бумаге слабее, чем на чёрном: мягкий фон акцента вдвое плотнее */
+    --accent-soft-amount: 28%;
+    --accent-hover-toward: black;
+
+    --fx-spotlight-color: #0c0c0b;
+
+    --bg: var(--background);
+    --bg-elevated: var(--popover);
+    --inverse-bg: var(--primary);
+    --inverse-fg: var(--primary-foreground);
+    --frame-tick-color: var(--text-subtle);
+    --hatch-color: var(--border-strong);
+    --code-plate: #f3f2ec;
+    --code-ink: #0c0c0b;
+  }
+}
+
+/*
+ * Производные, которые основа считает на каждом элементе (блок `*` в tokens.css). Здесь — те, что стилю
+ * нужны иначе: рамка поля в фокусе — цветом текста акцента (кислотная рамка на бумаге не видна, контраст
+ * 1.03); засечки рамок и штриховка — из цвета линий текущей темы.
+ */
+[data-style='signal'],
+[data-style='signal'] *,
+[data-style='signal'] ::before,
+[data-style='signal'] ::after {
+  --field-border-focus: var(--accent-text);
+  --state-selected-border: color-mix(in oklab, var(--accent-text) 55%, transparent);
+  --frame-ticks-content: '';
+  --frame-ticks:
+    linear-gradient(var(--frame-tick-color), var(--frame-tick-color)) top left / var(--frame-tick)
+      var(--frame-tick-width) no-repeat,
+    linear-gradient(var(--frame-tick-color), var(--frame-tick-color)) top left /
+      var(--frame-tick-width) var(--frame-tick) no-repeat,
+    linear-gradient(var(--frame-tick-color), var(--frame-tick-color)) top right / var(--frame-tick)
+      var(--frame-tick-width) no-repeat,
+    linear-gradient(var(--frame-tick-color), var(--frame-tick-color)) top right /
+      var(--frame-tick-width) var(--frame-tick) no-repeat,
+    linear-gradient(var(--frame-tick-color), var(--frame-tick-color)) bottom left /
+      var(--frame-tick) var(--frame-tick-width) no-repeat,
+    linear-gradient(var(--frame-tick-color), var(--frame-tick-color)) bottom left /
+      var(--frame-tick-width) var(--frame-tick) no-repeat,
+    linear-gradient(var(--frame-tick-color), var(--frame-tick-color)) bottom right /
+      var(--frame-tick) var(--frame-tick-width) no-repeat,
+    linear-gradient(var(--frame-tick-color), var(--frame-tick-color)) bottom right /
+      var(--frame-tick-width) var(--frame-tick) no-repeat;
+  --hatch: repeating-linear-gradient(
+    var(--hatch-angle),
+    var(--hatch-color) 0 1px,
+    transparent 1px var(--hatch-gap)
+  );
+}
+
+/* --- Глобальное: только то, чего нет у компонентов ------------------------------------- */
+[data-style='signal'] ::selection {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}

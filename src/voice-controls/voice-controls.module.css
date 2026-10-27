@@ -1,0 +1,155 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+  min-width: 0;
+}
+
+.panel {
+  padding: var(--space-2);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 1px 0 var(--edge-highlight);
+}
+
+.bar {
+  display: inline-flex;
+  padding: var(--space-1);
+  background: var(--glass);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-float);
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  min-width: 0;
+}
+
+.signal {
+  flex-shrink: 0;
+  color: var(--success);
+}
+
+.root[data-quality='fair'] .signal {
+  color: var(--warning);
+}
+
+.root[data-quality='poor'] .signal,
+.root[data-connection='disconnected'] .signal {
+  color: var(--danger);
+}
+
+.root[data-connection='connecting'] .signal,
+.root[data-connection='reconnecting'] .signal {
+  color: var(--warning);
+  animation: var(--anim-pulse-soft);
+  animation-iteration-count: infinite;
+  animation-play-state: var(--fx-play);
+}
+
+.statusText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.connection {
+  display: inline-flex;
+  gap: var(--space-1-5);
+  color: var(--success);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.root[data-connection='connecting'] .connection,
+.root[data-connection='reconnecting'] .connection {
+  color: var(--warning);
+}
+
+.root[data-connection='disconnected'] .connection {
+  color: var(--danger);
+}
+
+.ping {
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-weight: var(--weight-normal);
+  font-variant-numeric: tabular-nums;
+}
+
+.channel {
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* Индикатор уровня: полоски растущей высоты, горят по уровню — меняется только opacity */
+.level {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+  margin: 0 var(--space-1);
+}
+
+.levelBar {
+  width: 3px;
+  background: var(--success);
+  border-radius: 1px;
+  opacity: 0.2;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.levelBar:nth-child(1) {
+  height: 25%;
+}
+
+.levelBar:nth-child(2) {
+  height: 50%;
+}
+
+.levelBar:nth-child(3) {
+  height: 75%;
+}
+
+.levelBar:nth-child(4) {
+  height: 100%;
+}
+
+.levelBar[data-lit] {
+  opacity: 1;
+}
+
+.level[data-silent] .levelBar {
+  background: var(--text-disabled);
+}
+
+/* Тревожный тон включённого «выключить микрофон / звук»: видно издалека, что тебя не слышат.
+ * Три класса — чтобы победить выбранный тон Toggle при любом порядке CSS */
+.buttons .control.alarm[aria-pressed='true'] {
+  background: var(--danger-soft);
+  border-color: color-mix(in oklab, var(--danger) 40%, transparent);
+  color: var(--danger);
+}
+
+.leave {
+  margin-left: auto;
+}
+
+.bar .leave {
+  margin-left: var(--space-1);
+}

@@ -1,0 +1,140 @@
+/*
+ * Шильдик: волосяная рамка, шапка-плашка, строки через штрих-пунктир. Штрих — градиент, а не
+ * `border-style: dashed`: у пунктира браузера не задать длину штриха, а здесь она токен (--dash).
+ */
+.plate {
+  --plate-line: var(--border-strong);
+  --plate-dash: var(--dash, 4px);
+  --plate-dash-gap: var(--dash-gap, 3px);
+
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: var(--hairline, 1px) solid var(--plate-line);
+  border-radius: var(--radius-md);
+  color: var(--text);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--control-sm);
+  padding: 0 var(--space-3);
+  border-bottom: var(--hairline, 1px) solid var(--plate-line);
+  font-family: var(--micro-font, var(--font-mono));
+  font-size: var(--micro-size, var(--text-xs));
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--micro-tracking, 0.06em);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* Индекс — инверсная плашка в начале шапки, как номер на маркировке */
+.index {
+  margin-left: calc(var(--space-3) * -1);
+  padding: var(--space-1) var(--space-2);
+  background: var(--inverse-bg);
+  color: var(--inverse-fg);
+}
+
+.title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: var(--space-1) var(--space-3);
+}
+
+.row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: var(--row-compact);
+  padding-block: var(--space-1-5);
+  background: linear-gradient(90deg, var(--plate-line) 50%, transparent 50%) bottom left /
+    calc(var(--plate-dash) + var(--plate-dash-gap)) var(--hairline, 1px) repeat-x;
+}
+
+.row:last-child {
+  background: none;
+}
+
+.label {
+  flex-shrink: 0;
+  color: var(--text-subtle);
+  font-family: var(--micro-font, var(--font-mono));
+  font-size: var(--micro-size, var(--text-xs));
+  letter-spacing: var(--micro-tracking, 0.06em);
+  text-transform: uppercase;
+}
+
+.value {
+  min-width: 0;
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.default {
+  color: var(--text);
+}
+
+.accent {
+  color: var(--accent-text);
+}
+
+.muted {
+  color: var(--text-muted);
+}
+
+.success {
+  color: var(--success);
+}
+
+.warning {
+  color: var(--warning);
+}
+
+.danger {
+  color: var(--danger);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-top: var(--hairline, 1px) solid var(--plate-line);
+  color: var(--text-muted);
+}
+
+.serial {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  white-space: nowrap;
+  font-size: var(--micro-size, var(--text-xs));
+  letter-spacing: var(--micro-tracking, 0.06em);
+}
+
+/* Мелкий код — маркировка для вида: в узкой табличке сжимается по ширине (svg max-width из global.css,
+ * штрихи тянутся preserveAspectRatio="none"), серийник остаётся целым */
+.footer .barcode {
+  flex-shrink: 1;
+  min-width: 0;
+}

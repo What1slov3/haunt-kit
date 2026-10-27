@@ -1,0 +1,15 @@
+.root {
+  display: inline;
+}
+
+.line {
+  white-space: pre-wrap;
+}
+
+.caret {
+  margin-left: 1px;
+}
+
+.rest {
+  visibility: hidden;
+}

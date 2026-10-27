@@ -1,0 +1,62 @@
+/*
+ * Рамка, размеры и состояния — field-frame (рамка — span-якорь, фокус кнопки внутри зажигает её через
+ * :focus-within); здесь только внутренности, как у Select.Trigger.
+ */
+.frame {
+  min-width: 180px;
+  cursor: pointer;
+}
+
+.frame[data-disabled] {
+  cursor: not-allowed;
+}
+
+/* Кнопка растянута на высоту рамки: клик по любому месту строки попадает в триггер */
+.trigger {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  align-self: stretch;
+  min-width: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: inherit;
+  outline: none;
+}
+
+/* Фокус показывает рамка (:focus-within), своё кольцо у кнопки внутри было бы вторым */
+.trigger:focus-visible {
+  outline: none;
+}
+
+.value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.trigger[data-placeholder] .value {
+  color: var(--text-subtle);
+}
+
+.clear {
+  flex-shrink: 0;
+  color: var(--text-subtle);
+}
+
+.icon {
+  flex-shrink: 0;
+  color: var(--text-subtle);
+  pointer-events: none;
+  transition: color var(--duration-base) var(--ease-out);
+}
+
+.frame[data-state='open'] .icon {
+  color: var(--accent-text);
+}

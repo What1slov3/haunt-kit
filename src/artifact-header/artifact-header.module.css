@@ -1,0 +1,86 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* Метка вида — та же микро-подпись, что у разделов кита: моно и разрядка в TUI, обычная без него */
+.kind {
+  font-family: var(--micro-font, var(--font-mono));
+  font-size: var(--micro-size, var(--text-xs));
+  letter-spacing: var(--micro-tracking, 0.06em);
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+.titleRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.title {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  color: var(--text);
+}
+
+.actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* Строка «автор · место · когда»: точки-разделители между частями, сами части — любые узлы экрана */
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) 0;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.meta > * {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+}
+
+.meta > * + *::before {
+  content: '·';
+  margin: 0 var(--space-2);
+  color: var(--text-subtle);
+}
+
+.updated {
+  color: var(--text-subtle);
+}
+
+.origin {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--text-subtle);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

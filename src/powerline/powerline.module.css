@@ -1,0 +1,104 @@
+/*
+ * Строка промпта в клетках сетки TUI: высота — строка var(--tui-leading), сегмент — заливка с отступом в
+ * знак, разделитель — знак Powerline цвета своего сегмента (--pl-from) на заливке соседа (--pl-to).
+ * Заливки тонов — переменные на корне: разделителю нужен цвет и своего сегмента, и соседа.
+ */
+.root {
+  --pl-accent: var(--accent);
+  --pl-neutral: var(--surface-3);
+  --pl-muted: var(--surface-2);
+  --pl-success: var(--success-strong);
+  --pl-warning: var(--warning-strong);
+  --pl-danger: var(--danger-strong);
+  --pl-info: var(--info-strong);
+
+  display: inline-flex;
+  max-width: 100%;
+  font-family: var(--font-mono);
+  font-weight: var(--weight-medium);
+  line-height: var(--tui-leading);
+  white-space: pre;
+}
+
+.sm {
+  font-size: var(--text-xs);
+}
+
+.md {
+  font-size: var(--text-md);
+}
+
+.segment {
+  display: inline-flex;
+  align-items: center;
+  gap: 1ch;
+  min-width: 0;
+  padding: 0 1ch;
+  background: var(--pl-bg);
+  color: var(--pl-fg);
+}
+
+.separator {
+  flex-shrink: 0;
+  background: var(--pl-to);
+  color: var(--pl-from);
+  user-select: none;
+}
+
+.icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+/* --- Тона: заливка и текст из токенов; на *-strong и акценте — белый (контраст ≥ 4.5) ----- */
+.neutral {
+  --pl-bg: var(--pl-neutral);
+  --pl-fg: var(--text);
+}
+
+.muted {
+  --pl-bg: var(--pl-muted);
+  --pl-fg: var(--text-muted);
+}
+
+.accent {
+  --pl-bg: var(--pl-accent);
+  --pl-fg: var(--accent-contrast);
+}
+
+/* Белый на заливке статуса — исключение правила токенов (README) */
+.success {
+  --pl-bg: var(--pl-success);
+  --pl-fg: #ffffff;
+}
+
+.warning {
+  --pl-bg: var(--pl-warning);
+  --pl-fg: #ffffff;
+}
+
+.danger {
+  --pl-bg: var(--pl-danger);
+  --pl-fg: #ffffff;
+}
+
+.info {
+  --pl-bg: var(--pl-info);
+  --pl-fg: #ffffff;
+}
+
+/* --- Без TUI: отдельные плашки, стрелки — декор TUI ------------------------------------ */
+:global([data-tui='off']) .root {
+  gap: var(--space-1);
+  font-family: var(--font-sans);
+  line-height: var(--leading-normal);
+}
+
+:global([data-tui='off']) .root .segment {
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+:global([data-tui='off']) .root .separator {
+  display: none;
+}

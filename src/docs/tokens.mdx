@@ -1,0 +1,269 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+import {
+  ColorTokens,
+  HeightScale,
+  MotionTokens,
+  RadiusScale,
+  ShadowScale,
+  SpaceScale,
+  SpringDemo,
+  TextScale,
+  ZLayers,
+} from './token-blocks';
+
+<Meta title="Токены" />
+
+# Токены
+
+Всё — CSS-переменные из `theme/tokens.css`. Значения ниже читаются из CSS прямо сейчас: переключите тему
+или акцент в тулбаре — таблицы перестроятся. Цвета названы **по смыслу**, а не по оттенку: тема меняет
+значения, компоненты — нет.
+
+Цвета в два слоя. **Основа** — нейтральная палитра с именами shadcn / Fumadocs (`background`, `card`,
+`popover`, `muted`, `primary`…): так её узнает любой, кто видел эти системы. Их `accent` у нас называется
+`highlight` — имя `--accent` занято акцентом пространства. **Прежние имена** (`bg`, `panel-*`,
+`surface-*`, `text-*`) остались и выражены через основу: модули компонентов на них и написаны.
+
+| Fumadocs / shadcn       | У нас                                            | Где                                        |
+| ----------------------- | ------------------------------------------------ | ------------------------------------------ |
+| `background`            | `--background` = `--bg`                          | фон страницы, нижний слой                  |
+| `card`                  | `--card`, полупрозрачный `--surface-1`           | карточки; поверх живого фона — прозрачные  |
+| `popover`               | `--popover` = `--bg-elevated`, `--glass`         | плавающее: стекло — popover на 78 %        |
+| `muted` / `-foreground` | `--muted`, `--muted-foreground` ≈ `--text-muted` | приглушённые подложки и текст              |
+| `primary`               | `--primary` = `--inverse-bg`                     | основная кнопка, подсказка                 |
+| `accent`                | `--highlight` = `--state-hover-bg`               | наведение на строку, пункт меню            |
+| `border` / `ring`       | `--border`, `--ring` = `--focus`                 | рамки; кольцо фокуса — акцентное, не серое |
+
+Правило одно: в модулях компонентов только `var(--…)`, никаких hex. Исключение — белый текст на заливке
+статуса (`--danger-strong`, `--accent`).
+
+## Цвета
+
+<ColorTokens
+  groups={[
+    {
+      title: 'Основа (Fumadocs / shadcn)',
+      hint: 'нейтральный серый без оттенка; panel-*, surface-*, text-* ниже выражены через неё',
+      tokens: [
+        'background',
+        'foreground',
+        'card',
+        'popover',
+        'muted',
+        'muted-foreground',
+        'primary',
+        'primary-foreground',
+        'secondary',
+        'highlight',
+        'ring',
+      ],
+    },
+    {
+      title: 'Фон и панели',
+      hint: 'panel-* — слои приложения поверх живого фона: рейл → боковая панель → содержимое, светлее к центру',
+      tokens: ['bg', 'bg-elevated', 'panel-1', 'panel-2', 'panel-3'],
+    },
+    {
+      title: 'Поверхности',
+      hint: 'surface-* — карточки внутри панелей (белый 3–8 % поверх); glass — только плавающее',
+      tokens: [
+        'surface-1',
+        'surface-2',
+        'surface-3',
+        'surface-hover',
+        'surface-active',
+        'field-bg',
+        'glass',
+      ],
+    },
+    {
+      title: 'Границы',
+      hint: 'тонкая светлая граница вместо тени',
+      tokens: ['border-subtle', 'border', 'border-strong'],
+    },
+    {
+      title: 'Текст',
+      tokens: ['text', 'text-muted', 'text-subtle', 'text-disabled', 'inverse-bg', 'inverse-fg'],
+    },
+    {
+      title: 'Акцент пространства',
+      hint: 'задаются три переменные (accent, accent-2, accent-contrast), остальное выводится из них на каждом элементе',
+      tokens: [
+        'accent',
+        'accent-2',
+        'accent-contrast',
+        'accent-text',
+        'accent-hover',
+        'accent-soft',
+        'accent-soft-strong',
+        'accent-glow',
+        'accent-gradient',
+        'focus',
+      ],
+    },
+    {
+      title: 'Статусы',
+      hint: 'текст яркий, *-soft — фон чипа 14–16 %, *-strong — заливка под белый текст (контраст ≥ 4.5)',
+      tokens: [
+        'success',
+        'success-soft',
+        'success-strong',
+        'warning',
+        'warning-soft',
+        'warning-strong',
+        'danger',
+        'danger-soft',
+        'danger-strong',
+        'info',
+        'info-soft',
+        'info-strong',
+      ],
+    },
+    {
+      title: 'Состояния интерактивного',
+      hint: 'одна палитра у строк, кнопок, чипов, пунктов меню и переключателей — новый примитив читает те же',
+      tokens: [
+        'state-hover-bg',
+        'state-active-bg',
+        'state-selected-bg',
+        'state-selected-border',
+        'state-selected-fg',
+        'field-border',
+        'field-border-hover',
+        'field-border-focus',
+      ],
+    },
+    {
+      title: 'Фильтр изображений',
+      hint: 'палитра дизеринга FilteredImage (сортируется по яркости) и цвет символов ASCII — из основы и акцента',
+      tokens: [
+        'image-dither-1',
+        'image-dither-2',
+        'image-dither-3',
+        'image-dither-4',
+        'image-ascii-color',
+      ],
+    },
+  ]}
+/>
+
+## Текст
+
+Inter Variable — интерфейс и сообщения, JetBrains Mono Variable — время, счётчики, `Kbd`, id (оба шрифта
+локальные: десктоп работает офлайн). Интерфейс — 13 px, сообщения — 14 px.
+
+<TextScale />
+
+## Отступы
+
+Шаг 4 px плюс полушаги 2 и 6 для плотных строк. В пропсах — числом: `gap={1.5}`, `p={2}`.
+
+<SpaceScale />
+
+## Высоты
+
+Кнопка и поле одного размера — одной высоты и с одним кеглем: sm 24 / 12 px, md 28 / 13 px, lg 32 / 14 px.
+Строки списков — 28 (каналы) и 32 (участники с аватаром).
+
+<HeightScale />
+
+## Скругления
+
+`md` — контролы, `lg` — панели и меню, `xl` — рейл, `2xl` — карточки, блоки кода и диалоги (как `rounded-xl` у Fumadocs), `full` — только бейджи, чипы, переключатель и аватары
+людей. Внутренний радиус = внешний − отступ: меню `lg` 8 с полем 4 → пункты `sm` 4.
+
+<RadiusScale />
+
+## Тени и размытие
+
+Тени — чернила фона с каплей акцента, не серые. В тёмной теме слои различает граница; тень — у плавающего.
+Блик по верхней кромке — у панелей, стекла, вторичных кнопок и полей.
+
+<ShadowScale />
+
+## Движение
+
+Анимируются только `transform`, `opacity`, `filter`. Наведение и нажатие — CSS-переходы, появление
+всплывающего — глобальные keyframes `--anim-*`, раскладка и индикаторы — Motion.
+
+<MotionTokens />
+
+<SpringDemo />
+
+Подробно — на странице «Движение и эффекты».
+
+## Z-слои
+
+<ZLayers />
+
+## Токены в коде
+
+Источник правды — CSS. Из него генератор собирает имена и значения по умолчанию
+(`theme/tokens.generated.ts`), а поверх — типизированное API: ключ в коде — camelCase имени
+(`--text-muted` → `textMuted`, `--space-1-5` → `space1_5`), опечатка — ошибка компиляции.
+
+```tsx
+import {
+  readToken,
+  setTokens,
+  tokens,
+  tokenStyle,
+  tokenVar,
+  TokenScope,
+  TOKEN_DEFAULTS,
+} from '@haunt/ui';
+
+// Ссылка для инлайн-стиля: тема, акцент и скоупы работают, значение вычисляет браузер
+<div style={{ padding: tokens.space3, color: tokens.textMuted }} />;
+
+// Ручка с запасным значением: 'var(--chamfer, 0px)'
+const chamfer = tokenVar('chamfer', '0px');
+
+// Переопределить на всё приложение — и откатить, когда не нужно
+const restore = setTokens(document.documentElement, { radiusLg: '4px', controlMd: '32px' });
+restore();
+
+// На часть экрана — компонентом (всплывающее внутри тоже получает значения) или инлайн-стилем
+<TokenScope tokens={{ controlMd: '36px', radiusLg: '14px' }}>{/* … */}</TokenScope>;
+<section style={tokenStyle({ accent: '#0b7f77' })} />;
+
+// Вычисленное значение на элементе — для canvas, WebGL, графиков
+const background = readToken('background', element);
+
+// Значения по умолчанию как в CSS: { dark: '#111113', light: '#f6f6f7' }
+TOKEN_DEFAULTS.background;
+```
+
+Производные пересчитываются сами: `setTokens(el, { accent: … })` меняет и `--accent-text`, `--accent-soft`,
+свечение — они объявлены выражениями от `--accent`. Числа пишутся без единиц (`fxGlow: 0.2`), размеры —
+строкой с единицей (`'32px'`). Пример с меню внутри скоупа — [TokenScope](?path=/docs/тема-tokenscope--docs).
+
+## Ручки косметики
+
+Что человек «надевает» в сообществе — набор значений этих ручек на его контейнере. По умолчанию они не заданы
+(`initial`), и компоненты рисуют обычный вид.
+
+| Ручка                        | Где                 | Пример значения                                                         |
+| ---------------------------- | ------------------- | ----------------------------------------------------------------------- |
+| `authorPaint` + `authorFill` | имя в `MessageItem` | `'linear-gradient(90deg, #ff5ca8, #ffb35c)'`, `'transparent'`           |
+| `trailPaint`                 | след автора в ленте | цвет или `linear-gradient(…)`, пунктир — `repeating-linear-gradient(…)` |
+| `trailWidth`, `trailGlow`    | след автора         | `'3px'`, `'0 0 8px rgba(124, 107, 255, 0.6)'`                           |
+| `auraPaint`                  | аура `ProfileCard`  | любой `background`: пятна, звёзды, сетка                                |
+| `avatarFrame`                | `Avatar`            | `box-shadow`: `'0 0 0 2px var(--background), 0 0 0 4px #3dd6c3'`        |
+
+```tsx
+<TokenScope tokens={{ trailPaint: 'linear-gradient(#7c6bff, #ff5ca8)', trailWidth: '3px' }}>
+  {/* сообщения участника */}
+</TokenScope>
+```
+
+Витрина вещей — [StoreItemCard](?path=/docs/сообщество-storeitemcard--docs).
+
+## Как добавить токен
+
+Тема-независимый — в `:root` файла `theme/tokens.css`; зависящий от темы — в оба блока
+(`:root, [data-theme='dark']` и `[data-theme='light']`); производный от акцента — в блок `*` внизу файла.
+Затем `pnpm --filter @haunt/ui build:tokens` — токен появится в коде (`tokens.*`, `TokenKey`); тест
+`scripts/tokens.test.ts` не пропустит токен, добавленный в CSS без пересборки. На этой странице он появится,
+если добавить имя в список группы в `docs/tokens.mdx`.

@@ -1,0 +1,247 @@
+/*
+ * Строка терминала: «$ ввод█» в клетках моно-сетки, без рамки и фона поля. Высота строки —
+ * var(--tui-leading), отступ приглашения — один знак. Фокус виден по блочному курсору и цвету
+ * приглашения, как в терминале, получившем ввод.
+ */
+.root {
+  display: flex;
+  align-items: baseline;
+  gap: 1ch;
+  min-width: 0;
+  font-family: var(--font-mono);
+  line-height: var(--tui-leading);
+  color: var(--text);
+}
+
+.sm {
+  font-size: var(--text-sm);
+}
+
+.md {
+  font-size: var(--text-md);
+}
+
+.lg {
+  font-size: var(--text-lg);
+}
+
+.prompt {
+  flex-shrink: 0;
+  font-weight: var(--weight-semibold);
+  color: var(--text-subtle);
+  white-space: pre;
+}
+
+.promptToken::before {
+  content: var(--tui-prompt);
+}
+
+.root[data-focused] .prompt {
+  color: var(--accent-text);
+}
+
+.field {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Нативная каретка спрятана: место ввода показывает курсор зеркала */
+.input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  font: inherit;
+  line-height: inherit;
+  color: inherit;
+  caret-color: transparent;
+}
+
+.input::placeholder {
+  color: var(--text-subtle);
+}
+
+/* Пустая строка в фокусе: подсказка сдвинута на клетку — курсор стоит перед ней, а не на первой букве */
+.root[data-focused] .input:placeholder-shown {
+  text-indent: 1ch;
+}
+
+/* Зеркало повторяет текст поля тем же шрифтом: невидимый текст до каретки и знак под курсором */
+.mirror {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  white-space: pre;
+}
+
+.mirrorLine {
+  display: inline-block;
+}
+
+.before {
+  color: transparent;
+}
+
+/* Блочный курсор — знак в обратном цвете, мигает ступенчато; при наборе горит (ключ перезапускает) */
+.cursor {
+  display: inline-block;
+  min-width: 1ch;
+  background: var(--text);
+  color: var(--background);
+  animation: var(--anim-blink);
+  animation-delay: 0.5s;
+}
+
+/* Подсказки — окно BoxFrame сразу под строкой: без стекла, тени и скругления, фон экрана */
+.content {
+  z-index: var(--z-popover);
+  width: var(--radix-popover-trigger-width);
+  min-width: 30ch;
+  max-width: min(72ch, calc(100vw - 16px));
+  background: var(--background);
+  font-family: var(--font-mono);
+  outline: none;
+}
+
+.frame {
+  font-size: var(--text-sm);
+}
+
+/* Не выше 12 строк и места до края экрана за вычетом двух линий рамки */
+.list {
+  max-height: min(12lh, calc(var(--radix-popover-content-available-height) - 2lh));
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+  --scrollbar-radius: var(--tui-scrollbar-radius);
+}
+
+.option {
+  display: flex;
+  align-items: baseline;
+  gap: 2ch;
+  padding: 0 1ch;
+  white-space: pre;
+  cursor: default;
+  user-select: none;
+}
+
+/* Выбранная строка — обратным цветом акцента, как курсор списка в mc и fzf */
+.option[data-active] {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.value {
+  flex-shrink: 0;
+}
+
+.match {
+  background: transparent;
+  color: var(--accent-text);
+  font-weight: var(--weight-semibold);
+}
+
+.option[data-active] .match {
+  color: inherit;
+  text-decoration: underline;
+}
+
+/* Пояснение — комментарием TUI: «// справка»; без TUI знак гаснет */
+.description {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-subtle);
+  text-overflow: ellipsis;
+}
+
+.option[data-active] .description {
+  color: inherit;
+  opacity: 0.8;
+}
+
+.description::before {
+  content: var(--tui-hint);
+  margin-right: var(--tui-hint-gap);
+}
+
+/* --- Без TUI: обычное поле кита — рамка, фон, кольцо фокуса; каретка браузера ---------- */
+:global([data-tui='off']) .root {
+  align-items: center;
+  gap: var(--space-1-5);
+  min-height: var(--control-md);
+  padding: 0 var(--space-2);
+  background: var(--field-bg);
+  border: 1px solid var(--field-border);
+  border-radius: var(--radius-md);
+  box-shadow: inset 0 1px 0 var(--edge-highlight);
+  line-height: var(--leading-normal);
+  transition:
+    background-color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
+:global([data-tui='off']) .root.sm {
+  min-height: var(--control-sm);
+}
+
+:global([data-tui='off']) .root.lg {
+  min-height: var(--control-lg);
+  padding: 0 var(--space-3);
+}
+
+:global([data-tui='off']) .root[data-focused] {
+  background: var(--field-bg-hover);
+  border-color: var(--field-border-focus);
+  box-shadow: var(--field-ring);
+}
+
+:global([data-tui='off']) .root .input {
+  caret-color: auto;
+}
+
+:global([data-tui='off']) .root .mirror,
+:global([data-tui='off']) .root .promptToken {
+  display: none;
+}
+
+:global([data-tui='off']) .content {
+  margin-top: var(--space-1);
+  overflow: hidden;
+  background: var(--glass);
+  backdrop-filter: var(--glass-filter);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-float);
+}
+
+:global([data-tui='off']) .content .frame {
+  border: none;
+  border-radius: 0;
+}
+
+:global([data-tui='off']) .content .list {
+  padding: var(--space-1);
+}
+
+:global([data-tui='off']) .content .option {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+:global([data-tui='off']) .content .option[data-active] {
+  background: var(--state-active-bg);
+  color: inherit;
+}
+
+:global([data-tui='off']) .content .option[data-active] .match {
+  color: var(--accent-text);
+  text-decoration: none;
+}

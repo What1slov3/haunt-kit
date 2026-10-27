@@ -1,0 +1,73 @@
+/* Раскладка демо — только склейка: размеры и цвета из токенов, всё остальное делают компоненты кита */
+.sidebar {
+  display: flex;
+  height: 100%;
+}
+
+.spaceTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+}
+
+.section {
+  padding: var(--space-3) var(--space-2) var(--space-1);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.feed {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+  padding: var(--space-3) 0;
+  overflow-y: auto;
+}
+
+.composer {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.scene {
+  padding: var(--space-6);
+}
+
+.screen {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--radius-xl);
+  background: var(--surface-2);
+}
+
+.tile {
+  display: block;
+  width: 100%;
+  border-radius: var(--radius-lg);
+}
+
+.card {
+  padding: var(--space-4);
+}
+
+.post {
+  overflow: hidden;
+}
+
+.postImage {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  object-fit: cover;
+}

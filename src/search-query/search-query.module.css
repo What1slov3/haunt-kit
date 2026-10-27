@@ -1,0 +1,167 @@
+/*
+ * Рамка и состояния — field-frame.module.css; раскладка как у TagInput: чипы переносятся, поле растёт,
+ * в одну строку высота та же, что у Input. Вертикальный отступ = (высота − рамки − чип) / 2.
+ */
+.root {
+  display: inline-flex;
+  flex-direction: column;
+  min-width: 240px;
+}
+
+.fullWidth {
+  display: flex;
+  width: 100%;
+}
+
+.frame {
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  cursor: text;
+}
+
+.frame.sm {
+  --chip-height: 18px;
+
+  padding: calc((var(--control-sm) - 2px - var(--chip-height)) / 2) var(--space-1-5);
+}
+
+.frame.md {
+  --chip-height: 20px;
+
+  padding: calc((var(--control-md) - 2px - var(--chip-height)) / 2) var(--space-2);
+}
+
+.frame.lg {
+  --chip-height: 24px;
+
+  padding: calc((var(--control-lg) - 2px - var(--chip-height)) / 2) var(--space-3);
+}
+
+.icon {
+  flex-shrink: 0;
+  color: var(--text-subtle);
+}
+
+.frame:focus-within .icon {
+  color: var(--text-muted);
+}
+
+/* Список не участвует в раскладке: чипы и ввод переносятся одним потоком */
+.chips {
+  display: contents;
+  list-style: none;
+}
+
+/* Чип фильтра: ключ моно-меткой, значение текстом — читается как `from: @anna` */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  height: var(--chip-height);
+  background: var(--accent-soft);
+  border: 1px solid var(--state-selected-border);
+  border-radius: var(--radius-sm);
+  color: var(--accent-text);
+  font-size: var(--text-sm);
+  line-height: 1;
+}
+
+.chipBody {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  min-width: 0;
+  height: 100%;
+  padding: 0 var(--space-0-5) 0 var(--space-1-5);
+  background: transparent;
+  border: none;
+  border-radius: inherit;
+  color: inherit;
+  font: inherit;
+  line-height: calc(var(--chip-height) - 2px);
+  cursor: pointer;
+}
+
+.chipKey {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.chipValue {
+  min-width: 0;
+  max-width: 180px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-weight: var(--weight-medium);
+}
+
+/* Крестик внутри чипа: его высота минус рамки и зазор 2 px сверху и снизу */
+.remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: calc(var(--chip-height) - 2px - 2 * var(--space-0-5));
+  height: calc(var(--chip-height) - 2px - 2 * var(--space-0-5));
+  margin-right: var(--space-0-5);
+  padding: 0;
+  background: transparent;
+  border: none;
+  /* Концентрично чипу: его радиус минус зазор */
+  border-radius: calc(var(--radius-sm) - var(--space-0-5));
+  color: var(--accent-text);
+  opacity: 0.7;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    opacity var(--duration-fast) var(--ease-out);
+}
+
+.remove:hover:not(:disabled) {
+  background: var(--state-hover-bg);
+  opacity: 1;
+}
+
+.input {
+  flex: 1 0 80px;
+  min-width: 80px;
+  height: var(--chip-height);
+  padding: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: inherit;
+}
+
+.input::placeholder {
+  color: var(--text-subtle);
+}
+
+.input:disabled {
+  cursor: not-allowed;
+}
+
+.clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--chip-height);
+  height: var(--chip-height);
+  margin-left: auto;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: calc(var(--radius-md) - 3px);
+  color: var(--text-subtle);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.clear:hover {
+  background: var(--state-hover-bg);
+  color: var(--text);
+}

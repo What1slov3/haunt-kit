@@ -1,0 +1,109 @@
+.root {
+  margin: 0;
+  padding: var(--space-2);
+  list-style: none;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  color: var(--text);
+}
+
+.children {
+  position: relative;
+  margin: 0;
+  padding: 0 0 0 var(--space-4);
+  list-style: none;
+}
+
+/* Направляющая вложенности — тонкая линия под иконкой папки, как в сайдбаре Fumadocs */
+.children::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: calc(var(--space-2) + 8px - 0.5px);
+  width: 1px;
+  background: var(--border);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: var(--row-compact);
+  padding: 0 var(--space-2);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--text-md);
+  text-align: left;
+  color: var(--text-muted);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+button.row:hover,
+.file:hover .row {
+  background: var(--state-hover-bg);
+  color: var(--text);
+}
+
+.icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--text-subtle);
+}
+
+.name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.meta {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-subtle);
+}
+
+.openIcon {
+  display: none;
+}
+
+.folder[data-state='open'] > .row .openIcon {
+  display: block;
+}
+
+.folder[data-state='open'] > .row .closedIcon {
+  display: none;
+}
+
+.folder > .row {
+  color: var(--text);
+}
+
+.file[data-active] .row {
+  background: color-mix(in oklab, var(--accent) 14%, var(--state-active-bg));
+  color: var(--text);
+}
+
+.file[data-active] .icon {
+  color: var(--accent-text);
+}
+
+.content {
+  overflow: hidden;
+}
+
+.content[data-state='open'] {
+  animation: var(--anim-expand);
+}
+
+.content[data-state='closed'] {
+  animation: var(--anim-collapse);
+}

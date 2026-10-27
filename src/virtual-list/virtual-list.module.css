@@ -1,0 +1,37 @@
+.root {
+  position: relative;
+  min-height: 0;
+  min-width: 0;
+  overflow-y: auto;
+  /* Якорь прокрутки браузера выключен: позицию держит окно (поправка при измерении, якорь при
+   * подгрузке); вдвоём они сдвигали бы прокрутку дважды */
+  overflow-anchor: none;
+}
+
+/* Кольцо фокуса области прокрутки — внутрь: снаружи его срезает родитель с overflow */
+.root:focus-visible {
+  outline-offset: -2px;
+}
+
+/* Чат: короткий список прижат к низу. margin-top: auto у первого ребёнка, а не justify-content:
+ * flex-end — с ним переполненный флекс-контейнер не прокручивается к началу */
+.reverse {
+  display: flex;
+  flex-direction: column;
+}
+
+.reverse > * {
+  flex-shrink: 0;
+}
+
+.reverse > :first-child {
+  margin-top: auto;
+}
+
+.list {
+  min-width: 0;
+}
+
+.item {
+  min-width: 0;
+}

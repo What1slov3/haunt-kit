@@ -1,0 +1,202 @@
+/* Блоки страницы «Стиль „сигнал“»: раскладка листов; цвета и размеры — только токены кита */
+
+.sheet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+  padding: var(--space-5);
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.twoColumns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-4);
+  margin: var(--space-4) 0;
+}
+
+/* --- Палитра --- */
+.palette {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+}
+
+.paletteTitle,
+.cellTitle {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+}
+
+.paletteRow {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto 48px;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+.paletteSwatch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  border: 1px solid var(--border);
+  font-weight: var(--weight-bold);
+}
+
+.paletteName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.paletteHint {
+  color: var(--text-subtle);
+}
+
+.paletteRatio {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--success);
+}
+
+.paletteRatio[data-low='true'] {
+  color: var(--danger);
+}
+
+.paletteRatio[data-fill] {
+  color: var(--text-subtle);
+}
+
+.accentGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin: var(--space-4) 0;
+}
+
+.accentCell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--bg);
+}
+
+/* --- Шрифты --- */
+.fontSheet {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+}
+
+.fontCell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-5);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+/* Пометка о кириллице: у шрифтов без неё русские заголовки ниже — Inter, а не сам шрифт */
+.fontNote {
+  align-self: flex-start;
+  padding: var(--space-0-5) var(--space-1-5);
+  border: 1px solid var(--warning);
+  color: var(--warning);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.fontNote[data-cyrillic] {
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.fontDigits {
+  font-family: var(--font-display);
+  font-stretch: var(--display-stretch);
+  font-weight: var(--display-weight);
+  font-size: calc(var(--text-2xl) * var(--display-scale));
+  letter-spacing: var(--display-tracking);
+  line-height: 1;
+}
+
+.fontRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* --- Формы --- */
+.cells {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-5);
+}
+
+.cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.cell > * {
+  max-width: 100%;
+}
+
+/* Полосы, сетка и панели — во всю ширину ячейки; засечки и разметка — по содержимому */
+.stretch {
+  align-items: stretch;
+}
+
+.panelStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.kit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* --- Билет --- */
+.ticket {
+  display: grid;
+  grid-template-columns: minmax(240px, 1.4fr) minmax(200px, 1fr) auto;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.ticketMain {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.ticketSide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}

@@ -1,0 +1,115 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+.root[data-orientation='vertical'] {
+  flex-direction: column;
+}
+
+/* С рамкой: рамка 1 px и отступ 2 px, пункты внутри на 6 px ниже контрола */
+.framed {
+  padding: 2px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.group {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.root[data-orientation='vertical'] .group {
+  flex-direction: column;
+}
+
+/* Состояния — как у Toggle: наведение, выбранное тоном акцента; общие токены --state-* */
+.item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1-5);
+  flex-shrink: 0;
+  padding: 0 var(--space-2);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-weight: var(--weight-medium);
+  color: var(--text-muted);
+  white-space: nowrap;
+  transition:
+    transform var(--duration-release) var(--ease-release),
+    background-color var(--duration-base) var(--ease-out),
+    color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+}
+
+/* В рамке пункт концентричен ей: радиус рамки минус отступ и граница */
+.framed .item {
+  border-radius: calc(var(--radius-md) - 3px);
+}
+
+.item:hover:not(:disabled) {
+  background: var(--state-hover-bg);
+  color: var(--text);
+}
+
+.item:active:not(:disabled) {
+  transform: scale(0.94);
+  transition-duration: var(--duration-press);
+}
+
+/* По aria, а не по data-state: Tooltip вокруг пункта (asChild) перезаписывает data-state своим open/closed */
+.item[aria-pressed='true'],
+.item[aria-checked='true'] {
+  background: var(--state-selected-bg);
+  border-color: var(--state-selected-border);
+  color: var(--state-selected-fg);
+}
+
+.item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.item-sm {
+  height: var(--control-sm);
+  font-size: var(--text-sm);
+}
+
+.item-md {
+  height: var(--control-md);
+  font-size: var(--text-md);
+}
+
+.framed .item-sm {
+  height: calc(var(--control-sm) - 6px);
+}
+
+.framed .item-md {
+  height: calc(var(--control-md) - 6px);
+}
+
+.iconOnly {
+  padding: 0;
+  aspect-ratio: 1;
+}
+
+.separator {
+  flex-shrink: 0;
+  align-self: center;
+  width: 1px;
+  height: 16px;
+  margin: 0 var(--space-1);
+  background: var(--border);
+}
+
+.root[data-orientation='vertical'] .separator {
+  width: 16px;
+  height: 1px;
+  margin: var(--space-1) 0;
+}

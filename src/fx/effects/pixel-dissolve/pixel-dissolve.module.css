@@ -1,0 +1,14 @@
+/*
+ * Исключение из «только transform / opacity / filter»: маска меняется ступенями (16 или 64 за переход).
+ * Раскладку она не трогает, перерисовывается только сам элемент; растворения клетками без маски нет.
+ */
+.root[data-dissolving] {
+  mask-size: var(--dissolve-tile) var(--dissolve-tile);
+  mask-repeat: repeat;
+  -webkit-mask-size: var(--dissolve-tile) var(--dissolve-tile);
+  -webkit-mask-repeat: repeat;
+}
+
+.root[data-hidden] {
+  visibility: hidden;
+}

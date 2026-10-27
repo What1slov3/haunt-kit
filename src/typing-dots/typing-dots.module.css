@@ -1,0 +1,31 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 1em;
+  vertical-align: middle;
+}
+
+.dot {
+  width: 4px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: currentColor;
+  opacity: 0.35;
+  animation: var(--anim-typing);
+  /* При выключенных эффектах точки просто стоят: что идёт набор, говорит текст рядом */
+  animation-play-state: var(--fx-play);
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.sm .dot {
+  width: 3px;
+  height: 3px;
+}

@@ -1,0 +1,75 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+import { EffectsLevelsDemo, EffectsLevelsTable } from './effects-blocks';
+import { MotionTokens } from './token-blocks';
+
+<Meta title="Движение и эффекты" />
+
+# Движение и эффекты
+
+Интерфейс живой, но не отвлекает: короткие анимации без отскока, ни один эффект не идёт постоянно без
+причины. Анимируются только `transform`, `opacity`, `filter` и CSS-переменные.
+
+## Движение
+
+| Что                                  | Чем                                                                         | Где в коде                    |
+| ------------------------------------ | --------------------------------------------------------------------------- | ----------------------------- |
+| Наведение, нажатие                   | CSS-переходы 90–150 мс, нажатие — сжатие до `--press-scale`                 | модули примитивов             |
+| Появление меню, поповеров, подсказок | глобальные keyframes `haunt-pop-in` / `haunt-pop-out` по `data-state` Radix | `theme/animations.css`        |
+| Диалог                               | `haunt-rise-in` — из глубины, с масштабом и лёгким размытием                | `theme/animations.css`        |
+| Раскрытие Collapsible, Accordion     | `haunt-expand` по `--radix-*-content-height`                                | `theme/animations.css`        |
+| Индикатор вкладок, подсветка канала  | FLIP через Web Animations API, 220 мс, без Motion                           | `lib/use-shared-indicator.ts` |
+| Смена содержимого                    | Motion: `fadeUp`, `scaleIn`, `staggerList` — вход `@haunt/ui/motion`        | `motion/presets.ts`           |
+| Проявление изображения               | кадры с крупной ячейкой → обычная, 5 × 70 мс                                | `filtered-image`              |
+
+<MotionTokens />
+
+**Keyframes в модулях — только через `var(--anim-*)`** (`animation: var(--anim-pop-in)`). CSS Modules
+локализуют имя в `animation: haunt-pop-in …`, keyframes не находятся, `animationend` не приходит — и Radix
+Presence никогда не размонтирует закрытое меню. Play-функции историй всплывающего ловят ровно это: после Esc
+слой должен исчезнуть из DOM.
+
+## Уровни эффектов
+
+Уровень — атрибут `data-effects="off | subtle | rich"` на `<html>` (в приложении — `useTheme().setEffects`,
+здесь — кнопка **Эффекты** в тулбаре) или на любом контейнере. Без атрибута — `subtle`. `theme/effects.css`
+переводит уровень в интенсивности `--fx-*`:
+
+<EffectsLevelsTable />
+
+Те же примитивы при трёх уровнях рядом — наведите на панели, поставьте фокус в поле, нажмите на реакцию:
+
+<EffectsLevelsDemo />
+
+## Что где включается и выключается
+
+| Эффект                                             | Где                                                                              | Выключается                                                   |
+| -------------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| Прожектор за курсором (`data-spotlight`)           | `Surface panel`, `Surface interactive`, `Card href`; `spotlight={false}` снимает | `off`, reduced-motion                                         |
+| Зерно (`data-grain`)                               | `Surface panel`; `grain={false}` снимает                                         | `off`                                                         |
+| Градиентная кромка (`data-edge="gradient"`)        | `Button primary`, активный `NavItem`                                             | не выключается: статична, не движется                         |
+| Бегущий отблеск (`data-beam`, `data-glow`)         | `FieldFrame glow` в фокусе (композер), `Avatar speaking`                         | `off` (у композера остаётся статичная кромка), reduced-motion |
+| Поп + всплеск + счётчик                            | `Chip` при `selected` false → true и смене `count`                               | `off`, reduced-motion                                         |
+| Пульс непрочитанного, поп-ин бейджа                | `RailItem unread`, `NavItem unread`                                              | `off`, reduced-motion                                         |
+| Перелив скелетона                                  | `Skeleton`                                                                       | `off`, reduced-motion (остаётся пульс)                        |
+| Волна точек «печатает»                             | `TypingDots`                                                                     | `off`, reduced-motion (точки стоят)                           |
+| Диалог из глубины, размытие и свечение фона        | `Dialog`                                                                         | `off` (без размытия и свечения), reduced-motion               |
+| Подсветка переезжает, crossfade                    | `NavItem activeLayoutId`, `Tabs`; Motion в экране                                | reduced-motion (FLIP, `MotionProvider`)                       |
+| Дрейф радужной полосы                              | `Banner variant="rainbow"`                                                       | `off` (полоса стоит), reduced-motion                          |
+| Фильтр изображения, линза под курсором, проявление | `FilteredImage`                                                                  | `off` — обычное изображение; reduced-motion — статичный кадр  |
+
+Прожектор — один слушатель `pointermove` на окно (`theme/spotlight.ts`, ставит `ThemeProvider`), координаты
+пишутся в `--spot-x` / `--spot-y` в `requestAnimationFrame` на ближайший `[data-spotlight]`.
+
+## Живой фон
+
+`AmbientBackground` — один на экран (в Storybook — кнопка **Фон**): `blobs` — три размытых пятна на CSS,
+`dots` — точечная сетка с частицами на `<canvas>`. **Реакция** (`off` / `quiet` / `vivid`) — точки у курсора,
+тихая волна от клика, заметная от `ambient.pulse(x, y)` (отправка сообщения), оживление под панелью с
+`data-ambient-area`. На скрытой вкладке кадры не считаются.
+
+## prefers-reduced-motion
+
+Движение гаснет глобально (`global.css`), в FLIP-индикаторе и в Motion (`MotionProvider` с `reducedMotion="user"`); живой фон
+становится статичной сеткой. Исключение — `data-motion-keep`: спиннер и каретка двигаются всегда, иначе «грузится»
+неотличимо от «зависло», а место ввода не видно.

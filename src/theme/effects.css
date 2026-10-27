@@ -1,0 +1,197 @@
+/*
+ * Эффекты «дороже»: прожектор за курсором, бегущий отблеск по рамке, градиентная кромка, зерно и
+ * блик панелей, перелив скелетона. Все — только transform / opacity / filter и CSS-переменные.
+ *
+ * Уровень задаёт `data-effects="off | subtle | rich"` на <html> (theme/effects.ts) или на любом
+ * контейнере; без атрибута — subtle. Интенсивности — числа `--fx-*`, движение — `--fx-play`
+ * (animation-play-state). При prefers-reduced-motion всё, что движется или следует за курсором, гаснет.
+ *
+ * Селекторы — по data-атрибутам, а не классам: файл глобальный, а примитивы живут в CSS Modules.
+ */
+
+:root,
+[data-effects='subtle'] {
+  --fx-play: running;
+  --fx-spotlight: 0.07;
+  --fx-spotlight-size: 260px;
+  --fx-glow: 0.45;
+  --fx-grain: 1;
+  --fx-shimmer: 1;
+  --fx-beam: 0.8;
+  --fx-pulse: 1;
+  --fx-burst: 1;
+  --fx-blur: 4px;
+  --fx-depth-blur: 2px;
+}
+
+[data-effects='rich'] {
+  --fx-play: running;
+  --fx-spotlight: 0.13;
+  --fx-spotlight-size: 340px;
+  --fx-glow: 1;
+  --fx-grain: 1;
+  --fx-shimmer: 1;
+  --fx-beam: 1;
+  --fx-pulse: 1;
+  --fx-burst: 1;
+  --fx-blur: 8px;
+  --fx-depth-blur: 4px;
+}
+
+[data-effects='off'] {
+  --fx-play: paused;
+  --fx-spotlight: 0;
+  --fx-glow: 0;
+  --fx-grain: 0;
+  --fx-shimmer: 0;
+  --fx-beam: 0;
+  --fx-pulse: 0;
+  --fx-burst: 0;
+  --fx-blur: 0px;
+  --fx-depth-blur: 0px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root,
+  [data-effects] {
+    --fx-play: paused;
+    --fx-spotlight: 0;
+    --fx-shimmer: 0;
+    --fx-beam: 0;
+    --fx-pulse: 0;
+    --fx-burst: 0;
+    --fx-depth-blur: 0px;
+  }
+}
+
+/* Цвет прожектора: в тёмной теме — свет, в светлой — тень акцента, иначе его не видно на белом */
+:root,
+[data-theme='dark'] {
+  --fx-spotlight-color: #ffffff;
+}
+
+[data-theme='light'] {
+  --fx-spotlight-color: var(--accent);
+}
+
+/* Угол отблеска анимируется как число — иначе conic-gradient не интерполируется */
+@property --beam-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+/* --- Прожектор: радиальное свечение под курсором (координаты ставит theme/spotlight.ts) ------- */
+[data-spotlight] {
+  position: relative;
+  /* Свой контекст наложения: псевдоэлемент с z-index −1 ложится над фоном элемента, но под содержимым */
+  isolation: isolate;
+}
+
+[data-spotlight]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  /* --spot-size и --spot-gain — для мелких элементов (кнопки): пятно меньше и плотнее панельного */
+  background: radial-gradient(
+    var(--spot-size, var(--fx-spotlight-size)) circle at var(--spot-x, 50%) var(--spot-y, 50%),
+    color-mix(
+      in oklab,
+      var(--fx-spotlight-color) calc(var(--fx-spotlight) * var(--spot-gain, 1) * 100%),
+      transparent
+    ),
+    transparent 70%
+  );
+  transition: opacity var(--duration-slow) var(--ease-out);
+}
+
+[data-spotlight][data-spotlight-on]::after {
+  opacity: 1;
+}
+
+/* --- Зерно крупных поверхностей: SVG-шум инлайном, повторяющаяся плитка ----------------------- */
+[data-grain] {
+  position: relative;
+  isolation: isolate;
+}
+
+[data-grain]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: calc(var(--grain-alpha) * var(--fx-grain));
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+/* --- Кромка: градиентная рамка и бегущий отблеск ------------------------------------------------
+ * Кольцо рисует ::before поверх собственной рамки элемента: маска вырезает внутренность, остаётся
+ * обод шириной --edge-width. Элементу нужен position: relative (ставится здесь).
+ */
+[data-edge='gradient'],
+[data-beam],
+[data-glow] {
+  position: relative;
+}
+
+[data-edge='gradient']::before,
+[data-beam]::before,
+[data-glow]:focus-within::before {
+  content: '';
+  position: absolute;
+  inset: calc(-1 * var(--edge-offset, 1px));
+  z-index: 1;
+  padding: var(--edge-width, 1px);
+  border-radius: inherit;
+  pointer-events: none;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+[data-edge='gradient']::before {
+  background: var(--accent-gradient);
+  opacity: var(--edge-alpha, 1);
+}
+
+/* Отблеск: конический градиент крутится по кольцу; под ним — тихий статичный градиент */
+[data-beam]::before,
+[data-glow]:focus-within::before {
+  background:
+    conic-gradient(
+      from var(--beam-angle),
+      transparent 0deg,
+      transparent 200deg,
+      var(--beam-color-1, var(--accent)) 270deg,
+      color-mix(in oklab, var(--beam-color-2, var(--accent-2)) 55%, white) 320deg,
+      transparent 360deg
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(in oklab, var(--beam-color-1, var(--accent)) 35%, transparent),
+      color-mix(in oklab, var(--beam-color-2, var(--accent-2)) 35%, transparent)
+    );
+  opacity: var(--fx-beam);
+  animation: var(--anim-beam);
+  animation-play-state: var(--fx-play);
+}
+
+/* Без эффектов фокус композера всё равно виден: статичная градиентная кромка */
+[data-effects='off'] [data-glow]:focus-within::before {
+  background: var(--accent-gradient);
+  opacity: 0.9;
+  animation: none;
+}

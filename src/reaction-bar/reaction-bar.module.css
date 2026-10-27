@@ -1,0 +1,84 @@
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.emoji {
+  display: inline-block;
+  font-family: var(--font-sans);
+  line-height: 1;
+}
+
+/* Своё эмодзи пространства — квадрат в кегль символа */
+.custom {
+  display: block;
+  width: 1.15em;
+  height: 1.15em;
+  object-fit: contain;
+}
+
+.who {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+}
+
+/* «+» тише реакций, пока на сообщение не навели: ряд не спорит с текстом */
+.add {
+  color: var(--text-subtle);
+}
+
+.bar:hover .add,
+.add:focus-visible,
+.add[data-state='open'] {
+  color: var(--text);
+}
+
+.picker {
+  display: flex;
+  flex-direction: column;
+  max-width: calc(100vw - var(--space-4));
+}
+
+.quick {
+  display: flex;
+  gap: var(--space-0-5);
+  padding: var(--space-1-5);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Скругление концентрично поповеру: его радиус минус отступ ряда и рамка */
+.quickItem {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--control-lg);
+  height: var(--control-lg);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: calc(var(--radius-lg) - var(--space-1-5) - 1px);
+  font-size: var(--text-xl);
+  line-height: 1;
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+}
+
+.quickItem:hover {
+  background: var(--state-hover-bg);
+  transform: scale(1.12);
+}
+
+.quickItem:active {
+  transform: scale(var(--press-scale));
+  transition-duration: var(--duration-press);
+}
+
+/* Без полного пикера ряд — единственное содержимое, и разделитель не нужен */
+.quick:last-child {
+  border-bottom: 0;
+}

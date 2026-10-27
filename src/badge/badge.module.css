@@ -1,0 +1,115 @@
+.badge {
+  --badge-color: var(--text);
+  --badge-soft: var(--surface-3);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  border: 1px solid transparent;
+  /* --radius-pill и --micro-* — ручки стиля «сигнал»; без него бейдж — таблетка гротеском */
+  border-radius: var(--radius-pill, var(--radius-full));
+  font-family: var(--micro-font, inherit);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--micro-tracking, inherit);
+  text-transform: var(--micro-case, inherit);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.sm {
+  height: 16px;
+  min-width: 16px;
+  padding: 0 5px;
+  font-size: 10px;
+}
+
+.md {
+  height: 18px;
+  min-width: 18px;
+  padding: 0 6px;
+  font-size: var(--text-xs);
+}
+
+.soft {
+  background: var(--badge-soft);
+  color: var(--badge-color);
+}
+
+.solid {
+  background: var(--badge-color);
+  color: var(--bg);
+}
+
+.outline {
+  border-color: var(--border-strong);
+  color: var(--badge-color);
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: var(--radius-pill, var(--radius-full));
+  background: currentColor;
+}
+
+/* TUI: моно, без фона, в скобках */
+.bracket {
+  padding: 0;
+  background: transparent;
+  border-color: transparent;
+  border-radius: 0;
+  font-family: var(--font-mono);
+  font-weight: var(--weight-medium);
+  color: var(--badge-color);
+}
+
+.bracket::before {
+  content: var(--tui-bracket-open);
+  opacity: 0.6;
+}
+
+.bracket::after {
+  content: var(--tui-bracket-close);
+  opacity: 0.6;
+}
+
+.neutral {
+  --badge-color: var(--text-muted);
+  --badge-soft: var(--surface-3);
+}
+
+.accent {
+  --badge-color: var(--accent-text);
+  --badge-soft: var(--accent-soft);
+}
+
+.accent.solid {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.success {
+  --badge-color: var(--success);
+  --badge-soft: var(--success-soft);
+}
+
+.warning {
+  --badge-color: var(--warning);
+  --badge-soft: var(--warning-soft);
+}
+
+.danger {
+  --badge-color: var(--danger);
+  --badge-soft: var(--danger-soft);
+}
+
+.danger.solid {
+  background: var(--danger-strong);
+  color: #ffffff;
+}
+
+.info {
+  --badge-color: var(--info);
+  --badge-soft: var(--info-soft);
+}

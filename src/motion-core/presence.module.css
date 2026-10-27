@@ -1,0 +1,41 @@
+/*
+ * Пары появления и ухода — только через var(--anim-*): имя keyframes внутри CSS Modules локализовалось
+ * бы, анимация не нашлась бы, и Presence снимал бы элемент только по таймеру-страховке.
+ * forwards у ухода — элемент не «мигает» исходным видом в кадре между концом анимации и размонтированием.
+ */
+.fade[data-state='open'] {
+  animation: var(--anim-fade-in);
+}
+
+.fade[data-state='closed'] {
+  animation: var(--anim-fade-out);
+  animation-fill-mode: forwards;
+}
+
+.pop[data-state='open'] {
+  animation: var(--anim-pop-in);
+}
+
+.pop[data-state='closed'] {
+  animation: var(--anim-pop-out);
+  animation-fill-mode: forwards;
+}
+
+.rise[data-state='open'] {
+  animation: var(--anim-rise-in);
+}
+
+.rise[data-state='closed'] {
+  animation: var(--anim-sink-out);
+  animation-fill-mode: forwards;
+}
+
+.slide-right[data-state='open'] {
+  animation: var(--anim-slide-in-right);
+}
+
+.slide-right[data-state='closed'] {
+  animation: var(--anim-fade-out);
+  animation-duration: var(--duration-fast);
+  animation-fill-mode: forwards;
+}

@@ -1,0 +1,162 @@
+.list {
+  display: inline-flex;
+}
+
+.fullWidth {
+  display: flex;
+}
+
+.fullWidth .trigger {
+  flex: 1;
+}
+
+.trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1-5);
+  background: transparent;
+  border: none;
+  font-family: var(--control-font, inherit);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--control-tracking, inherit);
+  text-transform: var(--control-case, inherit);
+  color: var(--text-muted);
+  white-space: nowrap;
+  transition:
+    color var(--duration-base) var(--ease-out),
+    background-color var(--duration-base) var(--ease-out);
+}
+
+.trigger:hover:not([data-disabled]) {
+  color: var(--text);
+}
+
+.trigger[data-state='active'] {
+  color: var(--text);
+}
+
+.trigger[data-disabled] {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+.label {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+}
+
+.content {
+  outline: none;
+}
+
+.content[data-state='active'] {
+  animation: var(--anim-fade-in);
+}
+
+/* --- line: подчёркивание, как в навигации Linear/GitHub ----------------------------- */
+.list-line {
+  gap: var(--space-1);
+  border-bottom: 1px solid var(--border);
+}
+
+.trigger.line {
+  height: var(--control-lg);
+  padding: 0 var(--space-2);
+  margin-bottom: -1px;
+  font-size: var(--text-md);
+}
+
+.trigger.line:hover:not([data-disabled]) .label {
+  color: var(--text);
+}
+
+/* Активная вкладка — цветом акцента, как у Fumadocs: подчёркивание и текст читаются вместе */
+.trigger.line[data-state='active'],
+.trigger.card[data-state='active'] {
+  color: var(--accent-text);
+}
+
+.line .indicator {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  border-radius: 1px 1px 0 0;
+  background: var(--accent);
+}
+
+/* --- segment: компактный сегментированный переключатель -------------------------------- */
+/* Колодец и плашка — как у ToggleGroup (toggle-group.module.css): на вид это один и тот же контрол */
+.list-segment {
+  gap: 2px;
+  padding: 2px;
+  background: var(--segment-well);
+  border-radius: var(--radius-md);
+  box-shadow: var(--segment-inset);
+}
+
+/* Высота и шрифт — как у ToggleGroup md (28 px, 13 px текста) */
+.trigger.segment {
+  height: 24px;
+  padding: 0 10px;
+  /* Концентрично колодцу: его радиус минус padding */
+  border-radius: calc(var(--radius-md) - 2px);
+  font-size: var(--text-md);
+}
+
+.segment .indicator {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: calc(var(--radius-md) - 2px);
+  background: var(--segment-thumb);
+  box-shadow: var(--segment-raise);
+}
+
+/* --- card: вкладки в шапке карточки (примеры кода, варианты настроек) --------------------- */
+.rootCard {
+  overflow: hidden;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+}
+
+.list-card {
+  display: flex;
+  gap: var(--space-1);
+  padding: 0 var(--space-2);
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.trigger.card {
+  height: var(--control-lg);
+  padding: 0 var(--space-2);
+  margin-bottom: -1px;
+  font-size: var(--text-md);
+}
+
+.card .indicator {
+  position: absolute;
+  right: var(--space-1);
+  bottom: 0;
+  left: var(--space-1);
+  height: 2px;
+  border-radius: 1px 1px 0 0;
+  background: var(--accent);
+}
+
+.contentCard {
+  padding: var(--space-3);
+}
+
+/* Переезд индикатора — FLIP с translate + scale (lib/use-shared-indicator.ts): масштаб от левого верхнего угла */
+.indicator {
+  transform-origin: 0 0;
+}

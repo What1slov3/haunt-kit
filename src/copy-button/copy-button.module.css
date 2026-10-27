@@ -1,0 +1,37 @@
+.icons {
+  display: inline-grid;
+}
+
+/* Иконки лежат стопкой в одной ячейке грида и сменяются затуханием с лёгким масштабом */
+.icons > * {
+  grid-area: 1 / 1;
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
+}
+
+.check,
+.fail {
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+.button[data-copy-state='copied'] .copy,
+.button[data-copy-state='failed'] .copy {
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+.button[data-copy-state='copied'] .check,
+.button[data-copy-state='failed'] .fail {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.button[data-copy-state='copied'] {
+  color: var(--success);
+}
+
+.button[data-copy-state='failed'] {
+  color: var(--danger);
+}

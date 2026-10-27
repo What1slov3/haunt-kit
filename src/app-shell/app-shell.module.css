@@ -1,0 +1,151 @@
+/*
+ * Раскладка и форма панелей. Заливку и зерно даёт Surface в слоте; оболочка у островов добавляет только
+ * рамку, скругление и обрезку по нему, так что слот рисует фон, не зная, остров он или нет.
+ */
+.root {
+  --shell-gap: var(--space-2);
+  --shell-radius: var(--radius-xl);
+
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.top,
+.status {
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.body {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+.rail {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  min-height: 0;
+}
+
+/* Слот рейла — во всю высоту: его фон и рамка не обрываются под последним пунктом */
+.rail > * {
+  flex: 1;
+  min-height: 0;
+}
+
+.panels {
+  flex: 1;
+}
+
+/* Слот сам решает, прокручиваться ли: панель — только рамка нужной ширины во всю высоту */
+.panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel > * {
+  flex: 1;
+  min-height: 0;
+}
+
+.main > .header {
+  flex: none;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.content > * {
+  flex: 1;
+  min-height: 0;
+}
+
+/* В Sheet слот занимает всю панель: крестик Sheet лежит поверх его шапки */
+.sheet {
+  overflow: hidden;
+}
+
+.sheet > :not(button) {
+  flex: 1;
+  min-height: 0;
+  border-radius: inherit;
+}
+
+/* --- Острова ----------------------------------------------------------------------------- */
+.islands .body {
+  padding: var(--shell-gap);
+}
+
+/* Рейл на фоне вплотную к краю: свой отступ у пунктов, зазор — только до первого острова */
+.islands .rail {
+  margin: calc(var(--shell-gap) * -1) 0 calc(var(--shell-gap) * -1) calc(var(--shell-gap) * -1);
+  padding-right: var(--shell-gap);
+}
+
+.islands .panel {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--shell-radius);
+  box-shadow: inset 0 1px 0 var(--edge-highlight);
+}
+
+/* Контент — главный остров: чуть выше остальных, на нём взгляд */
+.islands .main {
+  border-color: var(--border-strong);
+  box-shadow:
+    var(--shadow-soft),
+    inset 0 1px 0 var(--edge-highlight);
+}
+
+/* Свёрнутая в ноль панель — без рамки: иначе от острова осталась бы щель в два пикселя */
+.islands .panel[data-collapsed] {
+  border-width: 0;
+  box-shadow: none;
+}
+
+/*
+ * Ручка — желоб во весь зазор между островами, сама невидима: линия акцента появляется по центру
+ * при наведении и перетаскивании. Селектор длиннее, чем у ручки Resizable, — иначе решал бы порядок стилей
+ */
+.islands .gutter {
+  width: var(--shell-gap);
+  background: transparent;
+}
+
+.islands .gutter::after {
+  inset: var(--space-6) calc(50% - 1px);
+  border-radius: var(--radius-full);
+}
+
+/* Свёрнута панель за ручкой — желоб уже, чем зазор: острова не расходятся на два зазора */
+.islands .gutter[data-collapsed] {
+  width: 0;
+}
+
+/* Строка состояния — тонкий остров под остальными, с тем же зазором */
+.islands .body:has(+ .status) {
+  padding-bottom: 0;
+}
+
+.islands .status {
+  padding: var(--shell-gap);
+}
+
+.islands .status > * {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--shell-radius);
+}

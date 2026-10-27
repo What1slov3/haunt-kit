@@ -1,0 +1,40 @@
+.root {
+  position: relative;
+  /* clip, а не hidden: не создаёт прокрутку и не ломает position: sticky внутри */
+  overflow: clip;
+  isolation: isolate;
+}
+
+.sheen {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: var(--fx-shimmer);
+}
+
+/* Полоса шире карточки на свой наклон; едет из-за левого края за правый */
+.band {
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  left: 0;
+  width: 45%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    color-mix(in oklab, var(--fx-spotlight-color) 22%, transparent) 45%,
+    color-mix(in oklab, var(--fx-spotlight-color) 34%, transparent) 50%,
+    color-mix(in oklab, var(--fx-spotlight-color) 22%, transparent) 55%,
+    transparent 100%
+  );
+  transform: translateX(-110%) skewX(-18deg);
+  animation: shine-pass var(--shine-duration) var(--ease-in-out) forwards;
+  animation-play-state: var(--fx-play);
+}
+
+@keyframes shine-pass {
+  to {
+    transform: translateX(330%) skewX(-18deg);
+  }
+}

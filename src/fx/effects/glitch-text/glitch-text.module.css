@@ -1,0 +1,103 @@
+.root {
+  position: relative;
+  display: inline-block;
+}
+
+.glyphs {
+  position: relative;
+  /* Свой контекст наложения: цветные копии ложатся за текстом, но над фоном родителя */
+  isolation: isolate;
+  white-space: pre-wrap;
+}
+
+/* Цветные копии строки — красный и бирюзовый каналы; видны только во время вспышки */
+.glyphs::before,
+.glyphs::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  white-space: pre-wrap;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.glyphs::before {
+  color: var(--danger);
+}
+
+.glyphs::after {
+  color: var(--info);
+}
+
+.glyphs[data-glitching]::before {
+  animation: channel-a var(--glitch-duration) steps(1, end);
+}
+
+.glyphs[data-glitching]::after {
+  animation: channel-b var(--glitch-duration) steps(1, end);
+}
+
+.char {
+  display: inline-block;
+  white-space: pre;
+  animation: char-jitter calc(var(--glitch-duration) * 0.5) steps(1, end) var(--gd) both;
+}
+
+@keyframes channel-a {
+  0% {
+    opacity: 0.85;
+    transform: translate(calc(var(--glitch-amp) * -1), 0);
+  }
+
+  30% {
+    opacity: 0.85;
+    transform: translate(calc(var(--glitch-amp) * 1.5), calc(var(--glitch-amp) * -0.5));
+  }
+
+  60% {
+    opacity: 0.6;
+    transform: translate(calc(var(--glitch-amp) * -0.5), 0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+
+@keyframes channel-b {
+  0% {
+    opacity: 0.85;
+    transform: translate(var(--glitch-amp), 0);
+  }
+
+  30% {
+    opacity: 0.85;
+    transform: translate(calc(var(--glitch-amp) * -1.5), calc(var(--glitch-amp) * 0.5));
+  }
+
+  60% {
+    opacity: 0.6;
+    transform: translate(calc(var(--glitch-amp) * 0.5), 0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+
+@keyframes char-jitter {
+  0% {
+    transform: translate(var(--gx), var(--gy));
+  }
+
+  50% {
+    transform: translate(calc(var(--gx) * -0.6), calc(var(--gy) * -1));
+  }
+
+  100% {
+    transform: none;
+  }
+}

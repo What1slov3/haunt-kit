@@ -1,0 +1,119 @@
+/*
+ * Сетка — фон поля: тонкие линии через ячейку и заметнее через --major, две пары градиентов. Подписи —
+ * линейки сверху и слева шириной --ruler; ячейка подписи равна ячейке сетки, поэтому буква стоит над
+ * своим столбцом без расчёта позиций.
+ */
+.grid {
+  --ruler: 18px;
+  --grid-line: var(--border-subtle);
+  --grid-major: var(--border);
+
+  position: relative;
+  display: grid;
+  grid-template: 'field' 1fr / 1fr;
+  min-width: 0;
+  min-height: calc(var(--cell) * 4);
+  color: var(--text-subtle);
+}
+
+.labelled {
+  grid-template:
+    '. columns' var(--ruler)
+    'rows field' 1fr / var(--ruler) 1fr;
+}
+
+.field {
+  position: relative;
+  grid-area: field;
+  min-width: 0;
+  overflow: hidden;
+  border: var(--hairline, 1px) solid var(--grid-major);
+  background:
+    linear-gradient(var(--grid-major) 1px, transparent 1px) 0 0 / var(--major) var(--major),
+    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px) 0 0 / var(--major) var(--major),
+    linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0 / var(--cell) var(--cell),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0 / var(--cell) var(--cell);
+}
+
+.columns,
+.rows {
+  display: flex;
+  overflow: hidden;
+  font-family: var(--micro-font, var(--font-mono));
+  font-size: var(--micro-size, var(--text-xs));
+  letter-spacing: var(--micro-tracking, 0.06em);
+  line-height: 1;
+  text-transform: uppercase;
+  pointer-events: none;
+  user-select: none;
+}
+
+.columns {
+  grid-area: columns;
+  align-items: center;
+}
+
+.rows {
+  grid-area: rows;
+  flex-direction: column;
+}
+
+.columns span,
+.rows span {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.columns span {
+  width: var(--cell);
+}
+
+.rows span {
+  height: var(--cell);
+}
+
+/* --- Перекрестие: две линии и подпись ячейки; координаты — переменные от pointermove ------- */
+.crossX,
+.crossY,
+.readout {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.field[data-crosshair] .crossX,
+.field[data-crosshair] .crossY,
+.field[data-crosshair] .readout {
+  opacity: 1;
+}
+
+.crossX {
+  width: 100%;
+  height: 1px;
+  background: var(--accent-text);
+  transform: translateY(var(--cross-y, 0));
+}
+
+.crossY {
+  width: 1px;
+  height: 100%;
+  background: var(--accent-text);
+  transform: translateX(var(--cross-x, 0));
+}
+
+.readout {
+  padding: var(--space-0-5) var(--space-1);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-family: var(--micro-font, var(--font-mono));
+  font-size: var(--micro-size, var(--text-xs));
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--micro-tracking, 0.06em);
+  line-height: 1;
+  transform: translate(calc(var(--cross-x, 0) + 6px), calc(var(--cross-y, 0) + 6px));
+}

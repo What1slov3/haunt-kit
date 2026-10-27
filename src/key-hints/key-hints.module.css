@@ -1,0 +1,55 @@
+/* Обёртка не участвует в раскладке: KeyHints кладут вокруг экрана, и он не должен ломать flex родителя */
+.root {
+  display: contents;
+}
+
+/* Слой меток поверх всего, мимо курсора: клик под ним выходит из подсказок и попадает куда целились */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-tooltip);
+  pointer-events: none;
+}
+
+/* Метка — стекло и моно; место — left / top из раскладки меток */
+.hint {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 var(--space-1);
+  background: var(--glass);
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+  border: 1px solid var(--accent-soft-strong);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-soft);
+  color: var(--accent-text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  animation: var(--anim-pop-in);
+  animation-duration: var(--duration-fast);
+}
+
+/* Набранное — тише: видно, какие буквы ещё нажать */
+.typed {
+  color: var(--text-subtle);
+}
+
+/* Метки, которые уже не подходят набранному, гаснут, а не пропадают: глаз не теряет место */
+.hint[data-dim] {
+  opacity: 0.25;
+}
+
+.status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

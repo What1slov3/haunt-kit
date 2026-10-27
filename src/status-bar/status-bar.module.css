@@ -1,0 +1,114 @@
+/*
+ * 26 px: клавиша Kbd sm (16 px) с полями по 5 px — подсказка читается, а не упирается в края.
+ * Левая группа при нехватке места уходит под затухание справа, правая (статус, время) не сжимается.
+ */
+.bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: 26px;
+  padding: 0 var(--space-3);
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1;
+  color: var(--text-subtle);
+  user-select: none;
+}
+
+.group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.start {
+  flex: 1 1 auto;
+  overflow: hidden;
+  /* Затухание в последних 24 px: пока пункты помещаются, там пусто, и маски не видно */
+  mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+}
+
+.end {
+  flex-shrink: 0;
+}
+
+.item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  flex-shrink: 0;
+  height: 20px;
+  white-space: nowrap;
+}
+
+/* Разделитель `│` — из TUI-токена, по центру промежутка между пунктами. Абсолютно, а не в потоке: у
+ * пункта-кнопки он иначе попал бы в её подсветку. Без TUI пункты разводит только промежуток */
+.item + .item::before {
+  content: var(--tui-separator);
+  position: absolute;
+  left: calc(var(--space-2) * -1);
+  transform: translateX(-50%);
+  color: var(--border-strong);
+  pointer-events: none;
+}
+
+/* Пункт с onClick — кнопка: тихая подсветка, как у ghost */
+.interactive {
+  margin: 0 calc(var(--space-1) * -1);
+  padding: 0 var(--space-1);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.interactive:hover {
+  background: var(--state-hover-bg);
+  color: var(--text);
+}
+
+/* Кнопка шире текста на padding слева: разделитель сдвигается на столько же, чтобы остаться в центре */
+.item + .interactive::before {
+  left: calc(var(--space-2) * -1 + var(--space-1));
+}
+
+.icon {
+  display: inline-flex;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: currentColor;
+}
+
+/* «В сети» дышит: три мягких удара при появлении, не вечная пульсация */
+.success .dot {
+  animation: var(--anim-pulse-soft);
+  animation-play-state: var(--fx-play);
+}
+
+.accent {
+  color: var(--accent-text);
+}
+
+.success {
+  color: var(--success);
+}
+
+.warning {
+  color: var(--warning);
+}
+
+.danger {
+  color: var(--danger);
+}

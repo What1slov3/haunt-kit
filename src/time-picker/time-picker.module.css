@@ -1,0 +1,89 @@
+/* Рамка, размеры и состояния — field-frame; кнопка списка справа, как иконка у DatePicker */
+.root {
+  justify-content: space-between;
+  cursor: text;
+}
+
+.segments {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * Сегмент — значение целиком, а не текст: каретки нет, выделение браузера погашено, фокус показывает
+ * подложка тона выбранного. Скругление — малое: сегмент вплотную к соседям, не в углу рамки.
+ */
+.segment {
+  width: 2ch;
+  /* Под подложку фокуса: цифры не прилипают к её краю */
+  box-sizing: content-box;
+  padding: 0 1px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-xs);
+  color: inherit;
+  font: inherit;
+  text-align: center;
+  caret-color: transparent;
+  outline: none;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.segment::selection {
+  background: transparent;
+}
+
+.segment::placeholder {
+  color: var(--text-subtle);
+}
+
+.segment:focus {
+  background: var(--state-selected-bg);
+  color: var(--state-selected-fg);
+}
+
+.segment:disabled {
+  cursor: not-allowed;
+}
+
+/* Подпись периода зависит от локали («AM», «午前»): ширина по содержимому, где браузер умеет */
+.period {
+  width: 3ch;
+  margin-left: 0.5ch;
+  field-sizing: content;
+  min-width: 2ch;
+  font-family: var(--font-sans);
+}
+
+.separator {
+  color: var(--text-subtle);
+}
+
+.listButton {
+  flex-shrink: 0;
+  color: var(--text-subtle);
+}
+
+.root[data-state='open'] .listButton {
+  color: var(--accent-text);
+}
+
+/* Список как меню: отступ 4 px, пункты со скруглением menu.item (концентрично) */
+.content {
+  min-width: 140px;
+  padding: var(--space-1);
+}
+
+.list {
+  position: relative;
+  max-height: 240px;
+  overflow-y: auto;
+  outline: none;
+}
+
+.option {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}

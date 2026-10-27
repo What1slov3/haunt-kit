@@ -1,0 +1,143 @@
+/*
+ * Сетка рамки: верхняя строка, ряд «│ содержимое │», нижняя строка — всё в клетках моно-сетки:
+ * знак — 1ch, строка — var(--tui-leading). Содержимое наследует моно и ту же высоту строки, поэтому
+ * текст внутри стоит в тех же клетках, что и линии.
+ */
+/* Цвет линий — переменная: окно, в котором фокус, может подсветить рамку, как активную панель tmux */
+.root {
+  --box-color: var(--tui-line);
+
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-family: var(--font-mono);
+  line-height: var(--tui-leading);
+  color: var(--text);
+}
+
+.accent {
+  --box-color: var(--accent-text);
+}
+
+.edge,
+.side {
+  color: var(--box-color);
+  user-select: none;
+}
+
+.edge {
+  display: flex;
+  min-width: 0;
+  white-space: pre;
+}
+
+.glyph {
+  flex-shrink: 0;
+}
+
+/* Длинная строка знаков линии: не распирает рамку (contain), лишнее обрезано */
+.run {
+  flex: 1 1 0;
+  min-width: 1ch;
+  overflow: hidden;
+  contain: inline-size;
+}
+
+/* Заголовок в линии: «─ Журнал ─» — пробел по бокам, как у оконных рамок терминала */
+.title,
+.footer {
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0 1ch;
+  text-overflow: ellipsis;
+}
+
+.title {
+  font-weight: var(--weight-semibold);
+  color: var(--text);
+}
+
+.accent .title {
+  color: var(--accent-text);
+}
+
+.footer {
+  color: var(--text-muted);
+}
+
+.middle {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Столбец «│»: тянется на высоту содержимого (contain — сам высоты не задаёт), лишнее обрезано */
+.side {
+  flex-shrink: 0;
+  width: 1ch;
+  overflow: hidden;
+  white-space: pre;
+  contain: size;
+}
+
+/* Один знак по бокам; сверху и снизу отступа нет — первая строка текста сразу под линией */
+.content {
+  flex: 1;
+  min-width: 0;
+  padding: 0 1ch;
+}
+
+.content > :first-child {
+  margin-top: 0;
+}
+
+.flush .content {
+  padding: 0;
+}
+
+/* --- Без TUI: тонкая рамка кита, заголовок — строка над содержимым --------------------- */
+:global([data-tui='off']) .root {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  font-family: inherit;
+  line-height: inherit;
+}
+
+:global([data-tui='off']) .root .glyph,
+:global([data-tui='off']) .root .run,
+:global([data-tui='off']) .root .side {
+  display: none;
+}
+
+:global([data-tui='off']) .root .edge {
+  font-family: var(--font-sans);
+  line-height: var(--leading-normal);
+}
+
+:global([data-tui='off']) .root .top:has(.title) {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--border);
+  font-size: var(--text-sm);
+}
+
+:global([data-tui='off']) .root .bottom:has(.footer) {
+  justify-content: flex-end;
+  padding: var(--space-1-5) var(--space-3);
+  border-top: 1px solid var(--border);
+  font-size: var(--text-xs);
+}
+
+:global([data-tui='off']) .root .title,
+:global([data-tui='off']) .root .footer {
+  padding: 0;
+}
+
+:global([data-tui='off']) .root .content {
+  padding: var(--space-3);
+}
+
+:global([data-tui='off']) .root.flush .content {
+  padding: 0;
+}

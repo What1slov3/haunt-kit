@@ -1,0 +1,82 @@
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill, var(--radius-full));
+  color: var(--text-muted);
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  white-space: nowrap;
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    background-color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    color var(--duration-base) var(--ease-out);
+}
+
+.chip:hover:not(:disabled) {
+  background: var(--surface-3);
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+.chip:active:not(:disabled) {
+  transform: scale(var(--press-scale));
+}
+
+.chip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.selected,
+.selected:hover:not(:disabled) {
+  background: var(--state-selected-bg);
+  border-color: var(--state-selected-border);
+  color: var(--state-selected-fg);
+}
+
+/* «Поп» при включении: data-pop меняется на каждый выбор, анимация перезапускается */
+.chip[data-pop] {
+  animation: var(--anim-pop);
+  animation-play-state: var(--fx-play);
+}
+
+.sm {
+  height: 20px;
+  padding: 0 6px;
+  font-size: var(--text-xs);
+}
+
+.md {
+  height: 24px;
+  padding: 0 8px;
+  font-size: var(--text-sm);
+}
+
+.icon {
+  display: inline-flex;
+  font-size: 1.1em;
+  line-height: 1;
+}
+
+.text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+
+.count {
+  display: inline-grid;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--weight-semibold);
+}
+
+.countValue {
+  animation: var(--anim-count-in);
+}

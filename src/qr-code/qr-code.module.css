@@ -1,0 +1,23 @@
+.qr {
+  display: inline-block;
+  flex-shrink: 0;
+  color: var(--text);
+}
+
+.qr svg {
+  fill: currentColor;
+}
+
+/* Пока генератор грузится — штриховка на месте кода: место занято, раскладка не прыгает */
+.qr:not([data-ready]) {
+  background: var(
+    --hatch,
+    repeating-linear-gradient(-45deg, var(--border) 0 1px, transparent 1px 6px)
+  );
+}
+
+/* Плашка: как у Barcode — тёмное на светлом в любой теме; белый и чёрный — исключение из правила токенов */
+.plate {
+  background: var(--code-plate, #ffffff);
+  color: var(--code-ink, #000000);
+}

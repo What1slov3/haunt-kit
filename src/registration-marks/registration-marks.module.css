@@ -1,0 +1,154 @@
+/*
+ * Поля листа: содержимое отступает на --marks-space, метки живут в этом отступе. Метка обреза — два
+ * отрезка, продолжающих кромку содержимого наружу с зазором (как на печатном листе), а не уголок.
+ */
+.marks {
+  --marks-space: var(--space-5);
+  --marks-gap: var(--space-1);
+  --marks-color: var(--text-subtle);
+
+  position: relative;
+  padding: var(--marks-space);
+}
+
+.accent {
+  --marks-color: var(--accent-text);
+}
+
+.crop {
+  position: absolute;
+  width: var(--marks-space);
+  height: var(--marks-space);
+  pointer-events: none;
+}
+
+.crop::before,
+.crop::after {
+  content: '';
+  position: absolute;
+  background: var(--marks-color);
+}
+
+/* Горизонтальный отрезок — по линии верхней (нижней) кромки, вертикальный — по линии боковой */
+.crop::before {
+  width: calc(var(--marks-space) - var(--marks-gap));
+  height: var(--hairline, 1px);
+}
+
+.crop::after {
+  width: var(--hairline, 1px);
+  height: calc(var(--marks-space) - var(--marks-gap));
+}
+
+.crop[data-corner='tl'] {
+  top: 0;
+  left: 0;
+}
+
+.crop[data-corner='tl']::before {
+  bottom: 0;
+  left: 0;
+}
+
+.crop[data-corner='tl']::after {
+  top: 0;
+  right: 0;
+}
+
+.crop[data-corner='tr'] {
+  top: 0;
+  right: 0;
+}
+
+.crop[data-corner='tr']::before {
+  right: 0;
+  bottom: 0;
+}
+
+.crop[data-corner='tr']::after {
+  top: 0;
+  left: 0;
+}
+
+.crop[data-corner='br'] {
+  right: 0;
+  bottom: 0;
+}
+
+.crop[data-corner='br']::before {
+  top: 0;
+  right: 0;
+}
+
+.crop[data-corner='br']::after {
+  bottom: 0;
+  left: 0;
+}
+
+.crop[data-corner='bl'] {
+  bottom: 0;
+  left: 0;
+}
+
+.crop[data-corner='bl']::before {
+  top: 0;
+  left: 0;
+}
+
+.crop[data-corner='bl']::after {
+  right: 0;
+  bottom: 0;
+}
+
+.target {
+  position: absolute;
+  left: 50%;
+  width: calc(var(--marks-space) - var(--marks-gap) * 2);
+  height: calc(var(--marks-space) - var(--marks-gap) * 2);
+  color: var(--marks-color);
+  stroke-width: 1;
+  translate: -50% 0;
+  pointer-events: none;
+}
+
+.target[data-side='top'] {
+  top: var(--marks-gap);
+}
+
+.target[data-side='bottom'] {
+  bottom: var(--marks-gap);
+}
+
+/* Шкала цвета в правом нижнем поле: акцент, второй акцент, статусы и чернила — палитра текущей темы */
+.colorBar {
+  position: absolute;
+  right: calc(var(--marks-space) + var(--space-2));
+  bottom: calc((var(--marks-space) - 6px) / 2);
+  display: flex;
+  height: 6px;
+  pointer-events: none;
+}
+
+.colorBar span {
+  width: 10px;
+}
+
+.colorBar span:nth-child(1) {
+  background: var(--accent);
+}
+
+.colorBar span:nth-child(2) {
+  background: var(--accent-2);
+}
+
+.colorBar span:nth-child(3) {
+  background: var(--warning);
+}
+
+.colorBar span:nth-child(4) {
+  background: var(--danger);
+}
+
+.colorBar span:nth-child(5) {
+  background: var(--text);
+}

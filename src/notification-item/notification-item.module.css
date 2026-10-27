@@ -1,0 +1,146 @@
+.root {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-2) var(--space-3) var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.root[data-clickable]:hover {
+  background: var(--state-hover-bg);
+}
+
+.root[data-clickable]:active {
+  background: var(--state-active-bg);
+}
+
+/* Точка непрочитанного — на поле слева, по центру первой строки заголовка */
+.dot {
+  position: absolute;
+  /* Середина первой строки заголовка: 13 px × 1.35 / 2 − половина точки */
+  top: calc(var(--space-2) + 6px);
+  left: var(--space-1-5);
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: var(--radius-full);
+}
+
+.icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: var(--space-0-5);
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.title {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: var(--text-md);
+  font-weight: var(--weight-normal);
+  line-height: var(--leading-snug);
+  text-align: start;
+  color: var(--text-muted);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.root[data-unread] .title {
+  font-weight: var(--weight-semibold);
+  color: var(--text);
+}
+
+/* Кнопка-заголовок кликабельна на всю строку: ::after растянут на article */
+button.title {
+  cursor: pointer;
+  outline: none;
+}
+
+button.title::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+}
+
+/* Фокус заголовка обводит всю строку — кликается ведь она; кольцо внутрь, снаружи его режет список */
+button.title:focus-visible::after {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+  border-radius: var(--radius-md);
+}
+
+/* Время, действия и «прочитано» — над растянутой кнопкой, чтобы получать свои клики и наведение */
+.time,
+.actions,
+.markRead {
+  position: relative;
+  z-index: 1;
+}
+
+.time {
+  flex-shrink: 0;
+  font-size: var(--text-xs);
+  color: var(--text-subtle);
+}
+
+.text {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1-5);
+  margin-top: var(--space-1-5);
+}
+
+.markRead {
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.root:hover .markRead,
+.root:focus-within .markRead {
+  opacity: 1;
+}
+
+/* Без наведения (тач) кнопку не увидеть — показываем всегда */
+@media (hover: none) {
+  .markRead {
+    opacity: 1;
+  }
+}

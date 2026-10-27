@@ -1,0 +1,61 @@
+.root {
+  position: relative;
+}
+
+/*
+ * Исключение из «только transform / opacity / filter»: обрезка clip-path. Раскладку не трогает,
+ * Chromium анимирует её на композиторе; «открыть по строке» без цвета подложки иначе не сделать —
+ * шторка цвета фона сломалась бы на стекле и градиенте (решение 8 docs/ui-kit.md).
+ */
+.root[data-scan='waiting'] > .content {
+  clip-path: inset(0 0 100% 0);
+}
+
+.root[data-scan='revealing'] > .content {
+  animation: scan-open var(--scan-duration) var(--ease-in-out) both;
+}
+
+/* Строка развёртки: слой во всю высоту едет сам на себя вниз, линия — у его верхнего края */
+.beam {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  animation: scan-beam var(--scan-duration) var(--ease-in-out) both;
+}
+
+.line {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent-text);
+  box-shadow: 0 0 12px 2px var(--accent-glow);
+  opacity: var(--fx-glow);
+}
+
+@keyframes scan-open {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes scan-beam {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}

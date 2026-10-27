@@ -1,0 +1,30 @@
+/* Слово — неразрывный блок: переносы идут по пробелам между словами, как в обычном тексте */
+.word {
+  display: inline-block;
+  white-space: pre;
+}
+
+.piece {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.35em);
+  filter: blur(calc(var(--fx-blur) * 0.5));
+}
+
+.root[data-revealed] .piece {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition:
+    opacity var(--reveal-duration) var(--ease-out),
+    transform var(--reveal-duration) var(--ease-out),
+    filter var(--reveal-duration) var(--ease-out);
+  transition-delay: calc(var(--i, 0) * var(--reveal-stagger));
+}
+
+.root[data-static] .piece {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition: none;
+}

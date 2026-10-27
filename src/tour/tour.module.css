@@ -1,0 +1,96 @@
+/*
+ * Слой тура: затемнение — один fixed-слой, обрезанный путём `evenodd` с окном вокруг цели. clip-path
+ * режет и картинку, и область попадания курсора: в окне клики проходят к цели, вокруг — гаснут. Маска
+ * (mask-image) этого не умеет — по ней клики не проходят, а SVG потребовал бы отдельный слой для кликов.
+ *
+ * Свечение акцента у края окна — по уровню эффектов (--fx-glow), как у затемнения диалога. Фильтр на
+ * родителе: на самом затемнении clip-path срезал бы тень вместе с окном. Сам родитель клики не ловит
+ * (pointer-events: none) — иначе его коробка на весь экран перекрыла бы окно.
+ */
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  pointer-events: none;
+  filter: drop-shadow(
+    0 0 12px color-mix(in oklab, var(--accent) calc(var(--fx-glow) * 40%), transparent)
+  );
+  animation: var(--anim-fade-in);
+}
+
+.layer[data-state='closed'] {
+  animation: var(--anim-fade-out);
+}
+
+.shield {
+  position: absolute;
+  inset: 0;
+  pointer-events: auto;
+}
+
+/* Без размытия, в отличие от диалога: тур учит интерфейсу, и контекст вокруг цели должен читаться */
+.overlay {
+  --tour-dim: color-mix(in oklab, var(--shadow-ink) 62%, transparent);
+
+  position: absolute;
+  inset: 0;
+  background: var(--tour-dim);
+  pointer-events: auto;
+}
+
+[data-theme='light'] .overlay {
+  --tour-dim: color-mix(in oklab, var(--shadow-ink) 34%, transparent);
+}
+
+/* Карточка шага — стекло плавающего слоя (Popover), шире обычного поповера: заголовок + абзац */
+.card {
+  width: 320px;
+  padding: var(--space-4);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  outline: none;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+  animation: var(--anim-fade-in);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.progress {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-subtle);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  color: var(--text);
+}
+
+.content {
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  color: var(--text-muted);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}

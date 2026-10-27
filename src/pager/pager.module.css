@@ -1,0 +1,119 @@
+/*
+ * Вывод в клетках сетки TUI: строка — var(--tui-leading), строка состояния — сразу под выводом, без
+ * зазора, как у more и less. Знаки строки «ещё» — как у more; без TUI гаснут, подпись остаётся.
+ */
+.root {
+  --pager-mark-open: '-- ';
+  --pager-mark-close: ' --';
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: var(--tui-leading);
+}
+
+.view {
+  /* offsetTop строк считается от области: прокрутка к новой странице */
+  position: relative;
+  align-self: stretch;
+  overflow-y: auto;
+  color: var(--text);
+  --scrollbar-radius: var(--tui-scrollbar-radius);
+}
+
+/* Фокус показывает строка состояния и курсор (ниже), рамка вокруг вывода в терминале не рисуется */
+.view:focus-visible {
+  outline: none;
+}
+
+.line {
+  min-height: 1lh;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.status {
+  display: flex;
+  white-space: pre;
+}
+
+.more,
+.end {
+  padding: 0;
+  background: transparent;
+  border: none;
+  font: inherit;
+  line-height: inherit;
+}
+
+/* «-- ещё (42%) --» в обратном цвете, как подсказка more в терминале */
+.more {
+  background: var(--inverse-bg);
+  color: var(--inverse-fg);
+}
+
+.more:focus-visible {
+  outline: none;
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.more::before,
+.end::before {
+  /* Пустой альтернативный текст: знаки — декор, скринридер читает только «ещё (42%)» */
+  content: var(--pager-mark-open) / '';
+}
+
+.more::after,
+.end::after {
+  content: var(--pager-mark-close) / '';
+}
+
+.end {
+  color: var(--text-subtle);
+}
+
+.root:has(.view:focus-visible) .more {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+/* Блочный курсор ровно в клетку — только пока вывод в фокусе */
+.cursor {
+  width: 1ch;
+  height: 1lh;
+  vertical-align: top;
+  visibility: hidden;
+}
+
+.root:has(:focus-visible) .cursor {
+  visibility: visible;
+}
+
+:global([data-tui='off']) .root {
+  --pager-mark-open: '';
+  --pager-mark-close: '';
+
+  gap: var(--space-1);
+  line-height: var(--leading-snug);
+}
+
+/* Без TUI курсора нет — возвращается общее кольцо фокуса кита */
+:global([data-tui='off']) .root .view:focus-visible,
+:global([data-tui='off']) .root .more:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+:global([data-tui='off']) .root .more {
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+}
+
+:global([data-tui='off']) .root .cursor {
+  display: none;
+}

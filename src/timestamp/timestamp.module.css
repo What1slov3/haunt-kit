@@ -1,0 +1,8 @@
+/* Моно и табличные цифры: время в столбце сообщений не прыгает по ширине, когда «9 мин» становится «10 мин» */
+.time {
+  font-family: var(--font-mono);
+  font-size: 0.95em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  cursor: default;
+}

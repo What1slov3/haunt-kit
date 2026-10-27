@@ -1,0 +1,168 @@
+/* Плитки двигаются только transform: масштаб и сдвиг — переменные, которые пишет dock.tsx в rAF */
+.root {
+  --dock-grow-start: 0px;
+  --dock-grow-end: 0px;
+
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+  padding: calc(var(--space-2) + 1px);
+}
+
+/*
+ * Подложка растёт вместе с рядом, чтобы увеличенные плитки не торчали за неё. Исключение из «только
+ * transform»: меняются left / right одного абсолютного псевдоэлемента — раскладку соседей это не трогает,
+ * а scaleX исказил бы скругление и рамку. Без перехода: значения пишутся в том же кадре, что и плитки.
+ */
+.root::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  left: calc(var(--dock-grow-start) * -1);
+  right: calc(var(--dock-grow-end) * -1);
+  z-index: -1;
+  /* Засечки по углам — ручка стиля «сигнал», как у Card; без стиля слой прозрачный */
+  background: var(--frame-ticks, linear-gradient(transparent, transparent)), var(--glass);
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+  border: 1px solid var(--border);
+  /*
+   * Концентрично плитке: её радиус плюс отступ дока и рамка. Прямые углы плитки («сигнал», радиус 0) —
+   * прямые и у подложки: min() с радиусом, умноженным на большое число, обнуляет прибавку отступа
+   */
+  border-radius: min(var(--radius-lg) * 999, calc(var(--radius-lg) + var(--space-2) + 1px));
+  box-shadow:
+    var(--shadow-float),
+    inset 0 1px 0 var(--edge-highlight);
+}
+
+.vertical {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.vertical::before {
+  top: calc(var(--dock-grow-start) * -1);
+  right: 0;
+  bottom: calc(var(--dock-grow-end) * -1);
+  left: 0;
+}
+
+.item {
+  --dock-scale: 1;
+  --dock-offset: 0px;
+
+  position: relative;
+  flex-shrink: 0;
+  width: var(--dock-size);
+  height: var(--dock-size);
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-lg);
+  /* Растёт от кромки дока: снизу вверх у горизонтального, слева направо у вертикального */
+  transform-origin: 50% 100%;
+  transform: translateX(var(--dock-offset)) scale(var(--dock-scale));
+  transition: transform var(--duration-fast) var(--ease-out);
+  will-change: transform;
+}
+
+.vertical .item {
+  transform-origin: 0 50%;
+  transform: translateY(var(--dock-offset)) scale(var(--dock-scale));
+}
+
+/* Увеличенная плитка — над соседями, чтобы её край не прятался под следующей */
+.item:hover {
+  z-index: 1;
+}
+
+.plate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--surface-2);
+  border-radius: inherit;
+  color: var(--text-muted);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.item:hover .plate {
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.item[data-active] .plate {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+
+/*
+ * Угол режет плитка: аватар внутри — без своего скругления. Переменная и радиус ставятся на сам аватар
+ * (селектор сильнее его класса формы): от плитки --avatar-radius не наследуется, аватар объявляет его
+ * себе сам, и в квадратной плитке «сигнала» осталась бы круглая картинка с углами подложки вокруг
+ */
+.item .plate > * {
+  --avatar-radius: 0;
+
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+
+/* Иконке lucide растягиваться не нужно — она по центру своего размера */
+.item .plate > svg {
+  width: auto;
+  height: auto;
+}
+
+.indicator {
+  position: absolute;
+  bottom: calc(var(--space-1) * -1 - 1px);
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  /* Точка — пилюля: в «сигнале» прямая, как прочие таблетки */
+  border-radius: var(--radius-pill, var(--radius-full));
+  background: var(--text);
+  opacity: 0;
+  transform: translateX(-50%);
+  transition: opacity var(--duration-base) var(--ease-out);
+}
+
+.vertical .indicator {
+  top: 50%;
+  bottom: auto;
+  left: calc(var(--space-1) * -1 - 1px);
+  transform: translateY(-50%);
+}
+
+.item[data-active] .indicator {
+  opacity: 1;
+}
+
+.count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: var(--radius-pill, var(--radius-full));
+  /* Обводка цветом фона — исключение решения 8: под счётчиком всегда стекло дока */
+  box-shadow: 0 0 0 2px var(--popover);
+  background: var(--danger-strong);
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 16px;
+  text-align: center;
+  animation: var(--anim-pop-in);
+}

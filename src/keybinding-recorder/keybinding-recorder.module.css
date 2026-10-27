@@ -1,0 +1,102 @@
+.root {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+  min-width: 0;
+}
+
+.row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* Кнопка на рамке поля: в покое — сочетание плашкой Kbd, в записи — приглашение с кареткой */
+.recorder {
+  display: inline-flex;
+  align-items: center;
+  min-width: 160px;
+  height: var(--control-md);
+  padding: 0 var(--space-2);
+  background: var(--field-bg);
+  border: 1px solid var(--field-border);
+  border-radius: var(--radius-md);
+  box-shadow: inset 0 1px 0 var(--edge-highlight);
+  color: var(--text);
+  font-size: var(--text-md);
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+  transition:
+    background-color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
+.recorder:hover:not(:disabled) {
+  background: var(--field-bg-hover);
+  border-color: var(--field-border-hover);
+}
+
+.recorder:focus-visible,
+.recorder[data-recording] {
+  background: var(--field-bg-hover);
+  border-color: var(--field-border-focus);
+  box-shadow: var(--field-ring);
+}
+
+.recorder:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.prompt {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--text-muted);
+}
+
+.none {
+  color: var(--text-subtle);
+}
+
+.notice,
+.hint {
+  display: flex;
+  gap: 0.5em;
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+}
+
+.hint {
+  color: var(--text-subtle);
+}
+
+/* Подсказка — комментарий `// …`, ошибка — `! …`: знаки из TUI-токенов, как у Field */
+.hint::before {
+  content: var(--tui-hint);
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+}
+
+.error {
+  color: var(--danger);
+  animation: var(--anim-fade-in);
+}
+
+.error::before {
+  content: var(--tui-error);
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-weight: var(--weight-bold);
+}
+
+.warning {
+  color: var(--warning);
+}
+
+[data-tui='off'] .notice,
+[data-tui='off'] .hint {
+  gap: 0;
+}

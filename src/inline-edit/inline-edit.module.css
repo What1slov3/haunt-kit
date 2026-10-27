@@ -1,0 +1,122 @@
+/*
+ * Шрифт и кегль — родителя. Текст и поле одной геометрии: тот же отступ и рамка в 1 px (у текста
+ * прозрачная), поэтому при переходе в правку буквы остаются на месте.
+ */
+.root {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  max-width: 100%;
+  min-width: 0;
+  vertical-align: top;
+}
+
+/*
+ * Поля вынесены наружу на space-1 — буквы стоят ровно по краю соседнего текста. Поэтому и предел ширины
+ * шире корня на те же два поля: корень меряет себя по содержимому за вычетом выноса, и при 100% кнопка
+ * всегда выходила на 8 px уже своего текста — многоточие даже у коротких слов
+ */
+.display,
+.input {
+  max-width: calc(100% + 2 * var(--space-1));
+  margin: -1px calc(-1 * var(--space-1));
+  padding: 0 calc(var(--space-1) - 1px);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+}
+
+.display {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+  background: transparent;
+  text-align: left;
+  cursor: text;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.display:hover:not(:disabled) {
+  background: var(--state-hover-bg);
+}
+
+.display:disabled {
+  cursor: default;
+}
+
+.display[data-empty] .text {
+  color: var(--text-subtle);
+}
+
+/* Предел ширины в покое — `maxWidth`; без него текст режется только краем контейнера */
+.text {
+  min-width: 0;
+  max-width: var(--inline-edit-max, none);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Карандаш — подсказка, что текст правится; виден на наведении и в фокусе */
+.pencil {
+  flex-shrink: 0;
+  color: var(--text-subtle);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.display:hover:not(:disabled) .pencil,
+.display:focus-visible .pencil {
+  opacity: 1;
+}
+
+.status {
+  flex-shrink: 0;
+}
+
+.input {
+  /* По ширине текста (Chromium, WebView2); в других браузерах — ширина по умолчанию */
+  field-sizing: content;
+  min-width: 8ch;
+  background: var(--field-bg);
+  border-color: var(--field-border-focus);
+  box-shadow: var(--field-ring);
+  outline: none;
+}
+
+.input[aria-invalid] {
+  border-color: var(--danger);
+  box-shadow: var(--field-ring-invalid);
+}
+
+.input::placeholder {
+  color: var(--text-subtle);
+}
+
+/* Ошибка — как у Field: `! текст`, знак из TUI-токена */
+.error {
+  display: flex;
+  gap: 0.5em;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-normal);
+  line-height: var(--leading-snug);
+  color: var(--danger);
+  animation: var(--anim-fade-in);
+}
+
+.error::before {
+  content: var(--tui-error);
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-weight: var(--weight-bold);
+}
+
+[data-tui='off'] .error {
+  gap: 0;
+}

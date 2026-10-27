@@ -1,0 +1,43 @@
+.skeleton {
+  position: relative;
+  display: block;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--surface-3);
+  animation: pulse 1.6s var(--ease-in-out) infinite;
+}
+
+/* Перелив: блик едет по плашке (только transform); при data-effects="off" остаётся один пульс */
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 20%,
+    var(--edge-highlight-strong) 50%,
+    transparent 80%
+  );
+  opacity: var(--fx-shimmer);
+  animation: var(--anim-shimmer);
+  animation-play-state: var(--fx-play);
+}
+
+.lines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  width: 100%;
+}
+
+/* Пульс прозрачностью, а не бегущий градиент: фон не перерисовывается */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+}

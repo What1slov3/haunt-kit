@@ -1,0 +1,24 @@
+/* Окно, заголовок, описание и подвал — стили Dialog: подтверждение должно выглядеть как его диалог */
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.extra {
+  margin-top: var(--space-4);
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  color: var(--text-muted);
+}
+
+.field {
+  margin-top: var(--space-4);
+}
+
+/* Что ввести — моно цветом текста: его переписывают посимвольно, и он не должен теряться в подписи */
+.expected {
+  font-family: var(--font-mono);
+  font-weight: var(--weight-semibold);
+  color: var(--text);
+  user-select: all;
+}

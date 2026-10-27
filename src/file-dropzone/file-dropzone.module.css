@@ -1,0 +1,166 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+  min-width: 0;
+}
+
+/* Зона — панель с пунктирной рамкой: пунктир говорит «сюда можно положить», а не «это поле» */
+.zone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-6) var(--space-4);
+  background: var(--field-bg);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  color: var(--text);
+  text-align: center;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+}
+
+/* Свечение «над зоной» — отдельным слоем: его сила идёт за уровнем эффектов, рамка — нет */
+.zone::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  box-shadow:
+    0 0 0 3px var(--accent-soft),
+    0 0 24px var(--accent-glow);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-base) var(--ease-out);
+}
+
+.zone:hover:not(:disabled) {
+  background: var(--field-bg-hover);
+  border-color: var(--field-border-focus);
+}
+
+.zone:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.root[data-invalid] .zone {
+  border-color: var(--danger);
+}
+
+.root[data-drag='accept'] .zone {
+  background: var(--accent-soft);
+  border-style: solid;
+  border-color: var(--state-selected-border);
+}
+
+.root[data-drag='accept'] .zone::after {
+  opacity: var(--fx-glow);
+}
+
+.root[data-drag='reject'] .zone {
+  background: var(--danger-soft);
+  border-style: solid;
+  border-color: var(--danger);
+  cursor: no-drop;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  color: var(--text-subtle);
+  transition:
+    transform var(--duration-release) var(--ease-release),
+    color var(--duration-base) var(--ease-out);
+}
+
+/* Над зоной иконка приподнимается навстречу файлу */
+.root[data-drag='accept'] .icon {
+  transform: translateY(-3px) scale(1.06);
+  color: var(--accent-text);
+}
+
+.root[data-drag='reject'] .icon {
+  color: var(--danger);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+  min-width: 0;
+}
+
+.title {
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+}
+
+.description {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-subtle);
+}
+
+/* Компактно: иконка слева, текст справа, высота — пара строк */
+.compact .zone {
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+}
+
+.compact .icon {
+  width: 32px;
+  height: 32px;
+  /* Концентрично зоне: её радиус минус отступ и рамка, но не меньше радиуса мелких элементов */
+  border-radius: max(var(--radius-sm), calc(var(--radius-lg) - var(--space-2) - 1px));
+}
+
+.input {
+  display: none;
+}
+
+.errors {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  animation: var(--anim-fade-in);
+}
+
+/* Ошибка — как у Field: `! текст`, знак из TUI-токена */
+.error {
+  display: flex;
+  gap: 0.5em;
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+  color: var(--danger);
+}
+
+.error::before {
+  content: var(--tui-error);
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-weight: var(--weight-bold);
+}
+
+[data-tui='off'] .error {
+  gap: 0;
+}

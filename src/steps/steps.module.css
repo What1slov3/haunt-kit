@@ -1,0 +1,84 @@
+.root {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: haunt-step;
+}
+
+.item {
+  --step-size: var(--control-sm);
+
+  position: relative;
+  min-height: var(--step-size);
+  padding-left: calc(var(--step-size) + var(--space-3));
+  padding-bottom: var(--space-5);
+  counter-increment: haunt-step;
+}
+
+.item:last-child {
+  padding-bottom: 0;
+}
+
+/* Номер: моно-цифра в круге с рамкой — TUI-акцент в спокойной форме Fumadocs */
+.item::before {
+  content: counter(haunt-step);
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--step-size);
+  height: var(--step-size);
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-full);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--text-muted);
+}
+
+/* Линия до следующего шага — от низа круга до конца пункта */
+.item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: calc(var(--step-size) + var(--space-1));
+  bottom: var(--space-1);
+  left: calc(var(--step-size) / 2 - 0.5px);
+  width: 1px;
+  background: var(--border);
+}
+
+.item[data-current]::before {
+  border-color: var(--accent);
+  color: var(--accent-text);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.item[data-done]::before {
+  content: '✓';
+  background: var(--accent-soft);
+  border-color: var(--accent-soft-strong);
+  color: var(--accent-text);
+}
+
+.item[data-done]:not(:last-child)::after {
+  background: var(--accent-soft-strong);
+}
+
+.title {
+  display: block;
+  padding-top: calc((var(--step-size) - 1lh) / 2);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  color: var(--text);
+}
+
+.body {
+  margin-top: var(--space-1);
+  font-size: var(--text-md);
+  line-height: var(--leading-relaxed);
+  color: var(--text-muted);
+}

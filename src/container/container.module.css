@@ -1,0 +1,23 @@
+/* box-sizing: content-box — предел ширины у содержимого, поля сверху: 720 px текста при любом gutter */
+.container {
+  box-sizing: content-box;
+  width: auto;
+  max-width: var(--container-max);
+  margin-inline: auto;
+}
+
+.container[data-size='narrow'] {
+  --container-max: var(--container-narrow);
+}
+
+.container[data-size='reading'] {
+  --container-max: var(--container-reading);
+}
+
+.container[data-size='wide'] {
+  --container-max: var(--container-wide);
+}
+
+.container[data-size='full'] {
+  --container-max: none;
+}

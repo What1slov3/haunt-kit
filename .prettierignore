@@ -1,0 +1,8 @@
+node_modules
+dist
+pnpm-lock.yaml
+storybook-static
+__screenshots__
+.vitest-attachments
+# Генерирует packages/ui/scripts/tokens.ts; тест сверяет файл с генератором символ в символ
+src/theme/tokens.generated.ts

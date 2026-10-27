@@ -1,0 +1,118 @@
+.text {
+  margin: 0;
+}
+
+.size-xs {
+  font-size: var(--text-xs);
+  line-height: var(--leading-normal);
+}
+
+.size-sm {
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+
+.size-md {
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+}
+
+.size-lg {
+  font-size: var(--text-lg);
+  line-height: var(--leading-normal);
+}
+
+.size-xl {
+  font-size: var(--text-xl);
+  line-height: var(--leading-snug);
+}
+
+.weight-thin {
+  font-weight: var(--weight-thin);
+}
+
+.weight-normal {
+  font-weight: var(--weight-normal);
+}
+
+.weight-medium {
+  font-weight: var(--weight-medium);
+}
+
+.weight-semibold {
+  font-weight: var(--weight-semibold);
+}
+
+.weight-bold {
+  font-weight: var(--weight-bold);
+}
+
+.tone-default {
+  color: var(--text);
+}
+
+.tone-muted {
+  color: var(--text-muted);
+}
+
+.tone-subtle {
+  color: var(--text-subtle);
+}
+
+.tone-accent {
+  color: var(--accent-text);
+}
+
+.tone-success {
+  color: var(--success);
+}
+
+.tone-warning {
+  color: var(--warning);
+}
+
+.tone-danger {
+  color: var(--danger);
+}
+
+.tone-info {
+  color: var(--info);
+}
+
+.tone-inherit {
+  color: inherit;
+}
+
+.truncate {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Длинные слова и ссылки ломаются, а не распирают колонку */
+.wrap {
+  display: block;
+  min-width: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.align-start {
+  text-align: start;
+}
+
+.align-center {
+  text-align: center;
+}
+
+.align-end {
+  text-align: end;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.95em;
+  font-variant-numeric: tabular-nums;
+}

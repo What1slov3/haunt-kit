@@ -1,0 +1,56 @@
+/* Рамка, размеры и состояния — в field-frame.module.css; здесь только внутренности поля */
+.field {
+  cursor: text;
+}
+
+.mono .input {
+  font-family: var(--font-mono);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: inherit;
+}
+
+.input::placeholder {
+  color: var(--text-subtle);
+}
+
+.input:disabled {
+  cursor: not-allowed;
+}
+
+.slot {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--text-subtle);
+}
+
+/* Приглашение `>`: в покое тихое, в фокусе — цвет акцента, как курсор терминала, получивший ввод */
+.prompt {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-weight: var(--weight-semibold);
+  color: var(--text-subtle);
+  transition: color var(--duration-base) var(--ease-out);
+}
+
+.promptToken::before {
+  content: var(--tui-prompt);
+}
+
+.field:focus-within .prompt {
+  color: var(--accent-text);
+}
+
+/* Без TUI знак-токен пуст — убираем и сам элемент, чтобы не оставался промежуток */
+[data-tui='off'] .promptToken {
+  display: none;
+}

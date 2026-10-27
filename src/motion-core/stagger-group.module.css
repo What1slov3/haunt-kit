@@ -1,0 +1,24 @@
+/*
+ * Появление — через var(--anim-*) (README кита: локальное имя keyframes в модуле не нашлось бы).
+ * backwards — до своей задержки ребёнок уже в начальном кадре, а не мелькает на месте.
+ */
+.fade > * {
+  animation: var(--anim-fade-in);
+}
+
+.pop > * {
+  animation: var(--anim-pop-in);
+}
+
+.rise > * {
+  animation: var(--anim-rise-in);
+}
+
+.root > * {
+  animation-fill-mode: backwards;
+  animation-delay: calc(min(var(--stagger-index, 0), var(--stagger-max)) * var(--stagger-step));
+}
+
+.root[data-static] > * {
+  animation: none;
+}

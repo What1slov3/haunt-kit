@@ -1,0 +1,42 @@
+<!--
+  Дополнение темы менеджера (storybook-themes.ts) тем, чего тема Storybook не умеет: сайдбар в духе
+  Fumadocs. Активный пункт — тон акцента и цветной текст вместо сплошной заливки, пункты со скруглением,
+  заголовки групп — моно-капитель (TUI-акцент кита). Селекторы — по data-атрибутам Storybook: классы у
+  него генерируются и меняются от версии к версии.
+-->
+<style>
+  :root {
+    --haunt-sb-active-bg: rgba(110, 92, 230, 0.18);
+    --haunt-sb-active-fg: #c3baff;
+    --haunt-sb-subheading: rgba(237, 237, 239, 0.5);
+  }
+
+  :root[data-haunt-theme='light'] {
+    --haunt-sb-active-bg: rgba(110, 92, 230, 0.12);
+    --haunt-sb-active-fg: #4b3bc4;
+    --haunt-sb-subheading: rgba(11, 11, 12, 0.55);
+  }
+
+  .sidebar-item {
+    border-radius: 6px;
+  }
+
+  .sidebar-item[data-selected='true'],
+  .sidebar-item[data-selected='true']:hover {
+    background: var(--haunt-sb-active-bg) !important;
+    color: var(--haunt-sb-active-fg) !important;
+    font-weight: 500;
+  }
+
+  .sidebar-item[data-selected='true'] svg {
+    color: var(--haunt-sb-active-fg) !important;
+  }
+
+  .sidebar-subheading {
+    font-family: 'JetBrains Mono Variable', ui-monospace, Consolas, monospace;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.06em !important;
+    color: var(--haunt-sb-subheading) !important;
+  }
+</style>

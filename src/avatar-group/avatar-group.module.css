@@ -1,0 +1,172 @@
+.group {
+  /* Доля диаметра, на которую следующий аватар наезжает на предыдущий, и зазор выреза вокруг соседа */
+  --group-overlap: 0.28;
+  --group-cut-gap: 2px;
+
+  display: inline-flex;
+  align-items: center;
+  /* Размеры — для плашки «+N» и её выреза под статус; у самих аватаров они свои, с теми же значениями
+   * (avatar.module.css) */
+  --avatar-size: 24px;
+  --status-size: 8px;
+}
+
+.xs {
+  --avatar-size: 20px;
+  --status-size: 7px;
+  --group-cut-gap: 1.5px;
+}
+
+.sm {
+  --avatar-size: 24px;
+  --status-size: 8px;
+}
+
+.md {
+  --avatar-size: 32px;
+  --status-size: 10px;
+}
+
+.lg {
+  --avatar-size: 40px;
+  --status-size: 12px;
+}
+
+.xl {
+  --avatar-size: 64px;
+  --status-size: 16px;
+  --group-cut-gap: 3px;
+}
+
+/* Радиус соседа — тот же, что у Avatar: круг или четверть стороны */
+.circle {
+  --group-radius-ratio: 0.5;
+}
+
+.rounded {
+  --group-radius-ratio: 0.25;
+}
+
+.item + .item {
+  margin-left: calc(var(--avatar-size) * var(--group-overlap) * -1);
+}
+
+/*
+ * Вырез под следующего соседа — маской, а не обводкой цвета фона (решение 8 в docs/ui-kit.md): отверстие
+ * прозрачно на любой подложке. Слои выреза — переменными, чтобы аватар со статусом мог положить поверх
+ * них ещё один слой. Переменные объявлены на самом элементе: там объявлен --avatar-size.
+ *
+ * Круг: центр соседа — на 1.5 диаметра правее левого края минус наезд, радиус — его радиус плюс зазор.
+ */
+.circle .item {
+  --cut-center: calc(var(--avatar-size) * (1.5 - var(--group-overlap)));
+  --cut-radius: calc(var(--avatar-size) / 2 + var(--group-cut-gap));
+  --cut-layers: radial-gradient(
+    circle at var(--cut-center) 50%,
+    transparent var(--cut-radius),
+    #000 calc(var(--cut-radius) + 0.5px)
+  );
+  --cut-position: 0 0;
+  --cut-size: 100% 100%;
+  --cut-composite: add;
+}
+
+/*
+ * Квадрат со скруглением: у радиальной маски нет формы «скруглённый прямоугольник», поэтому сосед (на
+ * зазор больше, радиус концентричен — свой плюс зазор) собирается из частей: два прямоугольника крестом
+ * и два круга в левых углах; верхний сплошной слой вычитает их объединение (subtract над add).
+ */
+.rounded .item {
+  --cut-x: calc(var(--avatar-size) * (1 - var(--group-overlap)) - var(--group-cut-gap));
+  --cut-r: calc(var(--avatar-size) * var(--group-radius-ratio) + var(--group-cut-gap));
+  --cut-top: calc(var(--cut-r) - var(--group-cut-gap));
+  --cut-bottom: calc(var(--avatar-size) + var(--group-cut-gap) - var(--cut-r));
+  --cut-layers:
+    linear-gradient(#000 0 0),
+    radial-gradient(
+      circle at calc(var(--cut-x) + var(--cut-r)) var(--cut-top),
+      #000 var(--cut-r),
+      transparent calc(var(--cut-r) + 0.5px)
+    ),
+    radial-gradient(
+      circle at calc(var(--cut-x) + var(--cut-r)) var(--cut-bottom),
+      #000 var(--cut-r),
+      transparent calc(var(--cut-r) + 0.5px)
+    ),
+    linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+  --cut-position: 0 0, 0 0, 0 0, calc(var(--cut-x) + var(--cut-r)) 0, var(--cut-x) var(--cut-top);
+  --cut-size:
+    100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% calc(var(--cut-bottom) - var(--cut-top));
+  --cut-composite: subtract, add, add, add, add;
+}
+
+.item:not(:last-child) {
+  mask-image: var(--cut-layers);
+  mask-position: var(--cut-position);
+  mask-size: var(--cut-size);
+  mask-repeat: no-repeat;
+  mask-composite: var(--cut-composite);
+}
+
+/*
+ * Статус последнего видимого, когда за ним «+N»: маска-исключение. Поверх выреза под соседа точка
+ * возвращается слоем add — вырез её не срезает, — а плашка вырезана под точку с тем же зазором, что
+ * Avatar оставляет вокруг неё в себе.
+ */
+.item.keepStatus:not(:last-child) {
+  /* Скругление обёртки обрезает маскированный элемент по своей форме, а точка статуса выступает за
+   * круг в углу — без этого её срезала бы сама обёртка. Картинку скругляет .root внутри Avatar */
+  border-radius: 0;
+  --dot: calc(var(--avatar-size) - var(--status-size) / 2);
+
+  mask-image:
+    radial-gradient(
+      circle at var(--dot) var(--dot),
+      #000 calc(var(--status-size) / 2),
+      transparent calc(var(--status-size) / 2 + 0.5px)
+    ),
+    var(--cut-layers);
+  mask-position:
+    0 0,
+    var(--cut-position);
+  mask-size:
+    100% 100%,
+    var(--cut-size);
+  mask-composite: add, var(--cut-composite);
+}
+
+.more {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  border-radius: calc(var(--avatar-size) * var(--group-radius-ratio));
+  background: var(--surface-3);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: calc(var(--avatar-size) * 0.36);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  cursor: default;
+}
+
+/* Центр точки в координатах плашки: она сдвинута вправо на диаметр минус наезд */
+.more.statusCut {
+  --dot-x: calc(var(--avatar-size) * var(--group-overlap) - var(--status-size) / 2);
+  --dot-y: calc(var(--avatar-size) - var(--status-size) / 2);
+  --dot-cut: calc(var(--status-size) / 2 + 2px);
+
+  mask-image: radial-gradient(
+    circle at var(--dot-x) var(--dot-y),
+    transparent var(--dot-cut),
+    #000 calc(var(--dot-cut) + 0.5px)
+  );
+}
+
+.more:hover {
+  background: var(--state-hover-bg);
+  color: var(--text);
+}

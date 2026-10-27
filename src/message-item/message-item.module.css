@@ -1,0 +1,301 @@
+/*
+ * Строка сообщения: колонка 40 px под аватар и след автора, текст справа, время и действия — у правого края
+ * первой строки.
+ * Тон состояния — фоном, наведение — слоем поверх него (background-image), чтобы упоминание не теряло тон
+ * под курсором. Отступ между группами — padding, а не margin: VirtualList меряет высоту строки, и margin
+ * ребёнка провалился бы мимо измерения.
+ */
+.root {
+  --message-author-color: var(--text);
+  --message-gutter: var(--space-10);
+  --message-gap: var(--space-3);
+  --message-pad-x: var(--space-4);
+  --message-line: calc(var(--text-lg) * var(--leading-normal));
+  --message-tone: transparent;
+  --message-bar: transparent;
+
+  position: relative;
+  padding: var(--space-0-5) var(--message-pad-x);
+  background-color: var(--message-tone);
+  box-shadow: inset 2px 0 0 var(--message-bar);
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+/* Начало группы отделено от предыдущей — закон близости: группа читается одним блоком */
+.root:not([data-grouped], [data-compact]) {
+  padding-top: var(--space-2);
+}
+
+/* Конец группы — тот же отступ снизу: аватар короткой группы не упирается в разделитель под ней */
+.root[data-group-end]:not([data-compact]) {
+  padding-bottom: var(--space-2);
+}
+
+.root:hover,
+.root:focus-within,
+.root[data-actions-open] {
+  background-image: linear-gradient(var(--surface-hover), var(--surface-hover));
+}
+
+/* Строка на всю ширину ленты: кольцо фокуса внутрь, иначе его срезает область прокрутки */
+.root:focus-visible {
+  outline-offset: -2px;
+}
+
+.root[data-mentioned] {
+  --message-tone: var(--accent-soft);
+  --message-bar: var(--accent);
+}
+
+.root[data-highlighted] {
+  --message-tone: var(--warning-soft);
+  --message-bar: var(--warning);
+}
+
+.root[data-editing] {
+  --message-tone: var(--surface-hover);
+}
+
+.root[data-pending] .content {
+  opacity: 0.55;
+}
+
+.root[data-failed] .body {
+  color: var(--text-muted);
+}
+
+/* --- Цитата ответа: строка-след над шапкой, в колонке текста -------------------------------- */
+.reply {
+  display: flex;
+  min-width: 0;
+  margin-bottom: var(--space-0-5);
+  padding-left: calc(var(--message-gutter) + var(--message-gap));
+}
+
+.reply > * {
+  min-width: 0;
+}
+
+/* --- Строка ------------------------------------------------------------------------------------ */
+.row {
+  display: flex;
+  gap: var(--message-gap);
+  min-width: 0;
+}
+
+.gutter {
+  position: relative;
+  display: flex;
+  flex: none;
+  justify-content: center;
+  width: var(--message-gutter);
+  padding-top: 2px;
+}
+
+/*
+ * След автора: линия цвета автора по центру колонки у каждого продолжения. Строки группы идут вплотную,
+ * поэтому отрезки сливаются в одну нить от аватара вниз; сверху отрезок заходит под отступ строки, чтобы
+ * дотянуться до аватара.
+ */
+/* Цвет, толщина и свечение следа — ручки косметики (--trail-*); без них — линия цвета автора */
+.root[data-grouped] .gutter::before {
+  content: '';
+  position: absolute;
+  top: calc(-1 * var(--space-1));
+  bottom: calc(-1 * var(--space-0-5));
+  left: calc(50% - var(--trail-width, 2px) / 2);
+  width: var(--trail-width, 2px);
+  background: var(--trail-paint, color-mix(in oklab, var(--message-author-color) 32%, transparent));
+  border-radius: 1px;
+  box-shadow: var(--trail-glow, none);
+  pointer-events: none;
+}
+
+.gutterTime {
+  display: block;
+  width: 100%;
+  font-size: var(--text-xs);
+  /* Та же высота строки, что у тела: время стоит на линии текста */
+  line-height: calc(var(--message-line) - 2px);
+  text-align: right;
+  color: var(--text-subtle);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Справа место под время: шапка не заезжает под него. Не больше 40 % строки — в узкой ленте (телефон,
+ * превью в карточке) фиксированный резерв съедал бы почти всё имя */
+.header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-width: 0;
+  padding-right: min(9rem, 40%);
+  line-height: var(--message-line);
+}
+
+/* Шапка продолжения — только для скринридера: автор и время читаются у каждого сообщения */
+.hiddenHeader {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Имя — цвет автора; ручки косметики --author-paint / --author-fill дают градиент по буквам */
+.author {
+  min-width: 0;
+  overflow: hidden;
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--message-author-color);
+  background-image: var(--author-paint, none);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: var(--author-fill, currentColor);
+}
+
+.badges {
+  display: inline-flex;
+  flex: none;
+  align-self: center;
+  gap: var(--space-1);
+}
+
+.time {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+  color: var(--text-subtle);
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+/* Продолжение: время появляется при наведении и фокусе, как действия */
+.root[data-grouped] .time {
+  opacity: 0;
+}
+
+.root[data-grouped]:hover .time,
+.root[data-grouped]:focus-within .time {
+  opacity: 1;
+}
+
+.body {
+  min-width: 0;
+  font-size: var(--text-lg);
+  line-height: var(--leading-normal);
+  overflow-wrap: anywhere;
+  color: var(--text);
+}
+
+.edited {
+  margin-left: var(--space-1);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+  color: var(--text-subtle);
+  cursor: default;
+}
+
+.deleted {
+  font-style: italic;
+  color: var(--text-subtle);
+}
+
+.attachments,
+.reactions {
+  margin-top: var(--space-1);
+}
+
+.failure {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-0-5);
+  font-size: var(--text-sm);
+  color: var(--danger);
+}
+
+.retry {
+  margin-left: var(--space-1);
+}
+
+/* --- Компактная лента: время, имя и текст в строку; перенос текста — под текст, не под время ----- */
+.root[data-compact] {
+  --message-gutter: var(--space-12);
+
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+.root[data-compact] .content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: var(--space-2);
+}
+
+.root[data-compact] .header {
+  flex: none;
+  max-width: 40%;
+  padding-right: 0;
+}
+
+.root[data-compact] .body {
+  flex: 1 1 12rem;
+}
+
+.root[data-compact] .attachments,
+.root[data-compact] .failure,
+.root[data-compact] .reactions {
+  flex-basis: 100%;
+}
+
+/* --- Правый край первой строки: действия и время ------------------------------------------- */
+.aside {
+  position: absolute;
+  top: var(--space-0-5);
+  right: var(--message-pad-x);
+  z-index: var(--z-raised);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--message-line);
+  pointer-events: none;
+}
+
+/* Сверху — отступ начала группы и строка цитаты: время стоит на линии шапки */
+.root:not([data-grouped], [data-compact]) > .aside {
+  top: var(--space-2);
+}
+
+.root:not([data-grouped], [data-compact]):has(> .reply) > .aside {
+  top: calc(var(--space-2) + var(--text-sm) * var(--leading-snug) + var(--space-0-5));
+}
+
+/* Действия — строкой кнопок без тени: встают слева от времени на фоне строки */
+.actions {
+  display: flex;
+  gap: 1px;
+  background: var(--background);
+  border-radius: var(--radius-md);
+  box-shadow: 0 0 0 1px var(--border);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.root:hover .actions,
+.root:focus-within .actions,
+.root[data-actions-open] .actions {
+  opacity: 1;
+  pointer-events: auto;
+}

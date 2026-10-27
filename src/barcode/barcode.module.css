@@ -1,0 +1,31 @@
+.barcode {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  flex-shrink: 0;
+  color: var(--text);
+}
+
+.barcode svg {
+  fill: currentColor;
+}
+
+/*
+ * Плашка: сканеру нужно тёмное на светлом, поэтому в тёмной теме она не следует за фоном. Запасные белый
+ * и чёрный — исключение из «цвета только токенами», как белый на заливке статуса; стиль «сигнал» задаёт
+ * свои --code-plate / --code-ink (бумага и чернила).
+ */
+.plate {
+  padding: var(--space-2) 0 var(--space-1-5);
+  background: var(--code-plate, #ffffff);
+  color: var(--code-ink, #000000);
+}
+
+.value {
+  font-family: var(--micro-font, var(--font-mono));
+  font-size: var(--micro-size, var(--text-xs));
+  letter-spacing: var(--micro-tracking, 0.06em);
+  line-height: 1;
+  text-transform: uppercase;
+}

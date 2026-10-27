@@ -1,0 +1,251 @@
+/* Раскладка блоков документации; цвета и размеры — только токены кита */
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  margin: var(--space-4) 0;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.groupTitle {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+}
+
+.groupHint {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.swatchGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--space-3);
+}
+
+.swatchCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.swatch {
+  display: block;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.tokenName {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text);
+}
+
+.tokenValue {
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tokenHint {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.value {
+  padding: 1px 4px;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  color: var(--text);
+  background: var(--surface-2);
+  border-radius: var(--radius-xs);
+}
+
+.table {
+  display: flex;
+  flex-direction: column;
+  margin: var(--space-4) 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.scaleRow {
+  display: grid;
+  grid-template-columns: 160px 200px 1fr;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 40px;
+  padding: var(--space-2) var(--space-3);
+  color: var(--text);
+  background: var(--surface-1);
+}
+
+.scaleRow + .scaleRow {
+  border-top: 1px solid var(--border-subtle);
+}
+
+.scaleDemo {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.sample {
+  overflow: hidden;
+  line-height: var(--leading-tight);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.spaceBar {
+  display: block;
+  height: 10px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+.radiusBox {
+  display: block;
+  width: 40px;
+  height: 40px;
+  background: var(--surface-3);
+  border: 1px solid var(--border-strong);
+}
+
+.heightBox {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  background: var(--surface-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+}
+
+.shadowBox {
+  display: block;
+  width: 160px;
+  height: 40px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg);
+}
+
+.motionDot {
+  display: block;
+  width: 20px;
+  height: 20px;
+  background: var(--accent);
+  border-radius: var(--radius-sm);
+}
+
+.fxTable {
+  display: grid;
+  grid-template-columns: minmax(200px, 2fr) repeat(3, minmax(80px, 1fr));
+  margin: var(--space-4) 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  color: var(--text);
+}
+
+.fxRow {
+  display: contents;
+}
+
+.fxHead,
+.fxRow > div {
+  padding: var(--space-2) var(--space-3);
+  border-top: 1px solid var(--border-subtle);
+  background: var(--surface-1);
+}
+
+.fxHead {
+  border-top: none;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-subtle);
+  background: var(--surface-2);
+}
+
+.levels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+}
+
+.levelColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.levelRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Композер: кнопка 24 px в рамке 32 — вертикальное поле 3 px, как в мессенджере */
+.composer {
+  padding: 3px 3px 3px var(--space-2);
+}
+
+.composerInput {
+  flex: 1;
+  min-width: 0;
+  margin: calc((var(--control-sm) - 1lh) / 2) 0;
+}
+
+.example {
+  margin: var(--space-4) 0;
+  padding: var(--space-4);
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+/* Рамка живого примера руководства: тот же фон, что у превью историй, высота — по примеру */
+.demo {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: var(--space-4) 0 var(--space-5);
+  padding: var(--space-5);
+  overflow: hidden;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+}
+
+.demo:has(> [data-variant='islands']) {
+  padding: 0;
+}

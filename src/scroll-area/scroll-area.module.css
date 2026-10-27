@@ -1,0 +1,82 @@
+.root {
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+  min-width: 0;
+}
+
+.grow {
+  flex: 1 1 0;
+}
+
+.viewport {
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * Radix ставит ребёнку вьюпорта display: table — так он не сжимается уже контента.
+ * min-width: 100% растягивает на ширину; width: 100% нужен, чтобы текст переносился,
+ * а не делал таблицу шире вьюпорта.
+ */
+.viewport > div {
+  width: 100%;
+  min-width: 100%;
+  /* Авто-раскладка таблицы растягивается под длинный текст и ломает многоточие у строк */
+  table-layout: fixed;
+}
+
+/* Те же токены, что у нативной полосы (theme/global.css): ScrollArea и overflow: auto выглядят одинаково */
+.scrollbar {
+  display: flex;
+  user-select: none;
+  touch-action: none;
+  padding: var(--scrollbar-inset);
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    padding var(--duration-fast) var(--ease-out);
+}
+
+.scrollbar[data-orientation='vertical'] {
+  width: var(--scrollbar-size);
+}
+
+.scrollbar[data-orientation='horizontal'] {
+  height: var(--scrollbar-size);
+  flex-direction: column;
+}
+
+.scrollbar[data-state='hidden'] {
+  opacity: 0;
+}
+
+/* Под курсором ползунок шире, как у нативной полосы: отступ вдвое меньше, дорожка та же */
+.scrollbar:hover {
+  padding: calc(var(--scrollbar-inset) / 2);
+}
+
+.thumb {
+  position: relative;
+  flex: 1;
+  background: var(--scrollbar-thumb-hover);
+  border-radius: var(--scrollbar-radius);
+  transition: background-color var(--duration-base) var(--ease-out);
+}
+
+.scrollbar:hover .thumb,
+.thumb[data-state='visible']:active {
+  background: var(--scrollbar-thumb-active);
+}
+
+/* Область нажатия шире видимой полосы — так проще попасть мышью */
+.thumb::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  min-width: 20px;
+  min-height: 20px;
+  transform: translate(-50%, -50%);
+}

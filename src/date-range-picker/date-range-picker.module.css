@@ -1,0 +1,53 @@
+.frame {
+  min-width: 240px;
+}
+
+/* Два месяца и колонка пресетов шире обычного поповера (360 px); у края экрана месяцы встанут столбиком */
+.content {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  max-width: calc(100vw - 16px);
+}
+
+.presets {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+  min-width: 112px;
+  padding-right: var(--space-3);
+  border-right: 1px solid var(--border);
+  align-self: stretch;
+}
+
+/* Строка как пункт меню: те же высота, наведение и выбранное */
+.preset {
+  display: flex;
+  align-items: center;
+  height: var(--row-compact);
+  padding: 0 var(--space-2);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-md);
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.preset:hover:not(:disabled) {
+  background: var(--state-hover-bg);
+}
+
+.preset[aria-pressed='true'] {
+  background: var(--state-selected-bg);
+  color: var(--state-selected-fg);
+}
+
+.preset:disabled {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}

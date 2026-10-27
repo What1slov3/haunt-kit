@@ -1,0 +1,187 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  /* Свечение акцента со стороны панели — оттуда, где она появится; размытие по уровню эффектов */
+  --sheet-glow-x: 100%;
+
+  background:
+    radial-gradient(
+      50% 70% at var(--sheet-glow-x) 50%,
+      color-mix(in oklab, var(--accent) calc(var(--fx-glow) * 14%), transparent),
+      transparent 70%
+    ),
+    rgba(4, 4, 6, 0.5);
+  backdrop-filter: blur(var(--fx-blur));
+  -webkit-backdrop-filter: blur(var(--fx-blur));
+  animation: var(--anim-fade-in);
+}
+
+.overlay[data-side='left'] {
+  --sheet-glow-x: 0%;
+}
+
+.overlay[data-state='closed'] {
+  animation: var(--anim-fade-out);
+}
+
+[data-theme='light'] .overlay {
+  background:
+    radial-gradient(
+      50% 70% at var(--sheet-glow-x) 50%,
+      color-mix(in oklab, var(--accent) calc(var(--fx-glow) * 10%), transparent),
+      transparent 70%
+    ),
+    rgba(20, 20, 24, 0.28);
+}
+
+.content {
+  /* Отступ от края экрана: панель плавающая, со всех сторон видна рамка и скругление */
+  --sheet-inset: var(--space-2);
+
+  position: fixed;
+  top: var(--sheet-inset);
+  bottom: var(--sheet-inset);
+  z-index: var(--z-overlay);
+  display: flex;
+  flex-direction: column;
+  width: calc(100vw - var(--sheet-inset) * 2);
+  /* Стекло как у Dialog: popover на 92 % — в панели формы, им нужна читаемость больше, чем меню */
+  background: color-mix(in oklab, var(--popover) 92%, transparent);
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  box-shadow:
+    var(--shadow-float),
+    0 24px 64px color-mix(in oklab, var(--accent) calc(var(--fx-glow) * 16%), transparent);
+  color: var(--text);
+  outline: none;
+  animation: slide-in-right var(--duration-slow) var(--ease-out);
+}
+
+.content[data-side='right'] {
+  right: var(--sheet-inset);
+}
+
+.content[data-side='left'] {
+  left: var(--sheet-inset);
+  animation-name: slide-in-left;
+}
+
+/* Уход короче прихода: закрытие — ответ на действие человека, его не ждут */
+.content[data-state='closed'] {
+  animation: slide-out-right var(--duration-base) var(--ease-out) forwards;
+}
+
+.content[data-side='left'][data-state='closed'] {
+  animation-name: slide-out-left;
+}
+
+.sm {
+  max-width: 320px;
+}
+
+.md {
+  max-width: 400px;
+}
+
+.lg {
+  max-width: 560px;
+}
+
+.close {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+}
+
+.header {
+  flex-shrink: 0;
+  padding: var(--space-4) var(--space-10) var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+}
+
+.description {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  color: var(--text-muted);
+}
+
+.body {
+  flex: 1;
+  min-height: 0;
+  padding: var(--space-4);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  flex-shrink: 0;
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+/*
+ * Локальные keyframes: CSS Modules переименуют и их, и ссылку на них в этом же файле одинаково. Въезд —
+ * только transform и opacity; сдвиг на ширину плюс отступ, чтобы панель выходила из-за края экрана.
+ */
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(calc(100% + var(--sheet-inset)));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-out-right {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(calc(100% + var(--sheet-inset)));
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(calc(-100% - var(--sheet-inset)));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-out-left {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(calc(-100% - var(--sheet-inset)));
+  }
+}

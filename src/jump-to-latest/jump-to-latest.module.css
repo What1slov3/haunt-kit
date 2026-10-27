@@ -1,0 +1,52 @@
+/* Слой на всю ширину ленты у нижнего края: кнопка по центру, мимо неё клики проходят в ленту */
+.floating {
+  position: absolute;
+  right: 0;
+  bottom: var(--space-3);
+  left: 0;
+  z-index: var(--z-sticky);
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  height: var(--control-md);
+  padding: 0 var(--space-3);
+  background-color: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    var(--shadow-float),
+    inset 0 1px 0 var(--edge-highlight);
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  font-family: var(--control-font, inherit);
+  letter-spacing: var(--control-tracking, inherit);
+  text-transform: var(--control-case, none);
+  color: var(--text);
+  cursor: pointer;
+  pointer-events: auto;
+  transition:
+    transform var(--duration-release) var(--ease-release),
+    background-color var(--duration-fast) var(--ease-out);
+}
+
+/* Бейдж счётчика справа — на том же отступе от края, что сверху и снизу */
+.button[data-counted] {
+  padding-right: calc((var(--control-md) - 2px - 16px) / 2);
+}
+
+.button:hover {
+  background-image: linear-gradient(var(--state-hover-bg), var(--state-hover-bg));
+}
+
+.button:active {
+  transform: scale(var(--press-scale));
+  transition-duration: var(--duration-press);
+}

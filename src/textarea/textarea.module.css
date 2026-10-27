@@ -1,0 +1,31 @@
+/* Рамка и состояния — field-frame.module.css; здесь то, что есть только у textarea */
+.textarea {
+  display: block;
+  min-width: 0;
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  resize: vertical;
+  outline: none;
+}
+
+.textarea::placeholder {
+  color: var(--text-subtle);
+}
+
+.textarea:disabled {
+  cursor: not-allowed;
+}
+
+/* field-sizing есть в Chromium (а значит, в WebView2 и в Tauri); в других браузерах просто фикс. высота */
+.autoGrow {
+  field-sizing: content;
+  max-height: 12lh;
+  resize: none;
+}
+
+.bare {
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: inherit;
+}

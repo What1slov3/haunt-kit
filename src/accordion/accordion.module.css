@@ -1,0 +1,70 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.item + .item {
+  border-top: 1px solid var(--border);
+}
+
+.header {
+  margin: 0;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: var(--row-default);
+  padding: var(--space-1) var(--space-3);
+  background: transparent;
+  border: none;
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  text-align: left;
+  color: var(--text);
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.trigger:hover {
+  background: var(--state-hover-bg);
+}
+
+.label {
+  flex: 1;
+  min-width: 0;
+}
+
+.chevron {
+  color: var(--text-subtle);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.trigger[data-state='open'] .chevron {
+  transform: rotate(90deg);
+}
+
+.content {
+  overflow: hidden;
+  font-size: var(--text-md);
+  color: var(--text-muted);
+}
+
+.content[data-state='open'] {
+  animation: var(--anim-expand);
+}
+
+.content[data-state='closed'] {
+  animation: var(--anim-collapse);
+}
+
+/* Текст ответа выровнен по заголовку, а не по шеврону: шеврон 14 + зазор 8 */
+.inner {
+  padding: 0 var(--space-3) var(--space-3) calc(var(--space-3) + 14px + var(--space-2));
+  line-height: var(--leading-relaxed);
+}

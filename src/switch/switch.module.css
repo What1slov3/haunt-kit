@@ -1,0 +1,82 @@
+.root {
+  --switch-width: 30px;
+  --switch-height: 16px;
+  --switch-pad: 2px;
+
+  position: relative;
+  flex-shrink: 0;
+  width: var(--switch-width);
+  height: var(--switch-height);
+  padding: 0;
+  background: var(--surface-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill, var(--radius-full));
+  transition:
+    background-color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+}
+
+.root:hover:not(:disabled) {
+  border-color: var(--text-subtle);
+}
+
+.root[data-state='checked'] {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.root:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.thumb {
+  --thumb-size: calc(var(--switch-height) - var(--switch-pad) * 2 - 2px);
+
+  display: block;
+  width: var(--thumb-size);
+  height: var(--thumb-size);
+  background: var(--text);
+  border-radius: var(--radius-pill, var(--radius-full));
+  transform: translateX(var(--switch-pad));
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.thumb[data-state='checked'] {
+  background: var(--accent-contrast);
+  transform: translateX(calc(var(--switch-width) - var(--thumb-size) - var(--switch-pad) - 2px));
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: var(--row-compact);
+  cursor: pointer;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.label {
+  font-size: var(--text-md);
+  color: var(--text);
+}
+
+.description {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+/* Пояснение — комментарий `// …`, как подсказка Field; знак из TUI-токена, без TUI его нет */
+.description::before {
+  content: var(--tui-hint);
+  margin-right: var(--tui-hint-gap);
+  font-family: var(--font-mono);
+  color: var(--text-subtle);
+}

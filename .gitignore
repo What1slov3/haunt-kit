@@ -1,0 +1,18 @@
+node_modules/
+*.tsbuildinfo
+*.log
+
+# Сборка Storybook — её публикует workflow, в репозиторий она не попадает
+storybook-static/
+
+# Артефакты прогонов: Playwright, vitest browser
+test-results/
+playwright-report/
+__screenshots__/
+.vitest-attachments/
+
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db

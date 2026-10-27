@@ -1,0 +1,84 @@
+/* Тот же вид, что у Slider: дорожка 3 px, бегунок 12 px, значение — моно-плашкой над бегунком */
+.root {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 16px;
+  user-select: none;
+  touch-action: none;
+  cursor: pointer;
+}
+
+.root[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.track {
+  position: relative;
+  flex-grow: 1;
+  height: 3px;
+  background: var(--surface-3);
+  border-radius: var(--radius-full);
+}
+
+.range {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: var(--accent);
+  border-radius: var(--radius-full);
+}
+
+.thumb {
+  position: absolute;
+  top: 50%;
+  display: block;
+  width: 12px;
+  height: 12px;
+  background: var(--text);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-soft);
+  translate: -50% -50%;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.thumb[data-front] {
+  z-index: 1;
+}
+
+.root:not([data-disabled]) .thumb:hover,
+.thumb:focus-visible,
+.thumb[data-active] {
+  transform: scale(1.15);
+}
+
+.value {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  padding: 1px 5px;
+  background: var(--inverse-bg);
+  color: var(--inverse-fg);
+  border-radius: var(--radius-xs);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: var(--leading-snug);
+  white-space: nowrap;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+  pointer-events: none;
+}
+
+.thumb:hover .value,
+.thumb:focus-visible .value,
+.thumb[data-active] .value {
+  opacity: 1;
+}
+
+.root[data-show-values='always'] .value {
+  opacity: 1;
+}

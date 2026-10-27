@@ -1,0 +1,25 @@
+/*
+ * Лента: элементы не сжимаются и не переносятся, лишнее уходит в прокрутку. Отступ снизу — место под
+ * полосу прокрутки, чтобы она не ложилась на тени и кромки элементов. overscroll-behavior — жест по ленте
+ * не листает страницу назад в истории браузера.
+ */
+.reel {
+  display: flex;
+  min-width: 0;
+  padding-bottom: var(--space-1-5);
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+}
+
+.reel > * {
+  flex: 0 0 var(--item-width, auto);
+}
+
+.reel[data-snap] {
+  scroll-snap-type: x mandatory;
+}
+
+.reel[data-snap] > * {
+  scroll-snap-align: start;
+}

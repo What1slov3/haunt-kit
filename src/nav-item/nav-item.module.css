@@ -1,0 +1,163 @@
+.row {
+  position: relative;
+  display: flex;
+  width: 100%;
+}
+
+.item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: 0 var(--space-2);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  text-align: left;
+  color: var(--text-muted);
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.compact {
+  min-height: var(--row-compact);
+}
+
+.default {
+  min-height: var(--row-default);
+}
+
+.withDescription {
+  min-height: 40px;
+  padding-top: var(--space-1);
+  padding-bottom: var(--space-1);
+}
+
+.item:hover,
+.row:hover .item {
+  background: var(--state-hover-bg);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.item[data-active] {
+  color: var(--text);
+}
+
+.item[data-unread] {
+  color: var(--text);
+}
+
+.item[data-muted] {
+  color: var(--text-subtle);
+}
+
+.item[data-muted] .icon {
+  opacity: 0.6;
+}
+
+/* Подсветка активной строки — отдельный слой под содержимым: он умеет переезжать (layoutId) и
+ * носит градиентную кромку (data-edge, effects.css). Содержимое выше за счёт z-index у соседей */
+.highlight {
+  --edge-alpha: 0.45;
+
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  /* Активный пункт как в сайдбаре Fumadocs — тон акцента поверх нейтральной подложки */
+  background: color-mix(in oklab, var(--accent) 14%, var(--state-active-bg));
+  pointer-events: none;
+}
+
+.item > :not(.highlight) {
+  position: relative;
+  z-index: 1;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-subtle);
+}
+
+.item[data-unread] .icon {
+  color: var(--text-muted);
+}
+
+.item[data-active] .icon {
+  color: var(--accent-text);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  gap: 1px;
+}
+
+.label {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: var(--leading-snug);
+}
+
+.description {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-normal);
+  line-height: var(--leading-snug);
+  color: var(--text-subtle);
+}
+
+/* Действия лежат поверх правого края строки и видны по наведению или фокусу внутри; счётчик в это
+ * время прячется, чтобы не толкались */
+.actions {
+  position: absolute;
+  top: 50%;
+  right: var(--space-1);
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  transform: translateY(-50%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.row:hover .actions,
+.row:focus-within .actions {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.row:hover .unread,
+.row:focus-within .unread {
+  opacity: 0;
+}
+
+.unread {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  animation: var(--anim-pop-in);
+}
+
+/* Переезд подсветки — FLIP с translate + scale (lib/use-shared-indicator.ts): масштаб от левого верхнего угла */
+.highlight {
+  transform-origin: 0 0;
+}

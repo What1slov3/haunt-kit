@@ -1,0 +1,252 @@
+/*
+ * Награда. Цвет редкости — производный от токенов статуса: обычная — нейтральная, редкая — info, эпическая —
+ * смесь info и danger (фиолетовый без своего токена), легендарная — warning (золото). Свечение — доля
+ * --fx-glow, растёт с редкостью; блик — полоса, пробегающая по медали только по поводу (наведение, фокус,
+ * появление легендарной). При data-effects="off" обе гаснут, медаль остаётся цветной.
+ */
+.root {
+  --rarity-color: var(--text-subtle);
+  --rarity-glow: 0;
+  --medal-size: 48px;
+
+  display: flex;
+  min-width: 0;
+  color: var(--text);
+}
+
+.root[data-rarity='rare'] {
+  --rarity-color: var(--info);
+  --rarity-glow: 0.35;
+}
+
+.root[data-rarity='epic'] {
+  --rarity-color: color-mix(in oklab, var(--info) 45%, var(--danger));
+  --rarity-glow: 0.6;
+}
+
+.root[data-rarity='legendary'] {
+  --rarity-color: var(--warning);
+  --rarity-glow: 1;
+}
+
+.tile {
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  box-shadow: inset 0 1px 0 var(--edge-highlight);
+  text-align: center;
+}
+
+.row {
+  --medal-size: 36px;
+
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-1-5) 0;
+}
+
+.root:not([data-locked])[data-rarity='legendary'].tile {
+  border-color: color-mix(in oklab, var(--rarity-color) 40%, var(--border));
+}
+
+/* Медаль — шестигранник clip-path; свечение — тень на подложке, поэтому оно не обрезается формой */
+.medal {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--medal-size);
+  height: var(--medal-size);
+  color: var(--rarity-color);
+  isolation: isolate;
+}
+
+.medal::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    160deg,
+    color-mix(in oklab, var(--rarity-color) 34%, var(--surface-2)),
+    color-mix(in oklab, var(--rarity-color) 12%, var(--surface-1))
+  );
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--rarity-color) 55%, transparent);
+  clip-path: polygon(50% 0, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+}
+
+/* Свечение: размытый круг цвета редкости под медалью */
+.medal::after {
+  content: '';
+  position: absolute;
+  inset: 12%;
+  z-index: -2;
+  background: var(--rarity-color);
+  border-radius: var(--radius-full);
+  filter: blur(var(--space-3));
+  opacity: calc(var(--fx-glow) * var(--rarity-glow) * 0.8);
+}
+
+.icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(var(--medal-size) * 0.42);
+  line-height: 1;
+}
+
+.icon :where(svg) {
+  width: calc(var(--medal-size) * 0.42);
+  height: calc(var(--medal-size) * 0.42);
+}
+
+/*
+ * Блик — полоса света поверх формы медали (та же маска-шестигранник). Слой с маской стоит на месте, едет
+ * только градиент внутри него: двигай слой целиком — маска уехала бы вместе с ним, и свет выезжал бы
+ * шестигранником за медаль, в пустоту. Градиент втрое шире слоя; позиции 87 % → 13 % — ровно от
+ * входа полосы у левого края до выхода у правого, а ease-in-out ведёт её через медаль ровно, без рывка
+ * в начале и мёртвого хвоста в конце.
+ */
+.root[data-rarity='epic'] .icon::after,
+.root[data-rarity='legendary'] .icon::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--medal-size);
+  height: var(--medal-size);
+  margin: calc(var(--medal-size) / -2) 0 0 calc(var(--medal-size) / -2);
+  background: linear-gradient(
+      105deg,
+      transparent 42%,
+      color-mix(in oklab, var(--text) 55%, transparent) 50%,
+      transparent 58%
+    )
+    no-repeat 87% 0 / 300% 100%;
+  clip-path: polygon(50% 0, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.root:not([data-locked]):is(:hover, :focus-within)[data-rarity='epic'] .icon::after,
+.root:not([data-locked]):is(:hover, :focus-within)[data-rarity='legendary'] .icon::after {
+  animation: achievement-shine 900ms var(--ease-in-out);
+  animation-play-state: var(--fx-play);
+}
+
+/* Легендарная бликует и при появлении — дважды, потом стоит */
+.root:not([data-locked])[data-rarity='legendary'] .icon::after {
+  animation: achievement-shine 1100ms var(--ease-in-out) 300ms 2;
+  animation-play-state: var(--fx-play);
+}
+
+@keyframes achievement-shine {
+  from {
+    background-position: 87% 0;
+    opacity: var(--fx-shimmer);
+  }
+
+  to {
+    background-position: 13% 0;
+    opacity: var(--fx-shimmer);
+  }
+}
+
+.lock {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: var(--surface-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-full);
+  color: var(--text-muted);
+}
+
+.root[data-locked] .medal {
+  --rarity-color: var(--text-disabled);
+}
+
+.root[data-locked] .icon {
+  filter: grayscale(1);
+  opacity: 0.55;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+  min-width: 0;
+}
+
+.tile .text {
+  align-items: center;
+  width: 100%;
+}
+
+.rarity {
+  display: inline-flex;
+  gap: var(--space-1);
+  color: var(--rarity-color);
+  font-family: var(--micro-font, var(--font-mono));
+  font-size: var(--micro-size, var(--text-xs));
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--micro-tracking, 0.06em);
+  text-transform: uppercase;
+}
+
+.root[data-locked] .rarity {
+  color: var(--text-subtle);
+}
+
+.state::before {
+  content: '·';
+  margin-right: var(--space-1);
+}
+
+.name {
+  overflow: hidden;
+  max-width: 100%;
+  font-family: var(--heading-font, inherit);
+  font-size: var(--text-lg);
+  font-stretch: var(--heading-stretch, normal);
+  font-weight: var(--weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.description {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+}
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  margin-top: var(--space-1);
+}
+
+.progress > :first-child {
+  flex: 1;
+}
+
+.progressValue,
+.date {
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}

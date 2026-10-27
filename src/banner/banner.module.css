@@ -1,0 +1,86 @@
+.banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--control-lg);
+  padding: var(--space-1) var(--space-10);
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  color: var(--text);
+}
+
+.content {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.text {
+  min-width: 0;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.text code {
+  padding: 1px 4px;
+  background: var(--surface-3);
+  border-radius: var(--radius-xs);
+  font-size: 0.92em;
+}
+
+.icon,
+.action {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.icon {
+  color: var(--accent-text);
+}
+
+.close {
+  position: absolute;
+  top: 50%;
+  right: var(--space-2);
+  translate: 0 -50%;
+}
+
+.accent {
+  background: color-mix(in oklab, var(--accent) 16%, var(--panel-3));
+  border-bottom-color: var(--accent-soft-strong);
+}
+
+/* Радуга Fumadocs, переведённая в акцент пространства: размытый градиент едет по полосе.
+ * Движется слой через transform (а не background-position) и только при включённых эффектах */
+.rainbow {
+  background: var(--panel-3);
+}
+
+.glow {
+  position: absolute;
+  inset: -50% 0;
+  z-index: -1;
+  width: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in oklab, var(--accent) 55%, transparent) 15%,
+    color-mix(in oklab, var(--accent-2) 55%, transparent) 30%,
+    color-mix(in oklab, var(--info) 35%, transparent) 42%,
+    transparent 50%,
+    color-mix(in oklab, var(--accent) 55%, transparent) 65%,
+    color-mix(in oklab, var(--accent-2) 55%, transparent) 80%,
+    color-mix(in oklab, var(--info) 35%, transparent) 92%,
+    transparent 100%
+  );
+  filter: blur(14px);
+  opacity: calc(0.45 + var(--fx-glow) * 0.35);
+  animation: var(--anim-drift);
+  animation-play-state: var(--fx-play);
+}

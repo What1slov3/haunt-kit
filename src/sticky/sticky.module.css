@@ -1,0 +1,26 @@
+.sticky {
+  position: sticky;
+  z-index: var(--z-sticky);
+  transition:
+    background-color var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
+/* Прилипший — на стекле; кромка и тень — со стороны, где под ним уезжает содержимое */
+.sticky[data-elevate][data-stuck] {
+  background: var(--glass);
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+}
+
+.sticky[data-elevate][data-stuck][data-edge='top'] {
+  box-shadow:
+    0 1px 0 var(--border-subtle),
+    var(--shadow-soft);
+}
+
+.sticky[data-elevate][data-stuck][data-edge='bottom'] {
+  box-shadow:
+    0 -1px 0 var(--border-subtle),
+    0 -6px 16px color-mix(in oklab, var(--shadow-ink) 25%, transparent);
+}

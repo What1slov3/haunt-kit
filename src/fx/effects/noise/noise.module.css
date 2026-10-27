@@ -1,0 +1,11 @@
+.noise {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: calc(var(--noise-opacity) * var(--fx-grain));
+  /* Холст в разрешении зерна, растянут без сглаживания: зерно остаётся резким */
+  image-rendering: pixelated;
+}

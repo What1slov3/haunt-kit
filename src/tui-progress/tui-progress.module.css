@@ -1,0 +1,104 @@
+.root {
+  --bar-color: var(--accent-text);
+
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--tui-leading);
+  white-space: pre;
+}
+
+.accent {
+  --bar-color: var(--accent-text);
+}
+
+.success {
+  --bar-color: var(--success);
+}
+
+.warning {
+  --bar-color: var(--warning);
+}
+
+.danger {
+  --bar-color: var(--danger);
+}
+
+.bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 1ch;
+}
+
+/* Ширина — ровно в клетках: блочные глифы моно-шрифта шириной в 1ch, бегущий блок считает так же */
+.track {
+  position: relative;
+  display: inline-block;
+  width: calc(var(--cells) * 1ch);
+  overflow: hidden;
+  color: var(--bar-color);
+}
+
+/* Дорожка blocks — ровный приглушённый блок цвета полосы во всю клетку строки: █ и ▏…▉ ложатся поверх */
+.blocks .track {
+  background: color-mix(in oklab, var(--bar-color) 16%, transparent);
+}
+
+/* [####----] — скобки словаря TUI (метка, свойство): границы поля значения; гаснут с data-tui="off" */
+.ascii .frame::before {
+  content: var(--tui-bracket-open);
+  color: var(--text-subtle);
+}
+
+.ascii .frame::after {
+  content: var(--tui-bracket-close);
+  color: var(--text-subtle);
+}
+
+/* Блок шагает по клеткам: от «за левым краем» до «за правым», steps — без промежуточных положений */
+.runner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(var(--runner) * 1ch);
+  animation: tui-runner var(--runner-duration) steps(var(--runner-steps)) infinite;
+}
+
+@keyframes tui-runner {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(calc(var(--cells) * 1ch));
+  }
+}
+
+/* Пустые клетки тише заполненных: полоса читается по заполнению, а не по всей дорожке */
+.empty {
+  color: var(--text-subtle);
+}
+
+.value {
+  color: var(--text-muted);
+}
+
+/* Без TUI — обычный Progress; селектор длиннее, чем у самого Progress, иначе решал бы порядок стилей */
+.root .fallback {
+  display: none;
+}
+
+:global([data-tui='off']) .root {
+  display: flex;
+  width: 100%;
+}
+
+:global([data-tui='off']) .root .bar {
+  display: none;
+}
+
+:global([data-tui='off']) .root .fallback {
+  display: block;
+}

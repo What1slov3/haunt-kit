@@ -1,0 +1,96 @@
+.preview {
+  --preview-color: var(--border-strong);
+
+  position: relative;
+  display: grid;
+  gap: var(--space-3);
+  /* Ширина карточки встраивания в ленте: шире — строки описания становятся нечитаемо длинными */
+  max-width: 440px;
+  min-width: 0;
+  padding: var(--space-3) var(--space-3) var(--space-3) calc(var(--space-3) + 3px);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+/* Полоса — отдельным слоем со своим скруглением, как у Callout: border-left ломал бы углы карточки */
+.preview::before {
+  content: '';
+  position: absolute;
+  top: var(--space-2);
+  bottom: var(--space-2);
+  left: var(--space-1-5);
+  width: 3px;
+  border-radius: 2px;
+  background: var(--preview-color);
+}
+
+.end {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+}
+
+.bottom {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.domain {
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--text-subtle);
+}
+
+.title,
+.description {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow-wrap: anywhere;
+}
+
+.title {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  color: var(--accent-text);
+}
+
+.description {
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  color: var(--text-muted);
+}
+
+/*
+ * Скругление картинки не выводится из карточки формулой: внутренний радиус 8 − 12 − 1 < 0. При отступе
+ * больше радиуса концентричности нет, поэтому — малый радиус контролов
+ */
+.image {
+  display: block;
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+}
+
+.end .image {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+}
+
+.bottom .image {
+  width: 100%;
+  max-height: 240px;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}

@@ -1,0 +1,437 @@
+/*
+ * Токены дизайн-системы. Цвета названы по смыслу (background, card, surface, text, accent…), а не по
+ * оттенку: тема меняет значения, компоненты — нет.
+ *
+ * Основа — нейтральная палитра в духе Fumadocs / shadcn (background, foreground, card, popover, muted,
+ * primary, secondary, border, ring). Характер — свой: плотное десктопное приложение для общения
+ * (Discord, Linear, Raycast), контролы 24/28/32 px, скругления 4–12 px, тонкие чёткие рамки, стекло у
+ * плавающих слоёв, акцент пространства, живой фон.
+ *
+ * Тёмная тема — основная, поэтому она на :root. Светлая — [data-theme='light'] на <html> или на любом
+ * контейнере: так витрина показывает обе темы рядом.
+ */
+
+:root {
+  /* --- Шрифт и шкала текста ------------------------------------------------------- */
+  --font-sans: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* Моно — для метаданных, Kbd, времени, счётчиков, кода (TUI-акценты); локальный, чтобы Tauri работал офлайн.
+   * Первым — глифы TUI (theme/tui-font.css): только псевдографика, блоки и брайль, остальное — JetBrains Mono */
+  --font-mono:
+    'Haunt TUI', 'JetBrains Mono Variable', ui-monospace, 'Cascadia Code', Consolas, monospace;
+
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-md: 13px;
+  --text-lg: 14px;
+  --text-xl: 16px;
+  --text-2xl: 20px;
+  --text-3xl: 24px;
+  --text-4xl: 32px;
+
+  --leading-tight: 1.2;
+  --leading-snug: 1.35;
+  --leading-normal: 1.45;
+  /* Длинный текст (описания карточек, шаги, документация) — ритм Fumadocs, свободнее интерфейса */
+  --leading-relaxed: 1.65;
+
+  --weight-thin: 300;
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* --- Отступы, шаг 4 (плюс полушаги для плотных строк) ---------------------------- */
+  --space-0: 0px;
+  --space-0-5: 2px;
+  --space-1: 4px;
+  --space-1-5: 6px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* --- Скругления: 4–12 px; таблетки только у бейджей, чипов и переключателей ---------- */
+  --radius-xs: 3px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
+  /* Карточки и диалоги — мягче, как rounded-xl у Fumadocs; контролы остаются плотными */
+  --radius-2xl: 12px;
+  --radius-full: 999px;
+
+  /* Полоса прокрутки: ширина дорожки, отступ ползунка от её краёв (на наведении — вдвое меньше), скругление */
+  --scrollbar-size: 10px;
+  --scrollbar-inset: 2px;
+  --scrollbar-radius: var(--radius-full);
+
+  /*
+   * Ручки косметики участника — то, что человек «надевает»: имя, след в ленте, аура профиля, рамка
+   * аватара. По умолчанию не заданы (initial): компонент рисует свой обычный вид. Вещь — набор значений
+   * этих ручек на контейнере участника (TokenScope, setTokens), а не свой CSS: меняется только то, что
+   * разрешено, и одинаково везде, где человека видно.
+   */
+  --author-paint: initial; /* фон имени, обрезанный по тексту: градиент */
+  --author-fill: initial; /* заливка букв имени; с --author-paint — transparent */
+  --trail-paint: initial; /* след автора в ленте: цвет или градиент (пунктир — repeating-linear-gradient) */
+  --trail-width: initial; /* толщина следа; по умолчанию 2px */
+  --trail-glow: initial; /* свечение следа: box-shadow */
+  --aura-paint: initial; /* аура ProfileCard: фон слоя вместо двух пятен цвета профиля */
+  --avatar-frame: initial; /* рамка аватара: box-shadow вокруг круга или квадрата */
+
+  /* --- Высоты контролов: кнопки, поля, пункты списков ------------------------------- */
+  --control-sm: 24px;
+  --control-md: 28px;
+  --control-lg: 32px;
+  --row-compact: 28px;
+  --row-default: 32px;
+
+  /* --- Ширины контейнера страницы: форма, чтение, лента с колонкой, во всю ширину --------- */
+  --container-narrow: 560px;
+  --container-reading: 720px;
+  --container-wide: 1120px;
+  /* Колонка «о пространстве» у ленты, оглавление у документа */
+  --aside-width: 300px;
+
+  /* --- Размытие ------------------------------------------------------------------- */
+  --blur-glass: 16px;
+  --blur-ambient: 110px;
+
+  /* --- Z-слои --------------------------------------------------------------------- */
+  --z-background: -1;
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 100;
+  --z-overlay: 1000;
+  --z-popover: 1100;
+  --z-toast: 1150;
+  --z-tooltip: 1200;
+
+  /* --- Движение: коротко и точно, без отскока (пружины Motion — в motion/presets.ts, вход @haunt/ui/motion) ------- */
+  --duration-fast: 90ms;
+  --duration-base: 150ms;
+  --duration-slow: 220ms;
+  --duration-ambient: 48s;
+
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.6, 0, 0.3, 1);
+
+  --press-scale: 0.98;
+  /* Нажатие мгновенное, отпускание — мягкое: кнопка «вдавливается» сразу и возвращается с запаздыванием */
+  --ease-release: cubic-bezier(0.2, 0.9, 0.3, 1);
+  --duration-press: 40ms;
+  --duration-release: 240ms;
+
+  /* --- Акцент пространства: три переменные, остальное выводится (см. блок `*` ниже) ---
+   * Сообщество переопределяет их на своём контейнере (AccentScope). */
+  --accent: #6e5ce6;
+  --accent-2: #9a4fc4;
+  --accent-contrast: #ffffff;
+
+  /* --- TUI-акценты: маркеры секций и скобки бейджей; гасятся `data-tui='off'` на контейнере --- */
+  --tui-marker: '>';
+  --tui-marker-gap: 0.5em;
+  --tui-bracket-open: '[';
+  --tui-bracket-close: ']';
+  /* Метки полей, счётчики, служебные подписи внутри компонентов: моно в TUI, гротеск без него */
+  --font-tui: var(--font-mono);
+  /* Комментарий-подсказка под полем, ошибка, разделитель пунктов строки состояния */
+  --tui-hint: '//';
+  --tui-hint-gap: 0.5em;
+  --tui-error: '!';
+  --tui-separator: '│';
+  /* Приглашение командной строки в поле ввода (Input prompt) */
+  --tui-prompt: '>';
+  /* Разделитель пути (Breadcrumbs). Без TUI не гаснет: путь без разделителя не читается */
+  --tui-path: '/';
+  /* Строка TUI — ровно клетка моно-шрифта (верх 1020 + низ 300 на 1000): █ и │ соседних строк стыкуются
+   * без зазора, а сетка знаков совпадает в любом компоненте */
+  --tui-leading: 1.32;
+  /* Ползунок прокрутки в компонентах TUI — прямоугольный, как в терминале */
+  --tui-scrollbar-radius: 0;
+  --caret-width: 0.55em;
+}
+
+/*
+ * Семантика основы — имена shadcn. Их `accent` (серое выделение при наведении) здесь называется
+ * `highlight`: `--accent` занят акцентом пространства. Прежние токены (bg, panel-*, surface-*, text-*)
+ * остались и выражены через основу, поэтому модули компонентов и пропсы не меняются.
+ */
+
+/* --- Тёмная тема (основная) ---------------------------------------------------------- */
+:root,
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* Почти нейтральный серый (у Fumadocs #121212); капля холода оставляет «ночной» характер Haunt */
+  --background: #111113;
+  --foreground: #ededef;
+  --card: #18181b;
+  --card-foreground: #ededef;
+  --popover: #1c1c1f;
+  --popover-foreground: #e4e4e7;
+  --muted: #212124;
+  --muted-foreground: rgba(237, 237, 239, 0.64);
+  --primary: #fafafa;
+  --primary-foreground: #171717;
+  --secondary: #212124;
+  --secondary-foreground: #ededef;
+  --highlight: rgba(140, 140, 150, 0.16);
+  --highlight-foreground: #ededef;
+
+  /* Панели приложения: полупрозрачные слои поверх живого фона, светлее к центру экрана
+   * (рейл → список → содержимое = темнее фона → фон → card) */
+  --panel-1: rgba(12, 12, 14, 0.88);
+  --panel-2: rgba(17, 17, 19, 0.88);
+  --panel-3: rgba(24, 24, 27, 0.9);
+
+  /* Поверхности внутри панелей: белый 3–8 % поверх — карточка Fumadocs, но прозрачная */
+  --surface-1: rgba(255, 255, 255, 0.03);
+  --surface-2: rgba(255, 255, 255, 0.05);
+  --surface-3: rgba(255, 255, 255, 0.08);
+  --surface-hover: rgba(255, 255, 255, 0.055);
+  --surface-active: rgba(255, 255, 255, 0.09);
+  --field-bg: rgba(255, 255, 255, 0.025);
+  --field-bg-hover: rgba(255, 255, 255, 0.04);
+  /* Сегмент: колодец темнее поверхности, плашка выбранного над ним — приподнята и светлее */
+  --segment-well: rgba(0, 0, 0, 0.26);
+  --segment-thumb: rgba(255, 255, 255, 0.1);
+  /* Клавиши клавиатуры: белые светлее любой поверхности — иначе клавиатура не читается */
+  --key-white: rgba(255, 255, 255, 0.26);
+  --key-black: #0c0c0e;
+  /* Стекло — popover на 78 %: плавающее остаётся прозрачным, под ним просвечивает основа */
+  --glass: rgba(28, 28, 31, 0.78);
+
+  /* Чёткие тонкие рамки: чуть заметнее прежних, одинаково читаются на любом слое */
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.16);
+
+  --text: #ededef;
+  --text-muted: rgba(237, 237, 239, 0.66);
+  --text-subtle: rgba(237, 237, 239, 0.5);
+  --text-disabled: rgba(237, 237, 239, 0.32);
+
+  /* Статусы: текст яркий, фон чипа 14–16 %; *-strong — заливка с белым текстом (контраст ≥ 4.5) */
+  --success: #a7e55e;
+  --success-soft: rgba(167, 229, 94, 0.14);
+  --success-strong: #3f7a0b;
+  --warning: #f5c04b;
+  --warning-soft: rgba(245, 192, 75, 0.14);
+  --warning-strong: #8a5a00;
+  --danger: #ff6b7a;
+  --danger-soft: rgba(255, 107, 122, 0.14);
+  --danger-strong: #d6334a;
+  --info: #5fd8d0;
+  --info-soft: rgba(95, 216, 208, 0.14);
+  --info-strong: #0d6f6a;
+
+  /* Тени с оттенком фона и акцента (см. блок `*`), не серые; блик по верхней кромке — --edge-highlight */
+  --shadow-ink: #020203;
+  --shadow-soft-alpha: 0.32;
+  --shadow-float-alpha: 0.5;
+  --edge-highlight: rgba(255, 255, 255, 0.06);
+  --edge-highlight-strong: rgba(255, 255, 255, 0.1);
+  --grain-alpha: 0.035;
+
+  /* Живой фон: пятна приглушены, чтобы не мешать читать чат; точечная сетка и частицы — для canvas */
+  --ambient-1: var(--accent);
+  --ambient-2: #1fb6a8;
+  --ambient-3: #c64fa6;
+  --ambient-opacity: 0.2;
+  --ambient-dot-color: #ffffff;
+  --ambient-dot-alpha: 0.085;
+  --ambient-particle-alpha: 0.7;
+
+  /* Из акцента выводится текст: в тёмной теме его надо осветлять */
+  --accent-text-toward: white;
+  --accent-text-amount: 34%;
+  --accent-soft-amount: 14%;
+  --accent-hover-toward: white;
+}
+
+/* --- Светлая тема (вторичная) --------------------------------------------------------- */
+[data-theme='light'] {
+  color-scheme: light;
+
+  --background: #f6f6f7;
+  --foreground: #0b0b0c;
+  /* Карточка чуть темнее фона, как у Fumadocs: на светлом слой читается тоном, а не тенью */
+  --card: #f0f0f2;
+  --card-foreground: #0b0b0c;
+  --popover: #fdfdfd;
+  --popover-foreground: #18181b;
+  --muted: #efeff1;
+  --muted-foreground: rgba(11, 11, 12, 0.6);
+  --primary: #171717;
+  --primary-foreground: #fafafa;
+  --secondary: #ededef;
+  --secondary-foreground: #171717;
+  --highlight: rgba(120, 120, 130, 0.14);
+  --highlight-foreground: #0b0b0c;
+
+  --panel-1: rgba(234, 234, 237, 0.9);
+  --panel-2: rgba(244, 244, 246, 0.9);
+  --panel-3: rgba(252, 252, 253, 0.92);
+
+  --surface-1: rgba(10, 10, 14, 0.025);
+  --surface-2: rgba(10, 10, 14, 0.045);
+  --surface-3: rgba(10, 10, 14, 0.075);
+  --surface-hover: rgba(10, 10, 14, 0.045);
+  --surface-active: rgba(10, 10, 14, 0.085);
+  --field-bg: rgba(255, 255, 255, 0.72);
+  --field-bg-hover: rgba(255, 255, 255, 0.92);
+  --segment-well: rgba(10, 10, 14, 0.06);
+  --segment-thumb: #ffffff;
+  --key-white: #ffffff;
+  --key-black: #1d1d21;
+  --glass: rgba(253, 253, 253, 0.8);
+
+  --border-subtle: rgba(10, 10, 14, 0.06);
+  --border: rgba(10, 10, 14, 0.1);
+  --border-strong: rgba(10, 10, 14, 0.17);
+
+  --text: #0b0b0c;
+  --text-muted: rgba(11, 11, 12, 0.68);
+  --text-subtle: rgba(11, 11, 12, 0.62);
+  --text-disabled: rgba(11, 11, 12, 0.36);
+
+  --success: #3f7a0b;
+  --success-soft: rgba(126, 200, 56, 0.18);
+  --success-strong: #3f7a0b;
+  --warning: #8a5a00;
+  --warning-soft: rgba(255, 186, 48, 0.2);
+  --warning-strong: #8a5a00;
+  --danger: #c92a3f;
+  --danger-soft: rgba(255, 107, 122, 0.16);
+  --danger-strong: #c92a3f;
+  --info: #0d6f6a;
+  --info-soft: rgba(95, 224, 216, 0.2);
+  --info-strong: #0d6f6a;
+
+  --shadow-ink: #18181b;
+  --shadow-soft-alpha: 0.07;
+  --shadow-float-alpha: 0.14;
+  --edge-highlight: rgba(255, 255, 255, 0.7);
+  --edge-highlight-strong: rgba(255, 255, 255, 0.9);
+  --grain-alpha: 0.02;
+
+  --ambient-1: #c7b8ff;
+  --ambient-2: #a9d8ff;
+  --ambient-3: #ffc2dc;
+  --ambient-opacity: 0.4;
+  --ambient-dot-color: #15161c;
+  --ambient-dot-alpha: 0.1;
+  --ambient-particle-alpha: 0.55;
+
+  --accent-text-toward: black;
+  --accent-text-amount: 20%;
+  --accent-soft-amount: 12%;
+  --accent-hover-toward: black;
+}
+
+/*
+ * Прежние имена — псевдонимы основы. Объявлены на каждом элементе с темой, а не только на :root:
+ * var() вычисляется там, где объявлен, и ThemeScope со светлой темой иначе унаследовал бы тёмный --bg.
+ */
+:root,
+[data-theme] {
+  --bg: var(--background);
+  --bg-elevated: var(--popover);
+  --inverse-bg: var(--primary);
+  --inverse-fg: var(--primary-foreground);
+  /* Линии псевдографики TUI: глиф сглаживается и выходит бледнее CSS-рамки того же цвета — поэтому между
+   * рамкой и тихим текстом, как приглушённый цвет текста у рамок в терминале */
+  --tui-line: color-mix(in oklab, var(--border-strong), var(--text-subtle) 50%);
+  /* Ползунок: в покое тихий, как рамка; над прокручиваемой областью — заметнее; под курсором — как тихий текст */
+  --scrollbar-thumb: var(--border-strong);
+  --scrollbar-thumb-hover: color-mix(in oklab, var(--border-strong), var(--text-subtle) 40%);
+  --scrollbar-thumb-active: var(--text-subtle);
+}
+
+/*
+ * Производные от акцента. Объявлены на каждом элементе, а не на :root, нарочно: custom property
+ * вычисляется там, где объявлена, и если бы --accent-soft жил на :root, переопределение --accent на
+ * контейнере сообщества его бы не меняло. Цена — несколько color-mix на элемент, это незаметно.
+ */
+*,
+::before,
+::after {
+  --accent-text: color-mix(
+    in oklab,
+    var(--accent),
+    var(--accent-text-toward) var(--accent-text-amount)
+  );
+  --accent-hover: color-mix(in oklab, var(--accent), var(--accent-hover-toward) 8%);
+  --accent-soft: color-mix(in oklab, var(--accent) var(--accent-soft-amount), transparent);
+  --accent-soft-strong: color-mix(in oklab, var(--accent) 26%, transparent);
+  --accent-glow: color-mix(in oklab, var(--accent) 40%, transparent);
+  --accent-gradient: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  --focus: var(--accent-text);
+  /* Кольцо фокуса shadcn: у нас акцентное, а не серое — фокус часть характера пространства */
+  --ring: var(--focus);
+
+  /* Тени: чернила фона с каплей акцента — слой выглядит частью сцены, а не серым пятном */
+  --shadow-color: color-mix(in oklab, var(--shadow-ink) 88%, var(--accent));
+  --shadow-soft:
+    0 1px 2px
+      color-mix(in oklab, var(--shadow-color) calc(var(--shadow-soft-alpha) * 100%), transparent),
+    0 2px 8px
+      color-mix(in oklab, var(--shadow-color) calc(var(--shadow-soft-alpha) * 80%), transparent);
+  --shadow-float:
+    0 8px 24px
+      color-mix(in oklab, var(--shadow-color) calc(var(--shadow-float-alpha) * 100%), transparent),
+    0 1px 3px
+      color-mix(in oklab, var(--shadow-color) calc(var(--shadow-float-alpha) * 70%), transparent),
+    inset 0 1px 0 var(--edge-highlight);
+  /* Фильтр стекла целиком — у всего плавающего один; здесь, а не в :root, чтобы `--blur-glass`, заданный
+   * на контейнере (`setTokens`), доходил и до него */
+  --glass-filter: blur(var(--blur-glass)) saturate(140%);
+  /* Сегмент (ToggleGroup, Tabs segment, клавиатура генератора): колодец вдавлен, плашка над ним поднята */
+  --segment-inset:
+    inset 0 0 0 1px var(--border-subtle),
+    inset 0 1px 2px color-mix(in oklab, var(--shadow-ink) 30%, transparent);
+  --segment-raise:
+    0 0 0 1px var(--border), var(--shadow-soft), inset 0 1px 0 var(--edge-highlight-strong);
+
+  /* --- Состояния интерактивного: одна палитра у строк, кнопок, чипов, пунктов меню, полей --- */
+  --state-hover-bg: var(--highlight);
+  --state-active-bg: var(--surface-active);
+  --state-selected-bg: var(--accent-soft);
+  --state-selected-border: var(--accent-soft-strong);
+  --state-selected-fg: var(--accent-text);
+  --focus-ring: 0 0 0 2px var(--accent-soft-strong);
+  --field-border: var(--border);
+  --field-border-hover: var(--border-strong);
+  --field-border-focus: var(--accent);
+  --field-ring: 0 0 0 3px var(--accent-soft);
+  --field-ring-invalid: 0 0 0 3px var(--danger-soft);
+
+  /* --- Фильтр изображений (FilteredImage): палитра дизеринга и цвет ASCII из темы и акцента --- */
+  --image-dither-1: var(--background);
+  --image-dither-2: color-mix(in oklab, var(--accent) 55%, var(--background));
+  --image-dither-3: var(--accent);
+  --image-dither-4: var(--accent-text);
+  --image-ascii-color: var(--foreground);
+}
+
+/* TUI-акценты выключены: маркеры, скобки и комментарии прячутся, метки — гротеском; StatusBar, Kbd и моно
+ * у времени и счётчиков остаются (это иерархия, а не декор) */
+[data-tui='off'] {
+  --tui-marker: '';
+  --tui-marker-gap: 0;
+  --tui-bracket-open: '';
+  --tui-bracket-close: '';
+  --font-tui: var(--font-sans);
+  --tui-hint: '';
+  --tui-hint-gap: 0;
+  --tui-error: '';
+  --tui-separator: '';
+  --tui-prompt: '';
+  --tui-scrollbar-radius: var(--radius-full);
+}

@@ -1,0 +1,97 @@
+.sparkline {
+  --spark-color: var(--accent-text);
+
+  display: inline-block;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.accent {
+  --spark-color: var(--accent-text);
+}
+
+.success {
+  --spark-color: var(--success);
+}
+
+.warning {
+  --spark-color: var(--warning);
+}
+
+.danger {
+  --spark-color: var(--danger);
+}
+
+.neutral {
+  --spark-color: var(--text-subtle);
+}
+
+.line {
+  fill: none;
+  stroke: var(--spark-color);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.stopTop {
+  stop-color: var(--spark-color);
+  stop-opacity: 0.32;
+}
+
+.stopBottom {
+  stop-color: var(--spark-color);
+  stop-opacity: 0;
+}
+
+.dot {
+  fill: var(--spark-color);
+}
+
+/* Ореол вместо обводки цвета фона (решение 8): линия может лежать на любой подложке */
+.halo {
+  fill: var(--spark-color);
+  opacity: 0.22;
+}
+
+.interactive {
+  cursor: crosshair;
+}
+
+/* Столбики тише последнего: глаз сразу находит «сейчас», как точку у линии */
+.bar {
+  fill: var(--spark-color);
+  opacity: 0.55;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.bar[data-last],
+.bar[data-hovered] {
+  opacity: 1;
+}
+
+.hint {
+  pointer-events: none;
+}
+
+.rule {
+  stroke: var(--spark-color);
+  stroke-width: 1;
+  stroke-dasharray: 2 2;
+  opacity: 0.6;
+}
+
+.box {
+  fill: var(--popover);
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.value {
+  fill: var(--text);
+  font-family: var(--font-mono);
+  /* --text-xs = 11 px: под него посчитана ширина подложки в sparkline.tsx (TOOLTIP_FONT) */
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  text-anchor: middle;
+}
